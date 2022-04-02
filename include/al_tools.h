@@ -34,6 +34,7 @@
     String ch_toString(const char * c);
     
     void on_time_h(String & result);
+    void on_time_h(uint32_t time, String & result);
     void on_time_d(String & result);  
   } // al_tools
 

@@ -7,13 +7,14 @@ https://stackoverflow.com/questions/16982015/getting-const-char-array-from-funct
 
 #include <Arduino.h>
 
-#ifdef FSOK
-  #if defined USE_SPIFFS
-    #include <FS.h>
-  #elif defined USE_LITTLEFS
+#ifdef FILESYSTEM
+  #if defined(ESP8266)
     #include <LittleFS.h> 
-  #endif
-#endif
+  #elif defined(ESP32)
+    #include <FS.h>
+    #include <LITTLEFS.h>
+  #endif  
+#endif  
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
@@ -169,6 +170,11 @@ namespace al_tools {
      millis2time_h(millis(), t);
      result = String(t);
   }
+  void on_time_h(uint32_t time, String & result) {
+     char t[12];
+     millis2time_h(time, t);
+     result = String(t);
+  }  
   void on_time_m(String & result) {
      char t[12];
      millis2time_m(millis(), t);

@@ -1,0 +1,37 @@
+{
+  "name": "esp_al_tools",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "esp tools",
+  "keywords": "esp, tools, esp-tools",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/AdriLighting/esp_al_tools.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Grellard Adrien",
+      "email": "grellard.adrien@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "dependencies": [
+    {
+        "owner": "Benoit Blanchon",
+        "name": "ArduinoJson",
+        "version": "https://github.com/bblanchon/ArduinoJson.git",
+        "platforms": ["espressif8266", "espressif32"]
+    },
+    {
+        "owner": "Ivan Seidel",
+        "name": "LinkedList",
+        "version": "https://github.com/AdriLighting/LinkedList.git",
+        "platforms": ["espressif8266", "espressif32"]
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": ["espressif8266", "espressif32"],
+  "headers": "arduino_patternsList.h"
+}
