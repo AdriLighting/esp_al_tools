@@ -1,5 +1,5 @@
-#ifndef _ALTOOLS_H
-  #define _ALTOOLS_H
+#ifndef ALTOOLS_H
+  #define ALTOOLS_H
   #include <Arduino.h>
   #include <ArduinoJson.h>
   #include <LinkedList.h>
