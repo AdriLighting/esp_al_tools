@@ -1,5 +1,5 @@
 {
-  "name": "espaltools.h",
+  "name": "espaltools",
   "version": "0.0.1",
   "license": "MIT",
   "description": "Utility tools for esp8266/esp32",
@@ -32,5 +32,5 @@
   
   "frameworks": "arduino",
   "platforms": "espressif8266",
-  "headers": ["altools.h", "alserialmenu.h"]
+  "headers": "altoolslib.h"
 }
