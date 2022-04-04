@@ -163,6 +163,12 @@ namespace al_tools {
     uint32_t hours      = (s /   (1000UL*3600UL)  ) % 24    ;
     sprintf(time,"%02lu:%02lu:%02lu", (unsigned long)hours , (unsigned long)minutes, (unsigned long)seconds);
   }
+
+  void on_time_h(uint32_t time,String & result) {
+     char t[12];
+     millis2time_h(time, t);
+     result = String(t);
+  }  
   void on_time_h(String & result) {
      char t[12];
      millis2time_h(millis(), t);
