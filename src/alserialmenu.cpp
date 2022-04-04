@@ -1,5 +1,8 @@
-#include "../include/al_serialmenu.h"
-#include "../include/al_tools.h"
+#include "alserialmenu.h"
+
+#include <altools.h>
+// #include "../include/program.h"
+// #include "../include/apapi.h"
 
 namespace {
   void splitText(const String & inputString, const char* const & sep, String & cmd, String & value) {

@@ -1,5 +1,5 @@
-#ifndef _AL_SERIALMENU_H
-  #define _AL_SERIALMENU_H
+#ifndef _ALSERIALMENU_H
+  #define _ALSERIALMENU_H
 
   #include <Arduino.h>
   #include <LinkedList.h>

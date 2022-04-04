@@ -32,5 +32,5 @@
   
   "frameworks": "arduino",
   "platforms": "espressif8266",
-  "headers": ["al_tools.h", "al_serialmenu.h"]
+  "headers": ["altools.h", "alserialmenu.h"]
 }
