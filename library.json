@@ -1,5 +1,5 @@
 {
-  "name": "altoolslib",
+  "name": "esp_al_tools",
   "version": "0.0.1",
   "license": "MIT",
   "description": "Utility tools for esp8266/esp32",
