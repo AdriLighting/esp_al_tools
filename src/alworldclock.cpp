@@ -1,0 +1,236 @@
+#include "alworldclock.h"
+#include <ArduinoJson.h>
+
+#include "altools.h"
+#include "alhttptools.h"
+#include "alhttptimesync.h"
+
+
+const char ALTIME_COUNTRY[] PROGMEM = R"rawliteral({"items":[{"timezone":"Europe/Paris","name":"Paris","country":"France"},{"timezone":"Asia/Shanghai","name":"Shanghai","country":"Chine"},{"timezone":"Europe/Istanbul","name":"Istanbul","country":"Turquie"},{"timezone":"America/Argentina/Buenos_Aires","name":"Buenos Aires","country":"Argentine"},{"timezone":"America/Mexico_City","name":"Mexico City","country":"Mexique"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"Europe/Moscow","name":"Moscou","country":"Russie"},{"timezone":"Europe/Kiev","name":"Kyiv","country":"Ukraine"},{"timezone":"Asia/Urumqi","name":"Asia/Urumqi","country":"Asia/Urumqi"},{"timezone":"Asia/Dhaka","name":"Dhaka","country":"Bangladesh"},{"timezone":"Asia/Seoul","name":"Seoul","country":"Corée du Sud"},{"timezone":"America/Sao_Paulo","name":"São Paulo","country":"Brésil"},{"timezone":"Africa/Lagos","name":"Lagos","country":"Nigéria"},{"timezone":"Asia/Jakarta","name":"Jakarta","country":"Indonésie"},{"timezone":"Asia/Tokyo","name":"Tokyo","country":"Japon"},{"timezone":"America/Martinique","name":"Martinique","country":"Martinique"},{"timezone":"America/New_York","name":"New York City","country":"États-Unis (USA)"},{"timezone":"Asia/Hong_Kong","name":"Hong Kong","country":"Hong Kong"},{"timezone":"America/Lima","name":"Lima","country":"Pérou"},{"timezone":"Africa/Cairo","name":"Caire","country":"Égypte"},{"timezone":"America/Bogota","name":"Bogotá","country":"Colombie"},{"timezone":"Europe/London","name":"London","country":"Royaume-Uni"},{"timezone":"Asia/Baghdad","name":"Baghdad","country":"Irak"},{"timezone":"Asia/Tehran","name":"Téhéran","country":"Iran"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"America/Argentina/Rio_Gallegos","name":"Río Gallegos","country":"Argentine"},{"timezone":"Europe/Berlin","name":"Berlin","country":"Allemagne"},{"timezone":"Australia/Sydney","name":"Sydney","country":"Australie"},{"timezone":"America/Detroit","name":"Detroit","country":"États-Unis (USA)"}]})rawliteral"; 
+
+WorldClock _WorldClock;
+
+
+/*
+ *
+
+boolean AL_httpTime::getUtc(const String & search, String & result) {
+  String country = FPSTR(ALTIME_COUNTRY);
+  DynamicJsonDocument doc(3072);
+  DeserializationError error = deserializeJson(doc, country);
+  if (!error) {
+    JsonArray arr = doc[F("items")];
+    for(size_t i = 0; i < arr.size(); ++i) {
+      JsonObject obj      = arr[i];
+      String name         = obj[F("name")];
+      String timezone     = obj[F("utc_offset")];
+      if (name == search) {
+        result = "";
+        if (get_timeHTTP(timezone, result)) return true;
+      }
+    }
+  } else {Serial.println("ERROR deserializeJson: ");} 
+  return false; 
+}
+
+*/
+/*
+
+*/
+/*
+  // Serial.println();
+  // String country = FPSTR(ALTIME_COUNTRY);
+  // Serial.printf("country\n%s\n", country.c_str());
+  // DynamicJsonDocument doc(3072);
+
+  // DeserializationError error = deserializeJson(doc, country);
+  // if (!error) {
+  //   JsonArray arr = doc[F("items")];
+  //     Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), 0, 
+  //       // "day_of_week",
+  //       // "day_of_year",
+  //       "timezone",
+  //       "name",
+  //       "country"); 
+  //   for(size_t i = 0; i < arr.size(); ++i) {
+  //     JsonObject obj      = arr[i];
+  //     // String day_of_week  = obj[F("day_of_week")];
+  //     // String day_of_year  = obj[F("day_of_year")];
+  //     String timezone     = obj[F("timezone")];
+  //     String name         = obj[F("name")].as<String>();
+  //     String country      = obj[F("country")];
+  //     Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), i,
+  //       timezone.c_str(),
+  //       name.c_str(),
+  //       country.c_str());
+  //   }
+  // } else {Serial.println("ERROR deserializeJson: ");}
+
+  // _WorldClock.setup();
+  */
+
+WorldClockItem::WorldClockItem(const char * name, const char * tz, const char * country, const char * utc){
+  size_t len;
+  if (!_name) {
+    len = strlen(name);
+    _name = new char[len + 1];
+    strcpy(_name, name);
+  }
+  if (!_tz) {
+    len = strlen(tz);
+    _tz = new char[len + 1];
+    strcpy(_tz, tz);
+  }
+  if (!_country) {
+    len = strlen(country);
+    _country = new char[len + 1];
+    strcpy(_country, country);
+  }
+  if (!_utc_offset) {
+    len = strlen(utc);
+    _utc_offset = new char[len + 1];
+    strcpy(_utc_offset, utc);
+  }
+
+}
+WorldClockItem::~WorldClockItem(){
+  if (_name)        delete _name;
+  if (_tz)          delete _tz;
+  if (_country)     delete _country;
+  if (_utc_offset)  delete _utc_offset;
+}
+String WorldClockItem::get_name() {return al_tools::ch_toString(_name);}
+
+void WorldClock::add(const char * name, const char * tz, const char * country, const char * utc) {
+  _list.add(new WorldClockItem(name, tz, country, utc)); 
+}
+// _WorldClock.add(name.c_str(), timezone.c_str(), country.c_str());
+
+
+
+boolean WorldClock::get_timeHTTP(const String & timezone, String & ret) {
+  String result((char *)0);
+  result.reserve(ALTIME_TIMEAPI_BUFSIZE);
+
+  if(timezone.length()){
+    String url(FPSTR(ALTIME_PT_timeapi_tz_url));
+    url+=timezone;
+    al_httptools::get_httpdata(result, url);
+    Serial.printf_P(PSTR("[0] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
+  } else return false;
+
+  if(!result.length()){
+    return false; 
+  }
+
+  DynamicJsonDocument doc(ALTIME_TIMEAPI_BUFSIZE);
+  DeserializationError error = deserializeJson(doc, result);
+  result="";
+
+  if (error) {
+    Serial.print( F("[ERR] Time deserializeJson error: "));
+    Serial.println( error.code());
+    return false;
+  }
+  String utc_offset = doc[F("utc_offset")];
+  ret = utc_offset;
+
+  return true;
+}
+
+void WorldClock::setup_default(){
+
+  String country = FPSTR(ALTIME_COUNTRY);
+  DynamicJsonDocument doc(3072);
+  DeserializationError error = deserializeJson(doc, country);
+  if (error) return;
+
+  JsonArray arr     = doc[F("items")];
+  String    list[5] = {"Shanghai", "New York City", "London", "Kyiv", "Martinique"};
+
+  for(int i = 0; i < 5; ++i) {
+    for(size_t j = 0; j < arr.size(); ++j) {
+      JsonObject obj      = arr[j];
+      String timezone     = obj[F("timezone")];
+      String name         = obj[F("name")].as<String>();
+      String country      = obj[F("country")];
+      if (name == list[i]) {
+        String utc = "";
+        if (!get_timeHTTP(timezone, utc)) continue;
+        _WorldClock.add(name.c_str(), timezone.c_str(), country.c_str(), utc.c_str());
+      }
+    }
+  }
+  Serial.println("---");
+  _WorldClock.print();
+  Serial.println("---");
+
+}
+void WorldClock::print(){
+	Serial.printf_P(PSTR("WorldClock current list\n"));
+  Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S %-7S\n"), 0, 
+    "timezone",
+    "name",
+    "country",
+    "utc"
+    );   
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S %-7S\n"), i,
+      item->_tz,
+      item->_name,
+      item->_country, 
+      item->_utc_offset
+      );    
+  }
+}
+void WorldClock::print_fullList() {
+  Serial.printf_P(PSTR("WorldClock full list\n"));
+  String country = FPSTR(ALTIME_COUNTRY);
+  DynamicJsonDocument doc(3072);
+  DeserializationError error = deserializeJson(doc, country);
+  if (error) return;
+  Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), 0, 
+    "timezone",
+    "name",
+    "country"
+  );   
+  JsonArray arr     = doc[F("items")];
+	for(size_t j = 0; j < arr.size(); ++j) {
+	  JsonObject obj      = arr[j];
+	  String timezone     = obj[F("timezone")];
+	  String name         = obj[F("name")].as<String>();
+	  String country      = obj[F("country")];
+	  Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), j,
+	    timezone.c_str(),
+	    name.c_str(),
+	    country.c_str()
+	  );    
+	}
+}
+void WorldClock::display(){
+	int utc_fr = 2;
+
+	String ts_paris = "";
+	AL_timeHelper::getDateTimeShortString(ts_paris, 0);
+	Serial.printf("%-15s", "Paris");
+	for(int i = 0; i < _list.size(); ++i) {WorldClockItem * item = _list.get(i);Serial.printf("%-15s", item->_name);}
+	Serial.printf("\n");  
+	Serial.printf("%-15s", ts_paris.c_str());
+	for(int i = 0; i < _list.size(); ++i) {
+	  WorldClockItem * item = _list.get(i);
+	  String utc = al_tools::ch_toString(item->_utc_offset);
+	  int utc_i = utc.substring(0,3).toInt();
+	  if (utc_i == utc_fr) {
+	    Serial.printf("%-15s", ts_paris.c_str());
+	  } else {
+	    String ts_country;
+	    time_t ts;
+	    utc_i -= utc_fr;
+	    AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
+	    AL_timeHelper::getDateTimeShortString(ts_country, ts);
+	    Serial.printf("%-15s", ts_country.c_str());
+	  }
+	}
+  Serial.printf("\n");
+}

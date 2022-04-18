@@ -1,6 +1,8 @@
 #include "../include/alserialmenu.h"
 #include "../include/altools.h"
-
+#if defined(ALSI_ENABLED) && defined(DEBUG_KEYBOARD)
+#include "../include/alsysinfo.h"
+#endif
 
 namespace {
   void splitText(const String & inputString, const char* const & sep, String & cmd, String & value) {
@@ -89,14 +91,14 @@ void Sr_item::get_mod(SR_MM & v1)         {v1 = _mod;}
 void Sr_item::get_callback(const String & v1, const String & v2){
   switch (_mod) {
     case SR_MM::SRMM_SIMPLE: break;
-    case SR_MM::SRMM_KEY: if (_cb_ss) _cb_ss(v1, v2); break;
+    case SR_MM::SRMM_KEYVAL: if (_cb_ss) _cb_ss(v1, v2); break;
     default:break;
   }
 }
 void Sr_item::get_callback(){
   switch (_mod) {
     case SR_MM::SRMM_SIMPLE: if (_cb_v) _cb_v(); break;
-    case SR_MM::SRMM_KEY: break;
+    case SR_MM::SRMM_KEYVAL: break;
     default:break;
   }
 }
@@ -114,7 +116,7 @@ void Sr_menu::print(){
   }
 }
 /*
-  SRMM_KEY
+  SRMM_KEYVAL
     "KEY" ... = ...  -> a debug si la pattern ne comprte pas  "=" 
       -3000=
       @loop=
@@ -130,11 +132,14 @@ Sr_menu::Sr_menu(){
     _Sr_menu.add("heapmonitor",   "-", [&](const String & v1, const String & v2) {
       _timer_h.set_delay(v1.toInt() * 1000);
       _timer_i1.set_enabled(v2.toInt());
-    }, SR_MM::SRMM_KEY);
+    }, SR_MM::SRMM_KEYVAL);
+    #if defined(ALSI_ENABLED) && defined(DEBUG_KEYBOARD)
+    _Sr_menu.add("sysinfo", "t", []() { ALSYSINFO_print(); });  
+    #endif    
     #ifdef ALT_DEBUG_TARCE
     _Sr_menu.add("debugregion", "u", []() { _DebugPrintList.ketboardPrint(); });    
     _Sr_menu.add("debugset",    ";", [](const String & v1, const String & v2) { 
-      _DebugPrintList.keyboardSet(v1,v2); }, SR_MM::SRMM_KEY);    
+      _DebugPrintList.keyboardSet(v1,v2); }, SR_MM::SRMM_KEYVAL);    
     #endif
 }
 Sr_menu::~Sr_menu(){}
@@ -171,8 +176,17 @@ void Sr_menu::serialRead(){
     }
   } 
   if(!Serial.available()) return;
-  String str = Serial.readStringUntil('\n');
-  serialReadString(str);
+  String  str = Serial.readStringUntil('\n');
+  String  ret;
+  byte    len = str.length();
+  char    * buffer = new char[len+1];
+  char    ch[len+1]; 
+  strcpy(ch, str.c_str());
+  strcpy(buffer,"");
+  for(int i=0; i < len; i++) {if (ch[i]=='\r' || ch[i]=='\n') break; strcat(buffer, String(ch[i]).c_str());}
+  ret = al_tools::ch_toString(buffer);
+  delete buffer;  
+  serialReadString(ret);
 }
 void Sr_menu::serialReadString(const String & v1){
   if (v1 == "") return;
@@ -188,6 +202,25 @@ void Sr_menu::serialReadString(const String & v1){
     switch (mod) {
       case SR_MM::SRMM_SIMPLE:
         if ( String((const __FlashStringHelper*) key) == v1 ) {_list[i]->get_callback(); } break;
+      case SR_MM::SRMM_KEYVAL: 
+        if (strcmp(keyStr, key) == 0) {
+          {
+            String cmd    = "";
+            String value  = "";
+            splitText(v1, key, cmd, value);
+
+            // byte  len = cmd.length();
+            // char  * buffer = new char[len];
+            // char  ch[len+1]; 
+            // strcpy(ch, cmd.c_str());
+            // strcpy(buffer,"");
+            // for(int i=1; i < len; i++) {strcat(buffer, String(ch[i]).c_str());}
+            // _list[i]->get_callback(al_tools::ch_toString(buffer), value);
+            // delete buffer;
+            _list[i]->get_callback(cmd, value);
+          }
+        }
+      break;/*
       case SR_MM::SRMM_KEY: 
         if (strcmp(keyStr, key) == 0) {
           {
@@ -195,9 +228,18 @@ void Sr_menu::serialReadString(const String & v1){
             String value  = "";
             splitText(v1, key, cmd, value);
             _list[i]->get_callback(cmd, value);
+            int rSize = 0;
+            const char** split = al_tools::explode(v1, '&', rSize);
+            for(int i = 0; i < rSize; ++i) {
+
+            }
+            for(int i = 0; i < rSize; ++i) {
+              delete split[i];
+            }
+            delete[] split;              
           }
         }
-      break;
+      break;  */    
       default:break;
     }
   }

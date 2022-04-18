@@ -215,6 +215,7 @@
      char* _value = nullptr;
 
   };
+  void splitText(const String & inputString, const char* const & arg,  char sep, LList<SplitItem * > * ptr);
   // void splitText(const String & inputString, const char* const & arg,  char sep, LList<SplitItem * > * ptr);
 
 

@@ -23,6 +23,11 @@
         "name": "ArduinoJson",
         "version": "https://github.com/bblanchon/ArduinoJson.git"
     },
+     {
+        "owner": "Paul Stoffregen",
+        "name": "Time",
+        "version": "https://github.com/PaulStoffregen/Time.git"
+    },
     {
         "owner": "Ivan Seidel",
         "name": "LinkedList",

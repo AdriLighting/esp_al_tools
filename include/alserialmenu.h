@@ -7,7 +7,7 @@
 
   typedef std::function<void()> sr_cb_v_f;
   typedef std::function<void(const String &, const String &)> sr_cb_ss_f;
-  typedef enum sr_menumod { SRMM_SIMPLE, SRMM_KEY  } SR_MM;
+  typedef enum sr_menumod { SRMM_SIMPLE, SRMM_KEYVAL/*, SRMM_KEY*/  } SR_MM;
   class Sr_timer
   {
     unsigned long _last =      0;

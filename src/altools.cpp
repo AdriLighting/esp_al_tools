@@ -6,7 +6,7 @@ https://stackoverflow.com/questions/16982015/getting-const-char-array-from-funct
 
 #include <Arduino.h>
 
-#ifdef FSOK
+#ifdef FILESYSTEM
   #if defined USE_SPIFFS
     #include <FS.h>
   #elif defined USE_LITTLEFS
