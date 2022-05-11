@@ -1,20 +1,11 @@
 #ifndef _ALSYSINFO_H
 	#define _ALSYSINFO_H
 	#include <Arduino.h>
-	#if defined(ESP8266)
-		// extern "C" {
-		//   #include "user_interface.h"
-		// }
-	#include <ESP8266WiFi.h>
-	#elif defined(ESP32)
-		#include <WiFi.h>
-		#include <esp_wifi.h>
-	#endif
 	#include <ArduinoJson.h>
 
-  typedef enum : uint8_t {
-    ALSI_M_FREEHEAP = 0
-  } alsi_mod_t;
+  // typedef enum : uint8_t {
+  //   ALSI_M_FREEHEAP = 0
+  // } alsi_mod_t;
 
 // static const char ALSI_KEY_001 [] PROGMEM = "FREEHEAP";
 // static const char ALSI_KEY_001 [] PROGMEM = "INITHEAP";

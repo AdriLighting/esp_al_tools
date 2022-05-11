@@ -167,7 +167,7 @@ void WorldClock::setup_default(){
 
 }
 void WorldClock::print(){
-	Serial.printf_P(PSTR("WorldClock current list\n"));
+  Serial.printf_P(PSTR("WorldClock current list\n"));
   Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S %-7S\n"), 0, 
     "timezone",
     "name",
@@ -196,41 +196,41 @@ void WorldClock::print_fullList() {
     "country"
   );   
   JsonArray arr     = doc[F("items")];
-	for(size_t j = 0; j < arr.size(); ++j) {
-	  JsonObject obj      = arr[j];
-	  String timezone     = obj[F("timezone")];
-	  String name         = obj[F("name")].as<String>();
-	  String country      = obj[F("country")];
-	  Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), j,
-	    timezone.c_str(),
-	    name.c_str(),
-	    country.c_str()
-	  );    
-	}
+  for(size_t j = 0; j < arr.size(); ++j) {
+    JsonObject obj      = arr[j];
+    String timezone     = obj[F("timezone")];
+    String name         = obj[F("name")].as<String>();
+    String country      = obj[F("country")];
+    Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S\n"), j,
+      timezone.c_str(),
+      name.c_str(),
+      country.c_str()
+    );    
+  }
 }
 void WorldClock::display(){
-	int utc_fr = 2;
+  int utc_fr = 2;
 
-	String ts_paris = "";
-	AL_timeHelper::getDateTimeShortString(ts_paris, 0);
-	Serial.printf("%-15s", "Paris");
-	for(int i = 0; i < _list.size(); ++i) {WorldClockItem * item = _list.get(i);Serial.printf("%-15s", item->_name);}
-	Serial.printf("\n");  
-	Serial.printf("%-15s", ts_paris.c_str());
-	for(int i = 0; i < _list.size(); ++i) {
-	  WorldClockItem * item = _list.get(i);
-	  String utc = al_tools::ch_toString(item->_utc_offset);
-	  int utc_i = utc.substring(0,3).toInt();
-	  if (utc_i == utc_fr) {
-	    Serial.printf("%-15s", ts_paris.c_str());
-	  } else {
-	    String ts_country;
-	    time_t ts;
-	    utc_i -= utc_fr;
-	    AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
-	    AL_timeHelper::getDateTimeShortString(ts_country, ts);
-	    Serial.printf("%-15s", ts_country.c_str());
-	  }
-	}
+  String ts_paris = "";
+  AL_timeHelper::getDateTimeShortString(ts_paris, 0);
+  Serial.printf("%-15s", "Paris");
+  for(int i = 0; i < _list.size(); ++i) {WorldClockItem * item = _list.get(i);Serial.printf("%-15s", item->_name);}
+  Serial.printf("\n");  
+  Serial.printf("%-15s", ts_paris.c_str());
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    String utc = al_tools::ch_toString(item->_utc_offset);
+    int utc_i = utc.substring(0,3).toInt();
+    if (utc_i == utc_fr) {
+      Serial.printf("%-15s", ts_paris.c_str());
+    } else {
+      String ts_country;
+      time_t ts;
+      utc_i -= utc_fr;
+      AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
+      AL_timeHelper::getDateTimeShortString(ts_country, ts);
+      Serial.printf("%-15s", ts_country.c_str());
+    }
+  }
   Serial.printf("\n");
 }

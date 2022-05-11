@@ -1,13 +1,13 @@
 #ifdef DEBUG_KEYBOARD
-	#include "../include/alserialmenu.h"	
+    #include "../include/alserialmenu.h"    
 #endif
 #include "../include/altools.h"
 #ifdef ALSI_ENABLED
-	#include "../include/alsysinfo.h"
+    #include "../include/alsysinfo.h"
 #endif
 #ifdef ALTIMESYNC_ENABLED
-	#include "../include/alhttptimesync.h"	
+    #include "../include/alhttptimesync.h"  
 #endif
 #ifdef ALWORLDCLOCK_ENABLED
-	#include "../include/alworldclock.h"
+    #include "../include/alworldclock.h"
 #endif

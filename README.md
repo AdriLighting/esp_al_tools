@@ -15,21 +15,33 @@ altoolslib.h
 		#include "../include/alworldclock.h"
 	#endif
 
--D ALT_DEBUG_TARCE
--D DEBUG_KEYBOARD
+tools
+	-D ALT_DEBUG_TARCE
+	-D DEBUG_KEYBOARD
 
--D ALSI_ENABLED
+	-D ALSI_ENABLED
 
--D ALTIMESYNC_ENABLED
--D ALTIME_USE_TIMELIB
+	-D ALTIMESYNC_ENABLED
+	-D ALTIME_USE_TIMELIB
 
--D ALWORLDCLOCK_ENABLED
+	-D ALWORLDCLOCK_ENABLED
 
+all lib
 -D USE_LITTLEFS - USE_SPIFFS	
-
 -D FILESYSTEM=LittleFS 
 -D FILESYSTEM=LITTLEFS
 -D FILESYSTEM=SPIFFS
+
+arduino patternlist
+  FSOK
+	-DDEBUG_PROGRAM
+	-DDEBUG_PLAYLIST	
+	DEBUG_APAPI
+	DEBUG_BASICLIST
+
+
+
+
 
 #include "../include/altools.h"
 	extern DebugPrintList _DebugPrintList;
@@ -149,6 +161,24 @@ altoolslib.h
 #ifdef DEBUG_KEYBOARD
 	#include "../include/alserialmenu.h"	
 #endif
+
+[0][key: a][mod: 0][name: menu]
+[1][key: z][mod: 0][name: ESPreset]
+[2][key: e][mod: 0][name: freeHeap]
+[4][key: t][mod: 0][name: sysinfo]
+[5][key: u][mod: 0][name: debugregion]
+[7][key: r][mod: 0][name: wcevo api]
+[9][key: o][mod: 0][name: setter list] 	arduinopattern
+[10][key: p][mod: 0][name: getter list] arduinopattern
+
+[3][key: -][mod: 1][name: heapmonitor]
+[6][key: ;][mod: 1][name: debugset]
+[8][key: @][mod: 1][name: wcevo api getter]
+
+[11][key: $][mod: 1][name: api getter] arduinopattern
+[12][key: #][mod: 1][name: api setter] arduinopattern
+
+
   extern Sr_menu _Sr_menu;
 	Sr_menu::Sr_menu(){
 	    _timer_h.set_delay(3000000);
