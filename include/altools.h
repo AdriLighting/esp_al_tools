@@ -40,7 +40,7 @@
     const char** explode(const String & s, char sep, int & rSize);
 
     #ifdef FILESYSTEM 
-      void SPIFFS_printFiles(const String & path, JsonObject & obj);
+      void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display = false);
       void SPIFFS_PRINT(const String & path = "", boolean sPrint = false, boolean display = false);
       void SPIFFS_readFile(const String & path);
       void SPIFFS_deleteRecursive(fs::FS &fs, const String &path);
