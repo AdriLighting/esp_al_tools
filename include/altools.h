@@ -4,6 +4,19 @@
   #include <ArduinoJson.h>
   #include <LinkedList.h>
 
+    #ifdef FILESYSTEM 
+      #if defined USE_LITTLEFS
+        #if defined(ESP8266)
+          #include <LittleFS.h> 
+        #elif defined(ESP32)
+          #include <FS.h>
+          #include <LITTLEFS.h>
+        #endif
+      #elif defined USE_SPIFFS
+        #include <FS.h>
+      #endif
+    #endif  
+
   namespace al_tools {
     /*
       int rSize = 0;
@@ -28,7 +41,9 @@
 
     #ifdef FILESYSTEM 
       void SPIFFS_printFiles(const String & path, JsonObject & obj);
-      void SPIFFS_PRINT(boolean sPrint = false);
+      void SPIFFS_PRINT(const String & path = "", boolean sPrint = false, boolean display = false);
+      void SPIFFS_readFile(const String & path);
+      void SPIFFS_deleteRecursive(fs::FS &fs, const String &path);
     #endif
 
     String ch_toString(const char * c);

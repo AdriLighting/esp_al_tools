@@ -2,6 +2,7 @@
     #include "../include/alserialmenu.h"    
 #endif
 #include "../include/altools.h"
+#include "../include/alhttptools.h"
 #ifdef ALSI_ENABLED
     #include "../include/alsysinfo.h"
 #endif

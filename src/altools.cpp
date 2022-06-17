@@ -23,7 +23,7 @@ https://stackoverflow.com/questions/16982015/getting-const-char-array-from-funct
 namespace al_tools {
   #ifdef FILESYSTEM
     unsigned int _SPIFFS_printFiles_size;
-    void SPIFFS_printFiles(fs::FS &fs, const String & path, JsonObject & obj, JsonArray & folders){
+    void SPIFFS_printFiles(fs::FS &fs, const String & path, JsonObject & obj, JsonArray & folders, boolean display){
       int         totalsize = 0;
       JsonObject  root      = obj.createNestedObject(path);
       JsonArray   arr       = root.createNestedArray(F("items"));
@@ -31,7 +31,7 @@ namespace al_tools {
       #if defined(ESP8266)
         Dir sub_dir = FILESYSTEM.openDir(path);
         while (sub_dir.next()) {
-          if (sub_dir.isDirectory()) SPIFFS_printFiles(fs, path + "/" + sub_dir.fileName(), obj, folders);
+          if (sub_dir.isDirectory()) SPIFFS_printFiles(fs, path + "/" + sub_dir.fileName(), obj, folders, display);
           else {
             JsonObject var = arr.createNestedObject();     
             var[F("file")] = sub_dir.fileName();
@@ -45,7 +45,7 @@ namespace al_tools {
         File sub_dir = dir.openNextFile();
         while (sub_dir) {
           if (sub_dir.isDirectory()) {
-            SPIFFS_printFiles(fs, sub_dir.name(), obj, folders);
+            SPIFFS_printFiles(fs, sub_dir.name(), obj, folders, display);
           }
           else {
             int LarraySize;
@@ -63,18 +63,22 @@ namespace al_tools {
         }
       #endif
     }  
-    void SPIFFS_printFiles(const String & path, JsonObject & obj){
+    void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display){
       al_tools::_SPIFFS_printFiles_size = 0;
       int         totalsize = 0;
+
+      String sPath = path;
+      if (path.substring(0, 1) != "/") sPath = "/" + path;
+
       JsonObject  root      = obj.createNestedObject(path);
       JsonArray   aFolder   = obj.createNestedArray(F("folders"));
       JsonArray   arr       = root.createNestedArray(F("items")); 
       aFolder.add(path);
       #if defined(ESP8266)
-        Dir dir = FILESYSTEM.openDir(path);
+        Dir dir = FILESYSTEM.openDir(sPath);
         while (dir.next()) {
           if (dir.isDirectory()) {
-            al_tools::SPIFFS_printFiles(FILESYSTEM, dir.fileName(), root, aFolder);
+            al_tools::SPIFFS_printFiles(FILESYSTEM, dir.fileName(), root, aFolder, display);
           } else  {
             JsonObject var = arr.createNestedObject();          
             var[F("file")] = dir.fileName();
@@ -89,7 +93,7 @@ namespace al_tools {
         File fFile = dir.openNextFile();
         while (fFile) {
           if (fFile.isDirectory()) {
-            SPIFFS_printFiles(FILESYSTEM, fFile.name(), root, aFolder);
+            SPIFFS_printFiles(FILESYSTEM, fFile.name(), root, aFolder, display);
           } else  {
             int LarraySize;
             const char  ** Larray = al_tools::explode(fFile.name(), '/', LarraySize);
@@ -117,10 +121,30 @@ namespace al_tools {
       #else
       #endif    
     } 
-    void SPIFFS_PRINT(boolean SerializePrint) {
+    void SPIFFS_readFile(const String & path){
+      Serial.printf_P(PSTR("[read file][%s]\n"), path.c_str()); 
+      char buffer[1024];
+      String print = "";
+      int nbr = 0;
+      File file = FILESYSTEM.open(path, "r");
+      if (file) {
+        while (file.position()<file.size()) {
+          String xml = file.readStringUntil('\n');
+          if (xml != "") {
+            sprintf(buffer, "[%-3d] %s", nbr, xml.c_str());
+            print += String(buffer) + "\n";
+            Serial.printf_P(PSTR("%s\n"), buffer);
+            delay(0);
+            nbr++;
+          }
+        }
+        file.close(); 
+      }
+    }    
+    void SPIFFS_PRINT(const String & in, boolean SerializePrint, boolean display) {
       DynamicJsonDocument doc(10000);
       JsonObject root = doc.to<JsonObject>();
-      al_tools::SPIFFS_printFiles("/", root);
+      al_tools::SPIFFS_printFiles(in, root, false);
       if (SerializePrint) {serializeJsonPretty(doc, Serial);Serial.println("");}
       Serial.printf_P(PSTR("[AP_SPIFFS_PRINT]\n"));
       JsonArray arr = doc[F("folders")].as<JsonArray>();
@@ -129,13 +153,44 @@ namespace al_tools {
         Serial.printf_P(PSTR("[%-3d][%s]\n"), i, path.c_str());
         JsonArray oPath;
         if (path == "/")  oPath = doc[path][F("items")].as<JsonArray>();
-        else              oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+        else {
+          if (in.substring(0, 1) != "/") oPath = doc[path][F("items")].as<JsonArray>();
+          else oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+        }
         for (size_t j = 0; j < oPath.size(); j++) {
           String file = oPath[j][F("file")].as<String>();
           Serial.printf_P(PSTR("\t[%-3d][%s]\n"), j, file.c_str());
+          if (display){
+            if (path == "/") {
+              SPIFFS_readFile(path+file);
+            } else {
+              SPIFFS_readFile("/"+path+"/"+file);
+            }
+          }
+
         }
       }
     } 
+    void SPIFFS_deleteRecursive(fs::FS &fs, const String &path) {
+
+        File file = fs.open(path, "r");
+        bool isDir = file.isDirectory();
+        file.close();
+
+        if (!isDir) {
+            fs.remove(path);
+            return;
+        }
+
+        Dir dir = fs.openDir(path);
+
+        while (dir.next()) {
+            SPIFFS_deleteRecursive(fs, path + '/' + dir.fileName());
+            yield();
+        }
+
+        fs.rmdir(path);
+    }    
   #endif
   
   String ch_toString(const char * c) {
@@ -533,7 +588,7 @@ DebugPrintItem::DebugPrintItem(const char * id){
 DebugPrintItem::~DebugPrintItem(){};
 
 void DebugPrintItem::print(){ 
-    Serial.printf_P(PSTR("[%12s][%7d][%7d][%7d][%7d][%7d][%7d][%7d][%7s]\n"), 
+    Serial.printf_P(PSTR("[%18s][%7d][%7d][%7d][%7d][%7d][%7d][%7d][%7s]\n"), 
       _id,
       is_macro(), 
       is_timeStamp(), 
@@ -585,7 +640,7 @@ DebugPrintItem * DebugPrintList::get_item(const char *  v1){
 } 
 
 void DebugPrintList::ketboardPrintHeader(boolean pNbId){
-  if (!pNbId)   Serial.printf_P(PSTR("[%12s]"), "_id");
+  if (!pNbId)   Serial.printf_P(PSTR("[%18s]"), "_id");
   else          Serial.printf_P(PSTR("[%3s][%12s]"), "nb", "_id");
   uint8_t size = ARRAY_SIZE(APPT_DEBUGREGIONMS_ALL);
   for(uint8_t i = 0; i < size; ++i) {
