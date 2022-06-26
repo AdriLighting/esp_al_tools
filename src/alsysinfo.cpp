@@ -65,12 +65,18 @@
 #endif
 */
 
+
+
+
+
+
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 const char S_y                  [] PROGMEM = "Yes";
 const char S_n                  [] PROGMEM = "No";
 
 
 const char* const ALSI_CATEGORY [] PROGMEM = { ALSI_HEAPSIZE, ALSI_FILESYSTEM, ALSI_FLASHCHIP, ALSI_SKETCH, ALSI_BOARD, ALSI_TIME, ALSI_NETWORK };
+const char* const ALSI_CATEGORY_KEY [] PROGMEM = { "ALSI_HEAPSIZE", "ALSI_FILESYSTEM", "ALSI_FLASHCHIP", "ALSI_SKETCH", "ALSI_BOARD", "ALSI_TIME", "ALSI_NETWORK" };
 
 namespace al_sysinfo {
   static uint32_t get_free_heap() {
@@ -580,89 +586,91 @@ namespace al_sysinfo {
 
 
 PROGMEM ALSI_LIST ALSI_items [] = {
-  {ALSI_FREEHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
-  {ALSI_HEAPBLOCK,      &al_sysinfo::getMaxFreeBlockSize,           ALSI_HEAPSIZE},
+  {ALSI_FREEHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE, "ALSI_FREEHEAP"},
+  {ALSI_HEAPBLOCK,      &al_sysinfo::getMaxFreeBlockSize,           ALSI_HEAPSIZE, "ALSI_HEAPBLOCK"},
 #ifdef ESP8266
-  {ALSI_HEAPFRAG,       &al_sysinfo::getHeapFragmentation,          ALSI_HEAPSIZE}, 
+  {ALSI_HEAPFRAG,       &al_sysinfo::getHeapFragmentation,          ALSI_HEAPSIZE, "ALSI_HEAPFRAG"}, 
 #endif
-  {ALSI_INITHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
+  {ALSI_INITHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE, "ALSI_INITHEAP"},
 
 #ifdef FILESYSTEM
-  {ALSI_FSTOTALBYTES,   &al_sysinfo::fs_totalBytes,                 ALSI_FILESYSTEM},
-  {ALSI_FSUSEDBYTES,    &al_sysinfo::fs_usedBytes,                  ALSI_FILESYSTEM},
-  {ALSI_FSFREEBYTES,    &al_sysinfo::fs_freebytes,                  ALSI_FILESYSTEM},
-  {ALSI_FSBLOCKSIZE,    &al_sysinfo::fs_blockSize,                  ALSI_FILESYSTEM},
-  {ALSI_FSMAXOPENFILES, &al_sysinfo::fs_maxOpenFiles,               ALSI_FILESYSTEM},
-  {ALSI_FSMAXPATH,      &al_sysinfo::fs_maxPathLength,              ALSI_FILESYSTEM}, 
+  {ALSI_FSTOTALBYTES,   &al_sysinfo::fs_totalBytes,                 ALSI_FILESYSTEM, "ALSI_FSTOTALBYTES"},
+  {ALSI_FSUSEDBYTES,    &al_sysinfo::fs_usedBytes,                  ALSI_FILESYSTEM, "ALSI_FSUSEDBYTES"},
+  {ALSI_FSFREEBYTES,    &al_sysinfo::fs_freebytes,                  ALSI_FILESYSTEM, "ALSI_FSFREEBYTES"},
+  {ALSI_FSBLOCKSIZE,    &al_sysinfo::fs_blockSize,                  ALSI_FILESYSTEM, "ALSI_FSBLOCKSIZE"},
+  {ALSI_FSMAXOPENFILES, &al_sysinfo::fs_maxOpenFiles,               ALSI_FILESYSTEM, "ALSI_FSMAXOPENFILES"},
+  {ALSI_FSMAXPATH,      &al_sysinfo::fs_maxPathLength,              ALSI_FILESYSTEM, "ALSI_FSMAXPATH"}, 
 #endif
 
 #ifdef ESP8266
-  {ALSI_FLASHCHIPID,    &al_sysinfo::getFlashChipId,                ALSI_FLASHCHIP},  
+  {ALSI_FLASHCHIPID,    &al_sysinfo::getFlashChipId,                ALSI_FLASHCHIP, "ALSI_FLASHCHIPID"},  
 #endif
 #ifdef ESP32
-  {ALSI_PSRAMSIZE,      &al_sysinfo::getPsramSize,                  ALSI_FLASHCHIP},  
+  {ALSI_PSRAMSIZE,      &al_sysinfo::getPsramSize,                  ALSI_FLASHCHIP, "ALSI_PSRAMSIZE"},  
 #endif
-  {ALSI_FLASHSIZE,      &al_sysinfo::getFlashChipSize,              ALSI_FLASHCHIP},
+  {ALSI_FLASHSIZE,      &al_sysinfo::getFlashChipSize,              ALSI_FLASHCHIP, "ALSI_FLASHSIZE"},
 #ifdef ESP8266
-  {ALSI_RFLASHSIZE,     &al_sysinfo::getFlashChipRealSize,          ALSI_FLASHCHIP},  
+  {ALSI_RFLASHSIZE,     &al_sysinfo::getFlashChipRealSize,          ALSI_FLASHCHIP, "ALSI_RFLASHSIZE"},  
 #endif
-  {ALSI_FLASHFREQUENCY, &al_sysinfo::getFlashChipSpeed,             ALSI_FLASHCHIP},
-  {ALSI_FLASHMOD,       &al_sysinfo::getFlashChipMode,              ALSI_FLASHCHIP},
+  {ALSI_FLASHFREQUENCY, &al_sysinfo::getFlashChipSpeed,             ALSI_FLASHCHIP, "ALSI_FLASHFREQUENCY"},
+  {ALSI_FLASHMOD,       &al_sysinfo::getFlashChipMode,              ALSI_FLASHCHIP, "ALSI_FLASHMOD"},
 
-  {ALSI_SKETCHSIZETOTAL, &al_sysinfo::getTotalSketchSize,           ALSI_SKETCH},
-  {ALSI_SKETCHSIZE,     &al_sysinfo::getSketchSize,                 ALSI_SKETCH},
-  {ALSI_FREESKETCHSIZE, &al_sysinfo::getFreeSketchSpace,            ALSI_SKETCH},
+  {ALSI_SKETCHSIZETOTAL, &al_sysinfo::getTotalSketchSize,           ALSI_SKETCH, "ALSI_SKETCHSIZETOTAL"},
+  {ALSI_SKETCHSIZE,     &al_sysinfo::getSketchSize,                 ALSI_SKETCH, "ALSI_SKETCHSIZE"},
+  {ALSI_FREESKETCHSIZE, &al_sysinfo::getFreeSketchSpace,            ALSI_SKETCH, "ALSI_FREESKETCHSIZE"},
 
 #ifdef ESP32
-  {ALSI_MODEL,          &al_sysinfo::getModel,                      ALSI_BOARD},
-  {ALSI_FEATURES,       &al_sysinfo::getfeatures,                   ALSI_BOARD},
-  {ALSI_CORES,          &al_sysinfo::getCores,                      ALSI_BOARD},
-  {ALSI_REVISION,       &al_sysinfo::getRevision,                   ALSI_BOARD},
-  {ALSI_ESPIDFVERS,     &al_sysinfo::getEspIdfVersion,              ALSI_BOARD},
-  {ALSI_EFUSEMAC,       &al_sysinfo::getEfuseMac,                   ALSI_BOARD},
+  {ALSI_MODEL,          &al_sysinfo::getModel,                      ALSI_BOARD, "ALSI_MODEL"},
+  {ALSI_FEATURES,       &al_sysinfo::getfeatures,                   ALSI_BOARD, "ALSI_FEATURES"},
+  {ALSI_CORES,          &al_sysinfo::getCores,                      ALSI_BOARD, "ALSI_CORES"},
+  {ALSI_REVISION,       &al_sysinfo::getRevision,                   ALSI_BOARD, "ALSI_REVISION"},
+  {ALSI_ESPIDFVERS,     &al_sysinfo::getEspIdfVersion,              ALSI_BOARD, "ALSI_ESPIDFVERS"},
+  {ALSI_EFUSEMAC,       &al_sysinfo::getEfuseMac,                   ALSI_BOARD, "ALSI_EFUSEMAC"},
 #endif
-  {ALSI_CHIPID,         &al_sysinfo::getChipId,                     ALSI_BOARD},
-  {ALSI_SDKVERSION,     &al_sysinfo::ALSI_system_get_sdk_version,   ALSI_BOARD},
+  {ALSI_CHIPID,         &al_sysinfo::getChipId,                     ALSI_BOARD, "ALSI_CHIPID"},
+  {ALSI_SDKVERSION,     &al_sysinfo::ALSI_system_get_sdk_version,   ALSI_BOARD, "ALSI_SDKVERSION"},
 #ifdef ESP8266
-  {ALSI_COREVERSION,    &al_sysinfo::getCoreVersion,                ALSI_BOARD},
-  {ALSI_BOOTVERSION,    &al_sysinfo::ALSI_system_get_boot_version,  ALSI_BOARD},
+  {ALSI_COREVERSION,    &al_sysinfo::getCoreVersion,                ALSI_BOARD, "ALSI_COREVERSION"},
+  {ALSI_BOOTVERSION,    &al_sysinfo::ALSI_system_get_boot_version,  ALSI_BOARD, "ALSI_BOOTVERSION"},
 #endif
-  {ALSI_CPUFREQUENCY,   &al_sysinfo::getCpuFreqMHz,                 ALSI_BOARD},
+  {ALSI_CPUFREQUENCY,   &al_sysinfo::getCpuFreqMHz,                 ALSI_BOARD, "ALSI_CPUFREQUENCY"},
 
-  {ALSI_STAMAC,         &al_sysinfo::stamacAddress,                 ALSI_BOARD},
-  {ALSI_APAMAC,         &al_sysinfo::softAPmacAddress,              ALSI_BOARD},
+  {ALSI_STAMAC,         &al_sysinfo::stamacAddress,                 ALSI_BOARD, "ALSI_STAMAC"},
+  {ALSI_APAMAC,         &al_sysinfo::softAPmacAddress,              ALSI_BOARD, "ALSI_APAMAC"},
 
-  {ALSI_LASTRESET,      &al_sysinfo::lasResetReason,                ALSI_BOARD},
+  {ALSI_LASTRESET,      &al_sysinfo::lasResetReason,                ALSI_BOARD, "ALSI_LASTRESET"},
 
 
-  {ALSI_STAIP,          &al_sysinfo::getSTAip,                      ALSI_NETWORK},
-  {ALSI_STASUBNET,      &al_sysinfo::getSTAsubnet,                  ALSI_NETWORK},
-  {ALSI_STAGATEWAY,     &al_sysinfo::getSTAgateway,                 ALSI_NETWORK},
-  {ALSI_CONNECT,        &al_sysinfo::getConeected,                  ALSI_NETWORK},
-  {ALSI_AUTOCONNECT,    &al_sysinfo::getAutoconnect,                ALSI_NETWORK},
-  {ALSI_DNSSERVER,      &al_sysinfo::getDNSserver,                  ALSI_NETWORK},
-  {ALSI_HOSTNAME,       &al_sysinfo::getHostname,                   ALSI_NETWORK},
-  {ALSI_BUILDDATE,      &al_sysinfo::getBuildate,                   ALSI_TIME},
-  {ALSI_UPTIME,         &al_sysinfo::getUptime,                     ALSI_TIME},
+  {ALSI_STAIP,          &al_sysinfo::getSTAip,                      ALSI_NETWORK, "ALSI_STAIP"},
+  {ALSI_STASUBNET,      &al_sysinfo::getSTAsubnet,                  ALSI_NETWORK, "ALSI_STASUBNET"},
+  {ALSI_STAGATEWAY,     &al_sysinfo::getSTAgateway,                 ALSI_NETWORK, "ALSI_STAGATEWAY"},
+  {ALSI_CONNECT,        &al_sysinfo::getConeected,                  ALSI_NETWORK, "ALSI_CONNECT"},
+  {ALSI_AUTOCONNECT,    &al_sysinfo::getAutoconnect,                ALSI_NETWORK, "ALSI_AUTOCONNECT"},
+  {ALSI_DNSSERVER,      &al_sysinfo::getDNSserver,                  ALSI_NETWORK, "ALSI_DNSSERVER"},
+  {ALSI_HOSTNAME,       &al_sysinfo::getHostname,                   ALSI_NETWORK, "ALSI_HOSTNAME"},
+  {ALSI_BUILDDATE,      &al_sysinfo::getBuildate,                   ALSI_TIME, "ALSI_BUILDDATE"},
+  {ALSI_UPTIME,         &al_sysinfo::getUptime,                     ALSI_TIME, "ALSI_UPTIME"},
 };
 const uint8_t ALSI_ITEMSSIZE    =  ARRAY_SIZE(ALSI_items);
 const uint8_t ALSI_CATEGORYSIZE =  ARRAY_SIZE(ALSI_CATEGORY);
 const char ALSI_PTJSON_001 [] PROGMEM = "system_infos";
 
 void ALSYSINFO_print() {
+  Serial.printf_P(PSTR("[%-3s] %-25s %-32s %s\n\n"), "pos", "NAME", "value", "KEY"); 
   for(int j = 0; j < ALSI_CATEGORYSIZE; ++j) {
-    Serial.printf_P(PSTR("[%-3d] %-20s\n"), j, ALSI_CATEGORY[j]); 
+    Serial.printf_P(PSTR("[%-3d] %-25s %-32s %-22s << CATEGORY\n"), j, ALSI_CATEGORY[j], "-", ALSI_CATEGORY_KEY[j]); 
     for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
       if (ALSI_items[i].GRP != ALSI_CATEGORY[j]) continue;
       const char * r = "";
       ALSI_items[i].DATA(r);
-      Serial.printf_P(PSTR("[%-3d] %-20s %s\n"), i, ALSI_items[i].NAME, r); 
+      Serial.printf_P(PSTR("[%-3d] %-25s %-32s %s\n"), i, ALSI_items[i].NAME, r, ALSI_items[i].KEY); 
       delay(1);
     } 
     Serial.println(); 
   }   
 } 
-void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key) {
+void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t returnArray) {
+  JsonArray array;
   if (!doc.containsKey(FPSTR(ALSI_PTJSON_001))) doc.createNestedObject(FPSTR(ALSI_PTJSON_001));
   if(isDigit(al_tools::ch_toString(key).charAt(0))) {
     for(int j = 0; j < ALSI_CATEGORYSIZE; ++j) {
@@ -671,9 +679,25 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key) {
         if (ALSI_items[i].GRP != ALSI_CATEGORY[j]) continue;
         const char * r = "";
         ALSI_items[i].DATA(r);
-        if (!doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])][FPSTR(ALSI_items[i].NAME)]) { 
-          doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])][FPSTR(ALSI_items[i].NAME)] = al_tools::ch_toString(r);          
-        } 
+        if (!returnArray) {
+          if (!doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])][FPSTR(ALSI_items[i].NAME)]) { 
+            doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])][FPSTR(ALSI_items[i].NAME)] = al_tools::ch_toString(r);          
+          } 
+        } else {
+          array = doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])][F("items")];
+          if (array.isNull()) {
+            doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[j])].createNestedArray("items");
+          }          
+          if (returnArray == 1) {
+            array.add(al_tools::ch_toString(r));
+          }
+          else if (returnArray == 2) {
+            JsonArray array_2 = array.createNestedArray() ;
+            array_2.add(FPSTR(ALSI_items[i].NAME));     
+            array_2.add(al_tools::ch_toString(r));     
+            array.add(array_2);   
+          }
+        }
       } 
     }
   }
@@ -681,9 +705,27 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key) {
     if (al_tools::ch_toString(ALSI_items[i].GRP) != al_tools::ch_toString(key)) continue;
     const char * r = "";
     ALSI_items[i].DATA(r);
-    if (!doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)][FPSTR(ALSI_items[i].NAME)]) { 
-      doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)][FPSTR(ALSI_items[i].NAME)] = al_tools::ch_toString(r);          
-    } 
+    if (!returnArray) {
+      if (!doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)][FPSTR(ALSI_items[i].NAME)]) { 
+        doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)][FPSTR(ALSI_items[i].NAME)] = al_tools::ch_toString(r);          
+      }       
+    } else {
+      array = doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)][F("items")];
+      if (array.isNull()) {
+        doc[FPSTR(ALSI_PTJSON_001)][FPSTR(key)].createNestedArray("items");
+      }      
+      if (returnArray == 1) {
+        array.add(al_tools::ch_toString(r));     
+      }
+      else if (returnArray == 2) {
+        JsonArray array_2 = array.createNestedArray() ;
+        array_2.add(FPSTR(ALSI_items[i].NAME));     
+        array_2.add(al_tools::ch_toString(r));     
+        array.add(array_2);     
+      }      
+
+    }
+
   }     
 }
 boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
@@ -700,12 +742,17 @@ boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
   return false;
 }
 boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
+  if(isDigit(al_tools::ch_toString(key).charAt(0))) {
+    uint8_t p = al_tools::ch_toString(key).toInt();
+    ALSI_items[p].DATA(ret);
+    return true;
+  }
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
     if (al_tools::ch_toString(ALSI_items[i].NAME) == al_tools::ch_toString(key)) {
       ALSI_items[i].DATA(ret);
       return true;
     }
-  }   
+  }  
   return false;
 }
 void ALSYSINFO_getterByKey(DynamicJsonDocument & doc, const char * key, bool keyStr) {

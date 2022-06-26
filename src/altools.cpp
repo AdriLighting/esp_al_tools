@@ -25,13 +25,22 @@ namespace al_tools {
     unsigned int _SPIFFS_printFiles_size;
     void SPIFFS_printFiles(fs::FS &fs, const String & path, JsonObject & obj, JsonArray & folders, boolean display){
       int         totalsize = 0;
-      JsonObject  root      = obj.createNestedObject(path);
+
+      String addF = path;
+      if (addF != "/" && addF.substring(0, 1) == "/") addF.remove(0,1);
+
+      JsonObject  root      = obj.createNestedObject(addF);
       JsonArray   arr       = root.createNestedArray(F("items"));
-      folders.add(path);
+   
+      folders.add(addF);
+      // Serial.printf("B -> %s\n", path);
       #if defined(ESP8266)
         Dir sub_dir = FILESYSTEM.openDir(path);
         while (sub_dir.next()) {
-          if (sub_dir.isDirectory()) SPIFFS_printFiles(fs, path + "/" + sub_dir.fileName(), obj, folders, display);
+          if (sub_dir.isDirectory()) {
+            // Serial.printf("B isDirectory -> %s\n", sub_dir.fileName());
+            SPIFFS_printFiles(fs, path + "/" + sub_dir.fileName(), obj, folders, display);
+          }
           else {
             JsonObject var = arr.createNestedObject();     
             var[F("file")] = sub_dir.fileName();
@@ -67,19 +76,36 @@ namespace al_tools {
       al_tools::_SPIFFS_printFiles_size = 0;
       int         totalsize = 0;
 
+      JsonObject  root;
+
+
+      if (path != "/") root = obj.createNestedObject(F("/"));
+
+
       String sPath = path;
       if (path.substring(0, 1) != "/") sPath = "/" + path;
 
-      JsonObject  root      = obj.createNestedObject(path);
+      String addF = path;
+      if (addF != "/" && addF.substring(0, 1) == "/") addF.remove(0,1);
+
+      if (path != "/") root = root.createNestedObject(addF);
+      else root = obj.createNestedObject(addF);
+
       JsonArray   aFolder   = obj.createNestedArray(F("folders"));
       JsonArray   arr       = root.createNestedArray(F("items")); 
-      aFolder.add(path);
+
+      if (path != "/") aFolder.add("/");
+      aFolder.add(addF);
       #if defined(ESP8266)
         Dir dir = FILESYSTEM.openDir(sPath);
         while (dir.next()) {
+
           if (dir.isDirectory()) {
-            al_tools::SPIFFS_printFiles(FILESYSTEM, dir.fileName(), root, aFolder, display);
+            // Serial.printf("A isDirectory -> %s\n", dir.fileName());
+            if (path == "/") al_tools::SPIFFS_printFiles(FILESYSTEM, dir.fileName(), root, aFolder, display);
+            else al_tools::SPIFFS_printFiles(FILESYSTEM, path + "/" + dir.fileName(), root, aFolder, display);
           } else  {
+             // Serial.printf("isFile -> %s\n", dir.fileName());
             JsonObject var = arr.createNestedObject();          
             var[F("file")] = dir.fileName();
             var[F("size")] = dir.fileSize();   
@@ -123,17 +149,13 @@ namespace al_tools {
     } 
     void SPIFFS_readFile(const String & path){
       Serial.printf_P(PSTR("[read file][%s]\n"), path.c_str()); 
-      char buffer[1024];
-      String print = "";
       int nbr = 0;
       File file = FILESYSTEM.open(path, "r");
       if (file) {
         while (file.position()<file.size()) {
           String xml = file.readStringUntil('\n');
           if (xml != "") {
-            sprintf(buffer, "[%-3d] %s", nbr, xml.c_str());
-            print += String(buffer) + "\n";
-            Serial.printf_P(PSTR("%s\n"), buffer);
+            Serial.printf_P(PSTR("[%-3d] %s\n"), nbr, xml.c_str());
             delay(0);
             nbr++;
           }
@@ -141,7 +163,17 @@ namespace al_tools {
         file.close(); 
       }
     }    
+    /**
+     * @brief      { function_description }
+     *
+     * @param[in]  in              root folder
+     * @param[in]  SerializePrint  pretty print
+     * @param[in]  display         print file content
+     */
     void SPIFFS_PRINT(const String & in, boolean SerializePrint, boolean display) {
+      JsonObject obj_1 ;
+      JsonArray oPath;
+
       DynamicJsonDocument doc(10000);
       JsonObject root = doc.to<JsonObject>();
       al_tools::SPIFFS_printFiles(in, root, false);
@@ -151,11 +183,16 @@ namespace al_tools {
       for (size_t i = 0; i < arr.size(); i++) {
         String path = arr[i].as<String>();
         Serial.printf_P(PSTR("[%-3d][%s]\n"), i, path.c_str());
-        JsonArray oPath;
+        
         if (path == "/")  oPath = doc[path][F("items")].as<JsonArray>();
         else {
-          if (in.substring(0, 1) != "/") oPath = doc[path][F("items")].as<JsonArray>();
-          else oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+          if (in == "/") oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+          else {
+            String addF = in;
+            if (addF.substring(0, 1) == "/") addF.remove(0,1);
+            obj_1 = doc[F("/")][addF];
+            oPath = obj_1[path][F("items")].as<JsonArray>();
+          }
         }
         for (size_t j = 0; j < oPath.size(); j++) {
           String file = oPath[j][F("file")].as<String>();
@@ -167,7 +204,6 @@ namespace al_tools {
               SPIFFS_readFile("/"+path+"/"+file);
             }
           }
-
         }
       }
     } 
@@ -239,7 +275,11 @@ namespace al_tools {
      millis2time_d(millis(), t);
      result = String(t);
   } 
-
+  void on_time_d(uint32_t time,String & result) {
+     char t[14];
+     millis2time_d(millis(), t);
+     result = String(t);
+  } 
   /**
    * @brief      split string with sep
    *
@@ -372,12 +412,8 @@ void HeapStatu::print(String & ret){
       }
 
       if (error) {
-          // ADRI_LOG(-1,2,2,"\nFile: failed to load json file: %s, deserializeJson error: %d", filepath, error.code());
-          // fsprintf("\t");
-          // Serial.println(error.code());
           return false;
       }
-      // ADRI_LOG(-1,2,2,"\nFile: %s ", filepath);
       return true;
   }  
 #endif
@@ -498,8 +534,11 @@ void ALT_debugPrint(const String & msg, const String & file, const String & line
 
   char * b_line = nullptr;
   if (ptr->is_line()) {
-    b_line = new char[line.length()+1];
-    sprintf_P(b_line, PSTR("%s"), line.c_str());
+    String lineSpace = line;
+    uint8_t lineSpaceSize = lineSpace.length();
+    while (lineSpaceSize<3){lineSpace +=" "; lineSpaceSize = lineSpace.length();}  
+    b_line = new char[lineSpace.length()+1];
+    sprintf_P(b_line, PSTR("%s"), lineSpace.c_str());
   }  
 
   char * b_func = nullptr;
@@ -649,7 +688,7 @@ DebugPrintItem * DebugPrintList::get_item(const char *  v1){
 
 void DebugPrintList::ketboardPrintHeader(boolean pNbId){
   if (!pNbId)   Serial.printf_P(PSTR("[%18s]"), "_id");
-  else          Serial.printf_P(PSTR("[%3s][%12s]"), "nb", "_id");
+  else          Serial.printf_P(PSTR("[%3s][%18s]"), "nb", "_id");
   uint8_t size = ARRAY_SIZE(APPT_DEBUGREGIONMS_ALL);
   for(uint8_t i = 0; i < size; ++i) {
     Serial.printf_P(PSTR("[%d %5s]"),i, APPT_DEBUGREGIONMS_ALL[i] );
@@ -773,7 +812,7 @@ void DebugPrintList::keyboardSet(DebugPrintItem * item, const String & value){
 
   item->print();       
 }  
-void DebugPrintList::keyboardSet(DebugPrintItem * item, uint8_t aPos, uint8_t vPos){ 
+void DebugPrintList::keyboardSet(DebugPrintItem * item, uint8_t aPos, uint8_t vPos, boolean reset){ 
   switch (aPos) {
     case 0: item->set_macro(vPos);      break;
     case 1: item->set_timeStamp(vPos);  break;
@@ -784,6 +823,10 @@ void DebugPrintList::keyboardSet(DebugPrintItem * item, uint8_t aPos, uint8_t vP
     case 6: item->set_crmsg(vPos);      break;
     case 7: item->set_lvl(vPos);        break;
     default:break;
+  }
+  if (reset) {
+    DebugPrintItem_maxlen_1 = 0;
+    DebugPrintItem_maxlen_2 = 0;    
   }
 }
 

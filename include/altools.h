@@ -51,6 +51,7 @@
     void on_time_h(uint32_t, String & result);
     void on_time_h(String & result);
     void on_time_d(String & result);  
+    void on_time_d(uint32_t, String & result);  
   } // al_tools
 
 
@@ -182,7 +183,7 @@
       void ketboardPrintHeader(boolean pNbId = false);
       void keyboardSet(const String &, const String &);
       void keyboardSet(DebugPrintItem*, const String &);
-      void keyboardSet(DebugPrintItem * item, uint8_t aPos, uint8_t vPos);
+      void keyboardSet(DebugPrintItem * item, uint8_t aPos, uint8_t vPos, boolean reset = false);
     };
     extern DebugPrintList _DebugPrintList;
 

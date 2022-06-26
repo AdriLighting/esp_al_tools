@@ -3,7 +3,6 @@
   #include <Arduino.h>
   #include <ArduinoJson.h>
 
-
   static const char ALSI_FREEHEAP        [] PROGMEM = "Free Heap";         // Ram
   #ifdef ESP8266
   static const char ALSI_HEAPFRAG        [] PROGMEM = "Heap fragmentation";  // Ram  
@@ -100,14 +99,16 @@
     const char  * NAME;
     void        (* DATA ) (const char *&);
     const char  * GRP;
+    const char  * KEY;
   } ;
   extern PROGMEM ALSI_LIST ALSI_items []; 
   extern const char* const ALSI_CATEGORY [] PROGMEM; 
+  extern const char* const ALSI_CATEGORY_KEY [] PROGMEM; 
   extern const uint8_t ALSI_ITEMSSIZE;
   extern const uint8_t ALSI_CATEGORYSIZE;
 
   void ALSYSINFO_print();
-  void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key);
+  void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t returnArray = 0);
   void ALSYSINFO_getterByKey(DynamicJsonDocument & doc, const char * key, bool keyStr = true);
   void ALSYSINFO_keyboard_getter(const String & v1); 
   void ALSYSINFO_keyboard_print();  
