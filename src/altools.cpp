@@ -420,6 +420,14 @@ char * ALT_debugBuffer = nullptr;
 uint32_t DebugPrintItem_maxlen_1 = 0;
 uint32_t DebugPrintItem_maxlen_2 = 0;
 
+boolean ALT_debugPrint(const char * _id) { 
+  if (!_DebugPrintList.get_item(_id)) return false;
+  if (_DebugPrintList.get_item(_id)->is_macro()) 
+    return true; 
+  else 
+    return false; 
+} 
+
 void ALT_debugPrint(const String & msg, const String & file, const String & line, const String & func) {
   Serial.printf_P(PSTR("[%s:%s] %s\n"), file.c_str() , line.c_str() , func.c_str());
   if (msg!="") Serial.printf_P(PSTR("%s"), msg.c_str() ); 

@@ -69,96 +69,7 @@
 const char S_y                  [] PROGMEM = "Yes";
 const char S_n                  [] PROGMEM = "No";
 
-const char ALSI_FREEHEAP        [] PROGMEM = "Free Heap";         // Ram
-#ifdef ESP8266
-const char ALSI_HEAPFRAG        [] PROGMEM = "Heap fragmentation";  // Ram  
-#endif
-const char ALSI_HEAPBLOCK       [] PROGMEM = "Largest free heap block"; // Ram
-const char ALSI_INITHEAP        [] PROGMEM = "Start Free Heap";   // Ram
-#ifdef ESP32
-const char ALSI_PSRAMSIZE       [] PROGMEM = "PSRAM Size";        // Ram
-#endif
 
-#ifdef FILESYSTEM
-const char ALSI_FSTOTALBYTES    [] PROGMEM = "Total Bytes";       // Filesystem
-const char ALSI_FSUSEDBYTES     [] PROGMEM = "Used Bytes";        // Filesystem
-const char ALSI_FSFREEBYTES     [] PROGMEM = "Free Bytes";        // Filesystem
-const char ALSI_FSBLOCKSIZE     [] PROGMEM = "Block size";        // Filesystem
-const char ALSI_FSMAXOPENFILES  [] PROGMEM = "Max nb files open simultaneously";  // Filesystem
-const char ALSI_FSMAXPATH       [] PROGMEM = "Max file name length";  // Filesystem 
-#endif
-
-// ESP.getSketchSize()
-// ESP.getSketchSize()+ESP.getFreeSketchSpace()
-const char ALSI_SKETCHSIZETOTAL [] PROGMEM = "Total sketch size";       // Flash chip info
-const char ALSI_SKETCHSIZE      [] PROGMEM = "Sketch size";       // Flash chip info
-const char ALSI_FREESKETCHSIZE  [] PROGMEM = "Free Sketch size";  // Flash chip info
-                                                                        // 
-// float flashChipSize = (float)ESP.getFlashChipSize() / 1024.0 / 1024.0;
-// Serial.printf("    Sketch thinks Flash RAM is size: ");  Serial.print(flashChipSize); Serial.println(" MB");
-const char ALSI_FLASHSIZE       [] PROGMEM = "Flash Chip Size";         // Flash chip info
-const char ALSI_RFLASHSIZE      [] PROGMEM = "Real Flash Chip Size";  // Flash chip info 
-
-const char ALSI_FLASHFREQUENCY  [] PROGMEM = "Flash Chip frequency";  // Flash chip info 
-const char ALSI_FLASHMOD        [] PROGMEM = "Flash Chip mod";  // Flash chip info 
-
-#ifdef ESP8266
-const char ALSI_FLASHSIZEMAP    [] PROGMEM = "Flash size map";  // Flash chip info 
-// Serial.printf("    Flash chip Id: %08X (for example: Id=001640E0  Manuf=E0, Device=4016 (swap bytes))\n", ESP.getFlashChipId());
-const char ALSI_FLASHCHIPID     [] PROGMEM = "Flash Chip ID";     // Flash chip info
-                                                                        // 
-// float realFlashChipSize = (float)ESP.getFlashChipRealSize() / 1024.0 / 1024.0;
-// Serial.print("    Actual size based on chip Id: "); Serial.print(realFlashChipSize); Serial.println(" MB ... given by (2^( \"Device\" - 1) / 8 / 1024");
-
-const char ALSI_COREVERSION     [] PROGMEM = "Core Version";      // Firmware info
-const char ALSI_BOOTVERSION     [] PROGMEM = "Boot Version";      // Firmware info
-#endif
-
-#ifdef ESP32
-const char ALSI_CHIPEV          [] PROGMEM = "Chip Rev";
-const char ALSI_TEMPERATURE     [] PROGMEM = "Temperature";
-#endif
-
-const char ALSI_LASTRESET       [] PROGMEM = "Last reset reason"; // Firmware info  
-const char ALSI_CHIPID          [] PROGMEM = "Chip ID";           // Firmware info
-const char ALSI_STAMAC          [] PROGMEM = "Station MAC";           // Firmware info
-const char ALSI_APAMAC          [] PROGMEM = "Access Point MAC";          // Firmware info
-const char ALSI_SDKVERSION      [] PROGMEM = "SDK Version";       // Firmware info
-const char ALSI_CPUFREQUENCY    [] PROGMEM = "CPU Frequency";     //
-const char ALSI_MODEL           [] PROGMEM = "Chip: Model";
-const char ALSI_FEATURES        [] PROGMEM = "Features";
-const char ALSI_CORES           [] PROGMEM = "Cores";
-const char ALSI_REVISION        [] PROGMEM = "Revision";
-const char ALSI_ESPIDFVERS      [] PROGMEM = "ESP-IDF Version";
-const char ALSI_EFUSEMAC        [] PROGMEM = "EFuse MAC";
-
-const char ALSI_APIIP           [] PROGMEM = "Access Point IP";
-const char ALSI_APSSID          [] PROGMEM = "Access Point SSID";
-const char ALSI_APBSSID         [] PROGMEM = "Access Point BSSID";
-const char ALSI_STAIP           [] PROGMEM = "Station IP";
-const char ALSI_STASUBNET       [] PROGMEM = "Station Subnet";
-const char ALSI_STAGATEWAY      [] PROGMEM = "Station Gateway";
-const char ALSI_CONNECT         [] PROGMEM = "Connected";
-const char ALSI_AUTOCONNECT     [] PROGMEM = "Autoconnect";
-const char ALSI_DNSSERVER       [] PROGMEM = "DNS Server";
-const char ALSI_HOSTNAME        [] PROGMEM = "Hostname";
-
-const char ALSI_BUILDDATE       [] PROGMEM = "Build Date";
-const char ALSI_UPTIME          [] PROGMEM = "Uptime";
-/*
-Memory
-Filesystem
-Board
-Network
-*/
-const char ALSI_HEAPSIZE        [] PROGMEM = "heap";
-// const char ALSI_FIRMWARE       [] PROGMEM = "Firmware";
-const char ALSI_FLASHCHIP       [] PROGMEM = "flash chip";
-const char ALSI_SKETCH          [] PROGMEM = "sketch";
-const char ALSI_FILESYSTEM      [] PROGMEM = "filesystem";
-const char ALSI_BOARD           [] PROGMEM = "core";
-const char ALSI_NETWORK         [] PROGMEM = "network";
-const char ALSI_TIME            [] PROGMEM = "time";
 const char* const ALSI_CATEGORY [] PROGMEM = { ALSI_HEAPSIZE, ALSI_FILESYSTEM, ALSI_FLASHCHIP, ALSI_SKETCH, ALSI_BOARD, ALSI_TIME, ALSI_NETWORK };
 
 namespace al_sysinfo {
@@ -179,8 +90,6 @@ namespace al_sysinfo {
     #endif
     return 0; 
   }
-
-
   void getMaxFreeBlockSize(const char *& r){
     char buffer[1024];
     sprintf(buffer, "%d bytes", get_MaxFreeBlockSize());
@@ -191,106 +100,106 @@ namespace al_sysinfo {
     sprintf(buffer, "%d bytes", get_free_heap());
     r = (const char *)buffer;
   }
-#ifdef ESP8266
-  void getHeapFragmentation(const char *& r){
-    char buffer[1024];
-    sprintf(buffer, "%d", ESP.getHeapFragmentation());
-    r = (const char *)buffer;
-  } 
-#endif
-#ifdef FILESYSTEM
-      void fs_totalBytes(const char *& r) {
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          float value = (float)fs_info.totalBytes / 1024.0; 
-        #elif defined(ESP32)
-          float value = (float)FILESYSTEM.totalBytes() / 1024.0;
-        #endif
-        char buffer[1024];
-        sprintf(buffer, "%.2f KB", value);  
-        r = (const char *)buffer;  
-      }
-      void fs_usedBytes(const char *& r) {
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          float value = (float)fs_info.usedBytes / 1024.0; 
-        #elif defined(ESP32)
-          float value = (float)FILESYSTEM.usedBytes() / 1024.0;
-        #endif
-        char buffer[1024];
-        sprintf(buffer, "%.2f KB", value);  
-        r = (const char *)buffer;  
-      } 
-      void fs_freebytes(const char *& r) {
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          float value = ((float)fs_info.totalBytes-(float)fs_info.usedBytes) / 1024.0; 
-        #elif defined(ESP32)
-          float value = ((float)FILESYSTEM.totalBytes()-(float)FILESYSTEM.usedBytes()) / 1024.0;
-        #endif
-        char buffer[1024];
-        sprintf(buffer, "%.2f KB", value);  
-        r = (const char *)buffer;  
-      }
-      void fs_blockSize(const char *& r) {
-        char buffer[1024];
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          sprintf(buffer, "%d", fs_info.blockSize);
-        #elif defined(ESP32)
-          sprintf(buffer, "UNKNOW");
-        #endif
-        r = (const char *)buffer;  
-      } 
-      void fs_maxOpenFiles(const char *& r) {
-        char buffer[1024];
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          sprintf(buffer, "%d", fs_info.maxOpenFiles);
-        #elif defined(ESP32)
-          sprintf(buffer, "UNKNOW");
-        #endif
-        r = (const char *)buffer;  
-      } 
-      void fs_maxPathLength(const char *& r) {
-        char buffer[1024];
-        #if defined(ESP8266)
-          FSInfo fs_info;
-          FILESYSTEM.info(fs_info);   
-          sprintf(buffer, "%d", fs_info.maxPathLength);
-        #elif defined(ESP32)
-          sprintf(buffer, "UNKNOW");
-        #endif
-        r = (const char *)buffer;  
-      }   
-    #endif    
+  #ifdef ESP8266
+    void getHeapFragmentation(const char *& r){
+      char buffer[1024];
+      sprintf(buffer, "%d", ESP.getHeapFragmentation());
+      r = (const char *)buffer;
+    } 
+  #endif
+  #ifdef FILESYSTEM
+    void fs_totalBytes(const char *& r) {
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        float value = (float)fs_info.totalBytes / 1024.0; 
+      #elif defined(ESP32)
+        float value = (float)FILESYSTEM.totalBytes() / 1024.0;
+      #endif
+      char buffer[1024];
+      sprintf(buffer, "%.2f KB", value);  
+      r = (const char *)buffer;  
+    }
+    void fs_usedBytes(const char *& r) {
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        float value = (float)fs_info.usedBytes / 1024.0; 
+      #elif defined(ESP32)
+        float value = (float)FILESYSTEM.usedBytes() / 1024.0;
+      #endif
+      char buffer[1024];
+      sprintf(buffer, "%.2f KB", value);  
+      r = (const char *)buffer;  
+    } 
+    void fs_freebytes(const char *& r) {
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        float value = ((float)fs_info.totalBytes-(float)fs_info.usedBytes) / 1024.0; 
+      #elif defined(ESP32)
+        float value = ((float)FILESYSTEM.totalBytes()-(float)FILESYSTEM.usedBytes()) / 1024.0;
+      #endif
+      char buffer[1024];
+      sprintf(buffer, "%.2f KB", value);  
+      r = (const char *)buffer;  
+    }
+    void fs_blockSize(const char *& r) {
+      char buffer[1024];
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        sprintf(buffer, "%d", fs_info.blockSize);
+      #elif defined(ESP32)
+        sprintf(buffer, "UNKNOW");
+      #endif
+      r = (const char *)buffer;  
+    } 
+    void fs_maxOpenFiles(const char *& r) {
+      char buffer[1024];
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        sprintf(buffer, "%d", fs_info.maxOpenFiles);
+      #elif defined(ESP32)
+        sprintf(buffer, "UNKNOW");
+      #endif
+      r = (const char *)buffer;  
+    } 
+    void fs_maxPathLength(const char *& r) {
+      char buffer[1024];
+      #if defined(ESP8266)
+        FSInfo fs_info;
+        FILESYSTEM.info(fs_info);   
+        sprintf(buffer, "%d", fs_info.maxPathLength);
+      #elif defined(ESP32)
+        sprintf(buffer, "UNKNOW");
+      #endif
+      r = (const char *)buffer;  
+    }   
+  #endif    
   void getFlashChipSize(const char *& r) {
     float value = (float)ESP.getFlashChipSize() / 1024.0 / 1024.0;
     char buffer[1024];
     sprintf(buffer, "%.2f MB", value);  
     r = (const char *)buffer;  
   }
-#ifdef ESP8266
-  void getFlashChipRealSize(const char *& r) {
-    float value = (float)ESP.getFlashChipRealSize() / 1024.0 / 1024.0;
-    char buffer[1024];
-    sprintf(buffer, "%.2f MB", value);  
-    r = (const char *)buffer;  
-  }   
-#endif
-#ifdef ESP32
-  void getPsramSize(const char *& r) {
-    float value = (float)ESP.getPsramSize() / 1024.0 / 1024.0;
-    char buffer[1024];
-    sprintf(buffer, "%.2f", value); 
-    r = (const char *)buffer;  
-  }   
-#endif  
+  #ifdef ESP8266
+    void getFlashChipRealSize(const char *& r) {
+      float value = (float)ESP.getFlashChipRealSize() / 1024.0 / 1024.0;
+      char buffer[1024];
+      sprintf(buffer, "%.2f MB", value);  
+      r = (const char *)buffer;  
+    }   
+  #endif
+  #ifdef ESP32
+    void getPsramSize(const char *& r) {
+      float value = (float)ESP.getPsramSize() / 1024.0 / 1024.0;
+      char buffer[1024];
+      sprintf(buffer, "%.2f", value); 
+      r = (const char *)buffer;  
+    }   
+  #endif  
   void getFreeSketchSpace(const char *& r) {
     float value = (float)ESP.getFreeSketchSpace() / 1024.0 / 1024.0;
     char buffer[1024];
@@ -309,14 +218,14 @@ namespace al_sysinfo {
     sprintf(buffer, "%.2f MB", value);  
     r = (const char *)buffer;  
   } 
-#ifdef ESP8266
-  void getFlashChipId(const char *& r) {
-    uint32_t value = (uint32_t)ESP.getFlashChipId();
-    char buffer[1024];
-    sprintf(buffer, "%08X", value); 
-    r = (const char *)buffer;  
-  } 
-#endif
+  #ifdef ESP8266
+    void getFlashChipId(const char *& r) {
+      uint32_t value = (uint32_t)ESP.getFlashChipId();
+      char buffer[1024];
+      sprintf(buffer, "%08X", value); 
+      r = (const char *)buffer;  
+    } 
+  #endif
   void getChipId(const char *& r) {
     char buffer[1024];
     sprintf(buffer, "%s", String(WIFI_getChipId(),HEX).c_str());  
@@ -341,20 +250,18 @@ namespace al_sysinfo {
     #endif
     r = (const char *)buffer;  
   }
-#ifdef ESP8266
-  void getCoreVersion(const char *& r) {
-    char buffer[1024];
-    sprintf(buffer, "%s", ESP.getCoreVersion().c_str());  
-    r = (const char *)buffer;  
-  } 
-  void ALSI_system_get_boot_version(const char *& r) {
-    char buffer[1024];
-    sprintf(buffer, "%d", system_get_boot_version()); 
-    r = (const char *)buffer;  
-  }
-
-#endif
-
+  #ifdef ESP8266
+    void getCoreVersion(const char *& r) {
+      char buffer[1024];
+      sprintf(buffer, "%s", ESP.getCoreVersion().c_str());  
+      r = (const char *)buffer;  
+    } 
+    void ALSI_system_get_boot_version(const char *& r) {
+      char buffer[1024];
+      sprintf(buffer, "%d", system_get_boot_version()); 
+      r = (const char *)buffer;  
+    }
+  #endif
   void getCpuFreqMHz(const char *& r) {
     char buffer[1024];
     sprintf(buffer, "%d", ESP.getCpuFreqMHz()); 
@@ -362,116 +269,116 @@ namespace al_sysinfo {
   }
 
 
-#ifdef ESP8266
-/*
-ESP8266 boot details
+  #ifdef ESP8266
+  /*
+  ESP8266 boot details
 
-reset causes:
-        0:
-        1: normal boot
-        2: reset pin
-        3: software reset
-        4: watchdog reset
+  reset causes:
+          0:
+          1: normal boot
+          2: reset pin
+          3: software reset
+          4: watchdog reset
 
-    boot device:
-        0:
-        1: ram
-        3: flash - See more at: http://www.esp8266.com/viewtopic.php?p=2096#p2112
-*/
+      boot device:
+          0:
+          1: ram
+          3: flash - See more at: http://www.esp8266.com/viewtopic.php?p=2096#p2112
+  */
 
-  struct boot_flags {
-    unsigned char raw_rst_cause : 4;
-    unsigned char raw_bootdevice : 4;
-    unsigned char raw_bootmode : 4;
+    struct boot_flags {
+      unsigned char raw_rst_cause : 4;
+      unsigned char raw_bootdevice : 4;
+      unsigned char raw_bootmode : 4;
 
-    unsigned char rst_normal_boot : 1;
-    unsigned char rst_reset_pin : 1;
-    unsigned char rst_watchdog : 1;
+      unsigned char rst_normal_boot : 1;
+      unsigned char rst_reset_pin : 1;
+      unsigned char rst_watchdog : 1;
 
-    unsigned char bootdevice_ram : 1;
-    unsigned char bootdevice_flash : 1;
-  };
+      unsigned char bootdevice_ram : 1;
+      unsigned char bootdevice_flash : 1;
+    };
 
-  struct boot_flags bootmode_detect(void) {
-    int reset_reason = 0, bootmode = 0;
-    asm (
-      "movi %0, 0x60000600\n\t"
-      "movi %1, 0x60000200\n\t"
-      "l32i %0, %0, 0x114\n\t"
-      "l32i %1, %1, 0x118\n\t"
-      : "+r" (reset_reason), "+r" (bootmode) /* Outputs */
-      : /* Inputs (none) */
-      : "memory" /* Clobbered */
-    );
+    struct boot_flags bootmode_detect(void) {
+      int reset_reason = 0, bootmode = 0;
+      asm (
+        "movi %0, 0x60000600\n\t"
+        "movi %1, 0x60000200\n\t"
+        "l32i %0, %0, 0x114\n\t"
+        "l32i %1, %1, 0x118\n\t"
+        : "+r" (reset_reason), "+r" (bootmode) /* Outputs */
+        : /* Inputs (none) */
+        : "memory" /* Clobbered */
+      );
 
-    struct boot_flags flags;
-    flags.raw_rst_cause     = (reset_reason&0xF);
-    flags.raw_bootdevice    = ((bootmode>>0x10)&0x7);
-    flags.raw_bootmode      = ((bootmode>>0x1D)&0x7);
-    flags.rst_normal_boot   = flags.raw_rst_cause == 0x1;
-    flags.rst_reset_pin     = flags.raw_rst_cause == 0x2;
-    flags.rst_watchdog      = flags.raw_rst_cause == 0x4;
-    flags.bootdevice_ram    = flags.raw_bootdevice == 0x1;
-    flags.bootdevice_flash  = flags.raw_bootdevice == 0x3;
-    return flags;
-  }
+      struct boot_flags flags;
+      flags.raw_rst_cause     = (reset_reason&0xF);
+      flags.raw_bootdevice    = ((bootmode>>0x10)&0x7);
+      flags.raw_bootmode      = ((bootmode>>0x1D)&0x7);
+      flags.rst_normal_boot   = flags.raw_rst_cause == 0x1;
+      flags.rst_reset_pin     = flags.raw_rst_cause == 0x2;
+      flags.rst_watchdog      = flags.raw_rst_cause == 0x4;
+      flags.bootdevice_ram    = flags.raw_bootdevice == 0x1;
+      flags.bootdevice_flash  = flags.raw_bootdevice == 0x3;
+      return flags;
+    }
 
-  String reset_cause(struct boot_flags flags) {
-    String reset_cause=String(flags.raw_rst_cause);
-    if (flags.rst_normal_boot)  reset_cause+="(normal boot)";
-    if (flags.rst_reset_pin)    reset_cause+="(reset pin)";
-    if (flags.rst_watchdog)     reset_cause+="(watchdog reset)";
-    return reset_cause;
-  }
-  String reset_cause() {
-    boot_flags f = bootmode_detect();
-    return reset_cause(f) ;
-  }
-  String boot_device(boot_flags flags) {
-    String boot_device=String(flags.raw_bootdevice);
-    if (flags.bootdevice_ram)   boot_device+=" (ram)";
-    if (flags.bootdevice_flash) boot_device+=" (flash)";
-    return boot_device;
-  }
-  String boot_device() {
-    boot_flags f = bootmode_detect();
-    return boot_device(f) ;
-  }
-  void lasResetReason(const char *&r) {
-    char buffer[1024];
-    sprintf(buffer, "%s - %s", ESP.getResetReason().c_str(), reset_cause().c_str());  
-    r = (const char *)buffer;     
-  }
-#endif
-#ifdef ESP32
-  void lasResetReason(const char *&r) {
-    char buffer[1024];
-      for(int i=0;i<2;i++){
-        int reason = rtc_get_reset_reason(i);
-        switch (reason)
-        {
-          //@todo move to array
-          case 1  : sprintf_P(buffer, PSTR("%s"), "Vbat power on reset");break;
-          case 3  : sprintf_P(buffer, PSTR("%s"), "Software reset digital core");break;
-          case 4  : sprintf_P(buffer, PSTR("%s"), "Legacy watch dog reset digital core");break;
-          case 5  : sprintf_P(buffer, PSTR("%s"), "Deep Sleep reset digital core");break;
-          case 6  : sprintf_P(buffer, PSTR("%s"), "Reset by SLC module, reset digital core");break;
-          case 7  : sprintf_P(buffer, PSTR("%s"), "Timer Group0 Watch dog reset digital core");break;
-          case 8  : sprintf_P(buffer, PSTR("%s"), "Timer Group1 Watch dog reset digital core");break;
-          case 9  : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog Reset digital core");break;
-          case 10 : sprintf_P(buffer, PSTR("%s"), "Instrusion tested to reset CPU");break;
-          case 11 : sprintf_P(buffer, PSTR("%s"), "Time Group reset CPU");break;
-          case 12 : sprintf_P(buffer, PSTR("%s"), "Software reset CPU");break;
-          case 13 : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog Reset CPU");break;
-          case 14 : sprintf_P(buffer, PSTR("%s"), "for APP CPU, reseted by PRO CPU");break;
-          case 15 : sprintf_P(buffer, PSTR("%s"), "Reset when the vdd voltage is not stable");break;
-          case 16 : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog reset digital core and rtc module");break;
-          default : sprintf_P(buffer, PSTR("%s"), "NO_MEAN");
-        }
-      }   
-    r = (const char *)buffer;     
-  }
-#endif
+    String reset_cause(struct boot_flags flags) {
+      String reset_cause=String(flags.raw_rst_cause);
+      if (flags.rst_normal_boot)  reset_cause+="(normal boot)";
+      if (flags.rst_reset_pin)    reset_cause+="(reset pin)";
+      if (flags.rst_watchdog)     reset_cause+="(watchdog reset)";
+      return reset_cause;
+    }
+    String reset_cause() {
+      boot_flags f = bootmode_detect();
+      return reset_cause(f) ;
+    }
+    String boot_device(boot_flags flags) {
+      String boot_device=String(flags.raw_bootdevice);
+      if (flags.bootdevice_ram)   boot_device+=" (ram)";
+      if (flags.bootdevice_flash) boot_device+=" (flash)";
+      return boot_device;
+    }
+    String boot_device() {
+      boot_flags f = bootmode_detect();
+      return boot_device(f) ;
+    }
+    void lasResetReason(const char *&r) {
+      char buffer[1024];
+      sprintf(buffer, "%s - %s", ESP.getResetReason().c_str(), reset_cause().c_str());  
+      r = (const char *)buffer;     
+    }
+  #endif
+  #ifdef ESP32
+    void lasResetReason(const char *&r) {
+      char buffer[1024];
+        for(int i=0;i<2;i++){
+          int reason = rtc_get_reset_reason(i);
+          switch (reason)
+          {
+            //@todo move to array
+            case 1  : sprintf_P(buffer, PSTR("%s"), "Vbat power on reset");break;
+            case 3  : sprintf_P(buffer, PSTR("%s"), "Software reset digital core");break;
+            case 4  : sprintf_P(buffer, PSTR("%s"), "Legacy watch dog reset digital core");break;
+            case 5  : sprintf_P(buffer, PSTR("%s"), "Deep Sleep reset digital core");break;
+            case 6  : sprintf_P(buffer, PSTR("%s"), "Reset by SLC module, reset digital core");break;
+            case 7  : sprintf_P(buffer, PSTR("%s"), "Timer Group0 Watch dog reset digital core");break;
+            case 8  : sprintf_P(buffer, PSTR("%s"), "Timer Group1 Watch dog reset digital core");break;
+            case 9  : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog Reset digital core");break;
+            case 10 : sprintf_P(buffer, PSTR("%s"), "Instrusion tested to reset CPU");break;
+            case 11 : sprintf_P(buffer, PSTR("%s"), "Time Group reset CPU");break;
+            case 12 : sprintf_P(buffer, PSTR("%s"), "Software reset CPU");break;
+            case 13 : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog Reset CPU");break;
+            case 14 : sprintf_P(buffer, PSTR("%s"), "for APP CPU, reseted by PRO CPU");break;
+            case 15 : sprintf_P(buffer, PSTR("%s"), "Reset when the vdd voltage is not stable");break;
+            case 16 : sprintf_P(buffer, PSTR("%s"), "RTC Watch dog reset digital core and rtc module");break;
+            default : sprintf_P(buffer, PSTR("%s"), "NO_MEAN");
+          }
+        }   
+      r = (const char *)buffer;     
+    }
+  #endif
 
   void getFlashChipSpeed(const char *&r) {
     char buffer[1024];
@@ -511,109 +418,108 @@ reset causes:
     r = (const char *)buffer;     
   }
 
-#ifdef ESP8266
-  void getBootMode(const char *&r) {
-    char buffer[1024];
-    sprintf(buffer, "%d", ESP.getBootMode()); 
-    r = (const char *)buffer;     
-  }
-  void getResetInfo(const char *&r) {
-    char buffer[1024];
-    sprintf(buffer, "%s", ESP.getResetInfo().c_str());  
-    r = (const char *)buffer;     
-  }   
-#endif
-#ifdef ESP32
-  void getModel(const char *&r) {
-    esp_chip_info_t info;
-    esp_chip_info(&info); 
-    const char *model;
-    switch (info.model) {
-      case CHIP_ESP32:
-        model = "ESP32";
-        break;
-      default:
-        model = "UNKNOWN";
-    }     
-    char buffer[1024];
-    sprintf(buffer, "%s",model);  
-    r = (const char *)buffer;     
-  }   
-  void getfeatures(const char *&r) {
-    esp_chip_info_t info;
-    esp_chip_info(&info); 
-    String features = "";
-    if (info.features & CHIP_FEATURE_EMB_FLASH) {
-      features += "EMB_FLASH,";
-      info.features &= ~CHIP_FEATURE_EMB_FLASH;
+  #ifdef ESP8266
+    void getBootMode(const char *&r) {
+      char buffer[1024];
+      sprintf(buffer, "%d", ESP.getBootMode()); 
+      r = (const char *)buffer;     
     }
-    if (info.features & CHIP_FEATURE_WIFI_BGN) {
-      features += "WIFI_BGN,";
-      info.features &= ~CHIP_FEATURE_WIFI_BGN;
-    }
-    if (info.features & CHIP_FEATURE_BLE) {
-      features += "BLE,";
-      info.features &= ~CHIP_FEATURE_BLE;
-    }
-    if (info.features & CHIP_FEATURE_BT) {
-      features += "BT,";
-      info.features &= ~CHIP_FEATURE_BT;
+    void getResetInfo(const char *&r) {
+      char buffer[1024];
+      sprintf(buffer, "%s", ESP.getResetInfo().c_str());  
+      r = (const char *)buffer;     
     }   
-    char buffer[1024];
-    sprintf(buffer, "%s",features.c_str()); 
-    r = (const char *)buffer;     
-  }   
-  void getCores(const char *&r) {
-    esp_chip_info_t info;
-    esp_chip_info(&info); 
-    char buffer[1024];
-    if (info.features) sprintf(buffer, "%d", info.cores); 
-    r = (const char *)buffer;     
-  }   
-  void getRevision(const char *&r) {
-    esp_chip_info_t info;
-    esp_chip_info(&info); 
-    char buffer[1024];
-    if (info.features) sprintf(buffer, "%d", info.revision);  
-    r = (const char *)buffer;     
-  }   
-  void getEspIdfVersion(const char *&r) {
-    esp_chip_info_t info;
-    esp_chip_info(&info); 
-    char buffer[1024];
-    if (info.features) sprintf(buffer, "%s", esp_get_idf_version());  
-    r = (const char *)buffer;     
-  } 
-
-  void get_mac_address_raw(uint8_t *mac) {
-  #if defined(USE_ESP32)
-  #if defined(USE_ESP32_IGNORE_EFUSE_MAC_CRC)
-    // On some devices, the MAC address that is burnt into EFuse does not
-    // match the CRC that goes along with it. For those devices, this
-    // work-around reads and uses the MAC address as-is from EFuse,
-    // without doing the CRC check.
-    esp_efuse_read_field_blob(ESP_EFUSE_MAC_FACTORY, mac, 48);
-  #else
-    esp_efuse_mac_get_default(mac);
   #endif
-  #elif defined(USE_ESP8266)
-    wifi_get_macaddr(STATION_IF, mac);
-  #endif
-  } 
-  String get_mac_address_pretty() {
-    uint8_t mac[6];
-    get_mac_address_raw(mac);
-    char buffer[1021];
-    sprintf(buffer, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    return String(buffer);
-  }   
-  void getEfuseMac(const char *&r) {
-    char buffer[1024];
-    sprintf(buffer, "%s", get_mac_address_pretty().c_str());  
-    r = (const char *)buffer;     
-  }   
+  #ifdef ESP32
+    void getModel(const char *&r) {
+      esp_chip_info_t info;
+      esp_chip_info(&info); 
+      const char *model;
+      switch (info.model) {
+        case CHIP_ESP32:
+          model = "ESP32";
+          break;
+        default:
+          model = "UNKNOWN";
+      }     
+      char buffer[1024];
+      sprintf(buffer, "%s",model);  
+      r = (const char *)buffer;     
+    }   
+    void getfeatures(const char *&r) {
+      esp_chip_info_t info;
+      esp_chip_info(&info); 
+      String features = "";
+      if (info.features & CHIP_FEATURE_EMB_FLASH) {
+        features += "EMB_FLASH,";
+        info.features &= ~CHIP_FEATURE_EMB_FLASH;
+      }
+      if (info.features & CHIP_FEATURE_WIFI_BGN) {
+        features += "WIFI_BGN,";
+        info.features &= ~CHIP_FEATURE_WIFI_BGN;
+      }
+      if (info.features & CHIP_FEATURE_BLE) {
+        features += "BLE,";
+        info.features &= ~CHIP_FEATURE_BLE;
+      }
+      if (info.features & CHIP_FEATURE_BT) {
+        features += "BT,";
+        info.features &= ~CHIP_FEATURE_BT;
+      }   
+      char buffer[1024];
+      sprintf(buffer, "%s",features.c_str()); 
+      r = (const char *)buffer;     
+    }   
+    void getCores(const char *&r) {
+      esp_chip_info_t info;
+      esp_chip_info(&info); 
+      char buffer[1024];
+      if (info.features) sprintf(buffer, "%d", info.cores); 
+      r = (const char *)buffer;     
+    }   
+    void getRevision(const char *&r) {
+      esp_chip_info_t info;
+      esp_chip_info(&info); 
+      char buffer[1024];
+      if (info.features) sprintf(buffer, "%d", info.revision);  
+      r = (const char *)buffer;     
+    }   
+    void getEspIdfVersion(const char *&r) {
+      esp_chip_info_t info;
+      esp_chip_info(&info); 
+      char buffer[1024];
+      if (info.features) sprintf(buffer, "%s", esp_get_idf_version());  
+      r = (const char *)buffer;     
+    } 
 
-#endif
+    void get_mac_address_raw(uint8_t *mac) {
+    #if defined(USE_ESP32)
+    #if defined(USE_ESP32_IGNORE_EFUSE_MAC_CRC)
+      // On some devices, the MAC address that is burnt into EFuse does not
+      // match the CRC that goes along with it. For those devices, this
+      // work-around reads and uses the MAC address as-is from EFuse,
+      // without doing the CRC check.
+      esp_efuse_read_field_blob(ESP_EFUSE_MAC_FACTORY, mac, 48);
+    #else
+      esp_efuse_mac_get_default(mac);
+    #endif
+    #elif defined(USE_ESP8266)
+      wifi_get_macaddr(STATION_IF, mac);
+    #endif
+    } 
+    String get_mac_address_pretty() {
+      uint8_t mac[6];
+      get_mac_address_raw(mac);
+      char buffer[1021];
+      sprintf(buffer, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+      return String(buffer);
+    }   
+    void getEfuseMac(const char *&r) {
+      char buffer[1024];
+      sprintf(buffer, "%s", get_mac_address_pretty().c_str());  
+      r = (const char *)buffer;     
+    }   
+  #endif
 
   void getSTAip(const char *&r) {
     char buffer[1024];
@@ -670,82 +576,78 @@ reset causes:
     sprintf(buffer, "%s", value.c_str());
     r = (const char *)buffer;     
   }
-
-
 } 
 
 
-
-
-  PROGMEM ALSI_LIST ALSI_items [] = {
-    {ALSI_FREEHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
-    {ALSI_HEAPBLOCK,      &al_sysinfo::getMaxFreeBlockSize,           ALSI_HEAPSIZE},
-  #ifdef ESP8266
-    {ALSI_HEAPFRAG,       &al_sysinfo::getHeapFragmentation,          ALSI_HEAPSIZE}, 
-  #endif
-    {ALSI_INITHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
+PROGMEM ALSI_LIST ALSI_items [] = {
+  {ALSI_FREEHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
+  {ALSI_HEAPBLOCK,      &al_sysinfo::getMaxFreeBlockSize,           ALSI_HEAPSIZE},
+#ifdef ESP8266
+  {ALSI_HEAPFRAG,       &al_sysinfo::getHeapFragmentation,          ALSI_HEAPSIZE}, 
+#endif
+  {ALSI_INITHEAP,       &al_sysinfo::freeheap,                      ALSI_HEAPSIZE},
 
 #ifdef FILESYSTEM
-    {ALSI_FSTOTALBYTES,   &al_sysinfo::fs_totalBytes,                 ALSI_FILESYSTEM},
-    {ALSI_FSUSEDBYTES,    &al_sysinfo::fs_usedBytes,                  ALSI_FILESYSTEM},
-    {ALSI_FSFREEBYTES,    &al_sysinfo::fs_freebytes,                  ALSI_FILESYSTEM},
-    {ALSI_FSBLOCKSIZE,    &al_sysinfo::fs_blockSize,                  ALSI_FILESYSTEM},
-    {ALSI_FSMAXOPENFILES, &al_sysinfo::fs_maxOpenFiles,               ALSI_FILESYSTEM},
-    {ALSI_FSMAXPATH,      &al_sysinfo::fs_maxPathLength,              ALSI_FILESYSTEM}, 
+  {ALSI_FSTOTALBYTES,   &al_sysinfo::fs_totalBytes,                 ALSI_FILESYSTEM},
+  {ALSI_FSUSEDBYTES,    &al_sysinfo::fs_usedBytes,                  ALSI_FILESYSTEM},
+  {ALSI_FSFREEBYTES,    &al_sysinfo::fs_freebytes,                  ALSI_FILESYSTEM},
+  {ALSI_FSBLOCKSIZE,    &al_sysinfo::fs_blockSize,                  ALSI_FILESYSTEM},
+  {ALSI_FSMAXOPENFILES, &al_sysinfo::fs_maxOpenFiles,               ALSI_FILESYSTEM},
+  {ALSI_FSMAXPATH,      &al_sysinfo::fs_maxPathLength,              ALSI_FILESYSTEM}, 
 #endif
 
-  #ifdef ESP8266
-    {ALSI_FLASHCHIPID,    &al_sysinfo::getFlashChipId,                ALSI_FLASHCHIP},  
-  #endif
-  #ifdef ESP32
-    {ALSI_PSRAMSIZE,      &al_sysinfo::getPsramSize,                  ALSI_FLASHCHIP},  
-  #endif
-    {ALSI_FLASHSIZE,      &al_sysinfo::getFlashChipSize,              ALSI_FLASHCHIP},
-  #ifdef ESP8266
-    {ALSI_RFLASHSIZE,     &al_sysinfo::getFlashChipRealSize,          ALSI_FLASHCHIP},  
-  #endif
-    {ALSI_FLASHFREQUENCY, &al_sysinfo::getFlashChipSpeed,             ALSI_FLASHCHIP},
-    {ALSI_FLASHMOD,       &al_sysinfo::getFlashChipMode,              ALSI_FLASHCHIP},
+#ifdef ESP8266
+  {ALSI_FLASHCHIPID,    &al_sysinfo::getFlashChipId,                ALSI_FLASHCHIP},  
+#endif
+#ifdef ESP32
+  {ALSI_PSRAMSIZE,      &al_sysinfo::getPsramSize,                  ALSI_FLASHCHIP},  
+#endif
+  {ALSI_FLASHSIZE,      &al_sysinfo::getFlashChipSize,              ALSI_FLASHCHIP},
+#ifdef ESP8266
+  {ALSI_RFLASHSIZE,     &al_sysinfo::getFlashChipRealSize,          ALSI_FLASHCHIP},  
+#endif
+  {ALSI_FLASHFREQUENCY, &al_sysinfo::getFlashChipSpeed,             ALSI_FLASHCHIP},
+  {ALSI_FLASHMOD,       &al_sysinfo::getFlashChipMode,              ALSI_FLASHCHIP},
 
-    {ALSI_SKETCHSIZETOTAL, &al_sysinfo::getTotalSketchSize,           ALSI_SKETCH},
-    {ALSI_SKETCHSIZE,     &al_sysinfo::getSketchSize,                 ALSI_SKETCH},
-    {ALSI_FREESKETCHSIZE, &al_sysinfo::getFreeSketchSpace,            ALSI_SKETCH},
+  {ALSI_SKETCHSIZETOTAL, &al_sysinfo::getTotalSketchSize,           ALSI_SKETCH},
+  {ALSI_SKETCHSIZE,     &al_sysinfo::getSketchSize,                 ALSI_SKETCH},
+  {ALSI_FREESKETCHSIZE, &al_sysinfo::getFreeSketchSpace,            ALSI_SKETCH},
 
-  #ifdef ESP32
-    {ALSI_MODEL,          &al_sysinfo::getModel,                      ALSI_BOARD},
-    {ALSI_FEATURES,       &al_sysinfo::getfeatures,                   ALSI_BOARD},
-    {ALSI_CORES,          &al_sysinfo::getCores,                      ALSI_BOARD},
-    {ALSI_REVISION,       &al_sysinfo::getRevision,                   ALSI_BOARD},
-    {ALSI_ESPIDFVERS,     &al_sysinfo::getEspIdfVersion,              ALSI_BOARD},
-    {ALSI_EFUSEMAC,       &al_sysinfo::getEfuseMac,                   ALSI_BOARD},
-  #endif
-    {ALSI_CHIPID,         &al_sysinfo::getChipId,                     ALSI_BOARD},
-    {ALSI_SDKVERSION,     &al_sysinfo::ALSI_system_get_sdk_version,   ALSI_BOARD},
-  #ifdef ESP8266
-    {ALSI_COREVERSION,    &al_sysinfo::getCoreVersion,                ALSI_BOARD},
-    {ALSI_BOOTVERSION,    &al_sysinfo::ALSI_system_get_boot_version,  ALSI_BOARD},
-  #endif
-    {ALSI_CPUFREQUENCY,   &al_sysinfo::getCpuFreqMHz,                 ALSI_BOARD},
+#ifdef ESP32
+  {ALSI_MODEL,          &al_sysinfo::getModel,                      ALSI_BOARD},
+  {ALSI_FEATURES,       &al_sysinfo::getfeatures,                   ALSI_BOARD},
+  {ALSI_CORES,          &al_sysinfo::getCores,                      ALSI_BOARD},
+  {ALSI_REVISION,       &al_sysinfo::getRevision,                   ALSI_BOARD},
+  {ALSI_ESPIDFVERS,     &al_sysinfo::getEspIdfVersion,              ALSI_BOARD},
+  {ALSI_EFUSEMAC,       &al_sysinfo::getEfuseMac,                   ALSI_BOARD},
+#endif
+  {ALSI_CHIPID,         &al_sysinfo::getChipId,                     ALSI_BOARD},
+  {ALSI_SDKVERSION,     &al_sysinfo::ALSI_system_get_sdk_version,   ALSI_BOARD},
+#ifdef ESP8266
+  {ALSI_COREVERSION,    &al_sysinfo::getCoreVersion,                ALSI_BOARD},
+  {ALSI_BOOTVERSION,    &al_sysinfo::ALSI_system_get_boot_version,  ALSI_BOARD},
+#endif
+  {ALSI_CPUFREQUENCY,   &al_sysinfo::getCpuFreqMHz,                 ALSI_BOARD},
 
-    {ALSI_STAMAC,         &al_sysinfo::stamacAddress,                 ALSI_BOARD},
-    {ALSI_APAMAC,         &al_sysinfo::softAPmacAddress,              ALSI_BOARD},
+  {ALSI_STAMAC,         &al_sysinfo::stamacAddress,                 ALSI_BOARD},
+  {ALSI_APAMAC,         &al_sysinfo::softAPmacAddress,              ALSI_BOARD},
 
-    {ALSI_LASTRESET,      &al_sysinfo::lasResetReason,                ALSI_BOARD},
+  {ALSI_LASTRESET,      &al_sysinfo::lasResetReason,                ALSI_BOARD},
 
 
-    {ALSI_STAIP,          &al_sysinfo::getSTAip,                      ALSI_NETWORK},
-    {ALSI_STASUBNET,      &al_sysinfo::getSTAsubnet,                  ALSI_NETWORK},
-    {ALSI_STAGATEWAY,     &al_sysinfo::getSTAgateway,                 ALSI_NETWORK},
-    {ALSI_CONNECT,        &al_sysinfo::getConeected,                  ALSI_NETWORK},
-    {ALSI_AUTOCONNECT,    &al_sysinfo::getAutoconnect,                ALSI_NETWORK},
-    {ALSI_DNSSERVER,      &al_sysinfo::getDNSserver,                  ALSI_NETWORK},
-    {ALSI_HOSTNAME,       &al_sysinfo::getHostname,                   ALSI_NETWORK},
-    {ALSI_BUILDDATE,      &al_sysinfo::getBuildate,                   ALSI_TIME},
-    {ALSI_UPTIME,         &al_sysinfo::getUptime,                     ALSI_TIME},
-  };
-  const uint8_t ALSI_ITEMSSIZE    =  ARRAY_SIZE(ALSI_items);
-  const uint8_t ALSI_CATEGORYSIZE =  ARRAY_SIZE(ALSI_CATEGORY);
-  const char ALSI_PTJSON_001 [] PROGMEM = "system_infos";
+  {ALSI_STAIP,          &al_sysinfo::getSTAip,                      ALSI_NETWORK},
+  {ALSI_STASUBNET,      &al_sysinfo::getSTAsubnet,                  ALSI_NETWORK},
+  {ALSI_STAGATEWAY,     &al_sysinfo::getSTAgateway,                 ALSI_NETWORK},
+  {ALSI_CONNECT,        &al_sysinfo::getConeected,                  ALSI_NETWORK},
+  {ALSI_AUTOCONNECT,    &al_sysinfo::getAutoconnect,                ALSI_NETWORK},
+  {ALSI_DNSSERVER,      &al_sysinfo::getDNSserver,                  ALSI_NETWORK},
+  {ALSI_HOSTNAME,       &al_sysinfo::getHostname,                   ALSI_NETWORK},
+  {ALSI_BUILDDATE,      &al_sysinfo::getBuildate,                   ALSI_TIME},
+  {ALSI_UPTIME,         &al_sysinfo::getUptime,                     ALSI_TIME},
+};
+const uint8_t ALSI_ITEMSSIZE    =  ARRAY_SIZE(ALSI_items);
+const uint8_t ALSI_CATEGORYSIZE =  ARRAY_SIZE(ALSI_CATEGORY);
+const char ALSI_PTJSON_001 [] PROGMEM = "system_infos";
 
 void ALSYSINFO_print() {
   for(int j = 0; j < ALSI_CATEGORYSIZE; ++j) {
@@ -793,6 +695,15 @@ boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
           return true;        
         }
       }
+    }
+  }   
+  return false;
+}
+boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
+  for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
+    if (al_tools::ch_toString(ALSI_items[i].NAME) == al_tools::ch_toString(key)) {
+      ALSI_items[i].DATA(ret);
+      return true;
     }
   }   
   return false;

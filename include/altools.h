@@ -234,6 +234,6 @@
   // void splitText(const String & inputString, const char* const & arg,  char sep, LList<SplitItem * > * ptr);
 
 
-
+  boolean ALT_debugPrint(const char * _id);
 
 #endif // TOOLS_H

@@ -150,7 +150,7 @@ void Sr_menu::add(const char* v1, const char* v2, sr_cb_v_f v3, SR_MM v4){
     _list[i]->get_key(key);
     if (strcmp(v2, key) == 0) {Serial.printf_P(PSTR("[Sr_menu::add | cb void] key %s already registered!\n"), v2);return;}
   }
-  Serial.printf_P(PSTR("[Sr_menu::add | cb void] adding key: %s\n"), v2);
+  Serial.printf_P(PSTR("[Sr_menu::add | cb void] adding key: %s - %s\n"), v2, v1);
   _list.add(new Sr_item());
   uint8_t pos = _list.size()-1;
   _list[pos]->set(v1, v2, v3, v4);
@@ -161,7 +161,7 @@ void Sr_menu::add(const char* v1, const char* v2, sr_cb_ss_f v3, SR_MM v4){
     _list[i]->get_key(key);
     if (strcmp(v2, key) == 0) {Serial.printf_P(PSTR("[Sr_menu::add | cb ss] key %s already registered!\n"), v2);return;}
   }
-  Serial.printf_P(PSTR("[Sr_menu::add | cb ss] adding key: %s\n"), v2);
+  Serial.printf_P(PSTR("[Sr_menu::add | cb ss] adding key: %s - %s\n"), v2, v1);
   _list.add(new Sr_item());
   uint8_t pos = _list.size()-1;
   _list[pos]->set(v1, v2, v3, v4);
