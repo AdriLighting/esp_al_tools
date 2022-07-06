@@ -203,6 +203,7 @@
 
     static uint32_t pInitHeap;
     static void setupHeap_v1() {pInitHeap = ESP.getFreeHeap();};
+    static void get_initHeap(uint32_t & result) {result = pInitHeap;};
 
     void setupHeap_v2() {mod = false; initHeap = ESP.getFreeHeap();};
 

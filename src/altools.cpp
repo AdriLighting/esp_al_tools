@@ -380,11 +380,11 @@ void HeapStatu::update(){
   if (tused > 0) ttot+=tused;  
 }
 void HeapStatu::print(String & ret){
-  char buffer[255];
+  char buffer[120];
   uint32_t heap;
   if (mod)  heap = pInitHeap;
   else      heap = initHeap;
-  sprintf(buffer, "heap-used:%7d |%d/%d|%d| init:%7d free:%7d mod: %d",
+  sprintf(buffer, "heap-used:%7d [%-8d/%-4d|%-7d] init:%7d - free:%7d - mod: %d",
     tused,
     ttot,
     tcnt,
@@ -502,10 +502,11 @@ void ALT_debugPrint(const String & msg, const String & file, const String & line
 
   char * b_timeStamp = nullptr;
   if (ptr->is_timeStamp()) {
-    char t[14];
-    al_tools::millis2time_m(micros(), t);  
-    b_timeStamp = new char[sizeof(t)+1];
-    strcpy(b_timeStamp, t);
+    char t[12];
+    al_tools::millis2time_d(millis(), t);  
+    b_timeStamp = new char[12];
+    sprintf(b_timeStamp, "%11s", t);
+    // strcpy(b_timeStamp, t);
   }
 
   char * b_file = nullptr;

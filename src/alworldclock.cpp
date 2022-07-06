@@ -5,8 +5,174 @@
 #include "alhttptools.h"
 #include "alhttptimesync.h"
 
+/*
+{
+    "items":
+    [
+        {
+            "timezone": "Europe/Paris",
+            "name": "Paris",
+            "country": "France"
+        },
+        {
+            "timezone": "Asia/Shanghai",
+            "name": "Shanghai",
+            "country": "Chine"
+        },
+        {
+            "timezone": "Europe/Istanbul",
+            "name": "Istanbul",
+            "country": "Turquie"
+        },
+        {
+            "timezone": "America/Argentina/Buenos_Aires",
+            "name": "Buenos Aires",
+            "country": "Argentine"
+        },
+        {
+            "timezone": "America/Mexico_City",
+            "name": "Mexico City",
+            "country": "Mexique"
+        },
+        {
+            "timezone": "Asia/Karachi",
+            "name": "Karachi",
+            "country": "Pakistan"
+        },
+        {
+            "timezone": "Europe/Moscow",
+            "name": "Moscou",
+            "country": "Russie"
+        },
+        {
+            "timezone": "Europe/Kiev",
+            "name": "Kyiv",
+            "country": "Ukraine"
+        },
+        {
+            "timezone": "Asia/Urumqi",
+            "name": "Asia/Urumqi",
+            "country": "Asia/Urumqi"
+        },
+        {
+            "timezone": "Asia/Dhaka",
+            "name": "Dhaka",
+            "country": "Bangladesh"
+        },
+        {
+            "timezone": "Asia/Seoul",
+            "name": "Seoul",
+            "country": "Corée du Sud"
+        },
+        {
+            "timezone": "America/Sao_Paulo",
+            "name": "São Paulo",
+            "country": "Brésil"
+        },
+        {
+            "timezone": "Africa/Lagos",
+            "name": "Lagos",
+            "country": "Nigéria"
+        },
+        {
+            "timezone": "Asia/Jakarta",
+            "name": "Jakarta",
+            "country": "Indonésie"
+        },
+        {
+            "timezone": "Asia/Tokyo",
+            "name": "Tokyo",
+            "country": "Japon"
+        },
+        {
+            "timezone": "America/Martinique",
+            "name": "Martinique",
+            "country": "Martinique"
+        },
+        {
+            "timezone": "America/New_York",
+            "name": "New York City",
+            "country": "États-Unis (USA)"
+        },
+        {
+            "timezone": "Asia/Hong_Kong",
+            "name": "Hong Kong",
+            "country": "Hong Kong"
+        },
+        {
+            "timezone": "America/Lima",
+            "name": "Lima",
+            "country": "Pérou"
+        },
+        {
+            "timezone": "Africa/Cairo",
+            "name": "Caire",
+            "country": "Égypte"
+        },
+        {
+            "timezone": "America/Bogota",
+            "name": "Bogotá",
+            "country": "Colombie"
+        },
+        {
+            "timezone": "Europe/London",
+            "name": "London",
+            "country": "Royaume-Uni"
+        },
+        {
+            "timezone": "Asia/Baghdad",
+            "name": "Baghdad",
+            "country": "Irak"
+        },
+        {
+            "timezone": "Asia/Tehran",
+            "name": "Téhéran",
+            "country": "Iran"
+        },
+        {
+            "timezone": "Asia/Karachi",
+            "name": "Karachi",
+            "country": "Pakistan"
+        },
+        {
+            "timezone": "America/Argentina/Rio_Gallegos",
+            "name": "Río Gallegos",
+            "country": "Argentine"
+        },
+        {
+            "timezone": "Europe/Berlin",
+            "name": "Berlin",
+            "country": "Allemagne"
+        },
+        {
+            "timezone": "Australia/Sydney",
+            "name": "Sydney",
+            "country": "Australie"
+        },
+        {
+            "timezone": "America/Detroit",
+            "name": "Detroit",
+            "country": "États-Unis (USA)"
+        },
+        {
+            "timezone": "Europe/Madrid",
+            "name": "Madrid",
+            "country": "Espagne"
+        },
+        {
+            "timezone": "Europe/Berlin",
+            "name": "Berlin",
+            "country": "Allemagne"
+        },
+            "timezone": "Europe/Amsterdam",
+            "name": "Amsterdam",
+            "country": "Pays-Bas"
+        },
 
-const char ALTIME_COUNTRY[] PROGMEM = R"rawliteral({"items":[{"timezone":"Europe/Paris","name":"Paris","country":"France"},{"timezone":"Asia/Shanghai","name":"Shanghai","country":"Chine"},{"timezone":"Europe/Istanbul","name":"Istanbul","country":"Turquie"},{"timezone":"America/Argentina/Buenos_Aires","name":"Buenos Aires","country":"Argentine"},{"timezone":"America/Mexico_City","name":"Mexico City","country":"Mexique"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"Europe/Moscow","name":"Moscou","country":"Russie"},{"timezone":"Europe/Kiev","name":"Kyiv","country":"Ukraine"},{"timezone":"Asia/Urumqi","name":"Asia/Urumqi","country":"Asia/Urumqi"},{"timezone":"Asia/Dhaka","name":"Dhaka","country":"Bangladesh"},{"timezone":"Asia/Seoul","name":"Seoul","country":"Corée du Sud"},{"timezone":"America/Sao_Paulo","name":"São Paulo","country":"Brésil"},{"timezone":"Africa/Lagos","name":"Lagos","country":"Nigéria"},{"timezone":"Asia/Jakarta","name":"Jakarta","country":"Indonésie"},{"timezone":"Asia/Tokyo","name":"Tokyo","country":"Japon"},{"timezone":"America/Martinique","name":"Martinique","country":"Martinique"},{"timezone":"America/New_York","name":"New York City","country":"États-Unis (USA)"},{"timezone":"Asia/Hong_Kong","name":"Hong Kong","country":"Hong Kong"},{"timezone":"America/Lima","name":"Lima","country":"Pérou"},{"timezone":"Africa/Cairo","name":"Caire","country":"Égypte"},{"timezone":"America/Bogota","name":"Bogotá","country":"Colombie"},{"timezone":"Europe/London","name":"London","country":"Royaume-Uni"},{"timezone":"Asia/Baghdad","name":"Baghdad","country":"Irak"},{"timezone":"Asia/Tehran","name":"Téhéran","country":"Iran"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"America/Argentina/Rio_Gallegos","name":"Río Gallegos","country":"Argentine"},{"timezone":"Europe/Berlin","name":"Berlin","country":"Allemagne"},{"timezone":"Australia/Sydney","name":"Sydney","country":"Australie"},{"timezone":"America/Detroit","name":"Detroit","country":"États-Unis (USA)"}]})rawliteral"; 
+    ]
+}
+*/
+const char ALTIME_COUNTRY[] PROGMEM = R"rawliteral({"items":[{"timezone":"Europe/Paris","name":"Paris","country":"France"},{"timezone":"Asia/Shanghai","name":"Shanghai","country":"Chine"},{"timezone":"Europe/Istanbul","name":"Istanbul","country":"Turquie"},{"timezone":"America/Argentina/Buenos_Aires","name":"Buenos Aires","country":"Argentine"},{"timezone":"America/Mexico_City","name":"Mexico City","country":"Mexique"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"Europe/Moscow","name":"Moscou","country":"Russie"},{"timezone":"Europe/Kiev","name":"Kyiv","country":"Ukraine"},{"timezone":"Asia/Urumqi","name":"Asia/Urumqi","country":"Asia/Urumqi"},{"timezone":"Asia/Dhaka","name":"Dhaka","country":"Bangladesh"},{"timezone":"Asia/Seoul","name":"Seoul","country":"Corée du Sud"},{"timezone":"America/Sao_Paulo","name":"São Paulo","country":"Brésil"},{"timezone":"Africa/Lagos","name":"Lagos","country":"Nigéria"},{"timezone":"Asia/Jakarta","name":"Jakarta","country":"Indonésie"},{"timezone":"Asia/Tokyo","name":"Tokyo","country":"Japon"},{"timezone":"America/Martinique","name":"Martinique","country":"Martinique"},{"timezone":"America/New_York","name":"New York City","country":"États-Unis (USA)"},{"timezone":"Asia/Hong_Kong","name":"Hong Kong","country":"Hong Kong"},{"timezone":"America/Lima","name":"Lima","country":"Pérou"},{"timezone":"Africa/Cairo","name":"Caire","country":"Égypte"},{"timezone":"America/Bogota","name":"Bogotá","country":"Colombie"},{"timezone":"Europe/London","name":"London","country":"Royaume-Uni"},{"timezone":"Asia/Baghdad","name":"Baghdad","country":"Irak"},{"timezone":"Asia/Tehran","name":"Téhéran","country":"Iran"},{"timezone":"Asia/Karachi","name":"Karachi","country":"Pakistan"},{"timezone":"America/Argentina/Rio_Gallegos","name":"Río Gallegos","country":"Argentine"},{"timezone":"Europe/Berlin","name":"Berlin","country":"Allemagne"},{"timezone":"Australia/Sydney","name":"Sydney","country":"Australie"},{"timezone":"America/Detroit","name":"Detroit","country":"États-Unis (USA)"},{"timezone": "Europe/Madrid","name": "Madrid","country": "Espagne"},{"timezone": "Europe/Amsterdam","name": "Amsterdam","country": "Pays-Bas"}]})rawliteral"; 
 
 WorldClock _WorldClock;
 
@@ -162,11 +328,107 @@ void WorldClock::setup_default(){
     }
   }
   Serial.println("---");
-  _WorldClock.print();
+  _WorldClock.print_registeredTime();
   Serial.println("---");
 
 }
-void WorldClock::print(){
+void WorldClock::new_timeByCity(const String & search){
+  String country = FPSTR(ALTIME_COUNTRY);
+  DynamicJsonDocument doc(3072);
+  DeserializationError error = deserializeJson(doc, country);
+  if (error) return;
+  JsonArray arr = doc[F("items")];  
+  for(size_t j = 0; j < arr.size(); ++j) {
+    JsonObject obj      = arr[j];
+    String timezone     = obj[F("timezone")];
+    String name         = obj[F("name")].as<String>();
+    String country      = obj[F("country")];
+    if (name == search) {
+      String utc = "";
+      if (!get_timeHTTP(timezone, utc)) break;
+      _WorldClock.add(name.c_str(), timezone.c_str(), country.c_str(), utc.c_str());
+      break;
+    }
+  }
+}
+void WorldClock::rem_timeByCity(const char *search){
+  int8_t pos = -1;
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    if (strcmp(item->_name, search) == 0) {
+      pos = i;
+      Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S %-7S\n"), i,
+        item->_tz,
+        item->_name,
+        item->_country, 
+        item->_utc_offset
+        );    
+      break;  
+    }
+    
+  }
+  if (pos>=0) delete _list.remove(pos);
+}
+void WorldClock::get_timeByCity(const char * search, time_t & result){
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    if (strcmp(search, item->_name) != 0) continue;
+    get_timeByCity(i, result);
+  }
+}
+void WorldClock::get_timeByCity(uint8_t p, time_t & result){
+  int utc_fr = 2;
+  WorldClockItem * item = _list.get(p);
+  String utc = al_tools::ch_toString(item->_utc_offset);
+  int utc_i = utc.substring(0,3).toInt();
+  if (utc_i == utc_fr) {
+    time(&result);
+  } else {
+    time_t ts;
+    utc_i -= utc_fr;
+    AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
+    result = ts;
+  }
+}
+
+void WorldClock::get_timeByCity(const char * search, String & result, boolean shortTime){
+  time_t ts;
+  get_timeByCity(search, ts);
+  if (shortTime) AL_timeHelper::getDateTimeShortString(result, ts);
+  else  AL_timeHelper::getDateTimeString(result, ts);
+}
+
+
+void WorldClock::print_times(boolean shortTime){
+  int utc_fr = 2;
+  String ts_paris = "";
+  if (shortTime) AL_timeHelper::getDateTimeShortString(ts_paris, 0);
+  else AL_timeHelper::getDateTimeString(ts_paris, 0);
+  Serial.printf("%-15s", "Paris");
+  for(int i = 0; i < _list.size(); ++i) {WorldClockItem * item = _list.get(i);Serial.printf("%-25s", item->_name);}
+  Serial.printf("\n");  
+  Serial.printf("%-15s", ts_paris.c_str());
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    String utc = al_tools::ch_toString(item->_utc_offset);
+    int utc_i = utc.substring(0,3).toInt();
+    if (utc_i == utc_fr) {
+      Serial.printf("%-25s", ts_paris.c_str());
+    } else {
+      String ts_country;
+      time_t ts;
+      utc_i -= utc_fr;
+      AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
+      if (shortTime) AL_timeHelper::getDateTimeShortString(ts_country, ts);
+      else AL_timeHelper::getDateTimeString(ts_country, ts);
+      Serial.printf("%-25s", ts_country.c_str());
+    }
+  }
+  Serial.printf("\n");
+}
+
+
+void WorldClock::print_registeredTime(){
   Serial.printf_P(PSTR("WorldClock current list\n"));
   Serial.printf_P(PSTR("[%-3d] %-35S %-18s %-20S %-7S\n"), 0, 
     "timezone",
@@ -184,7 +446,7 @@ void WorldClock::print(){
       );    
   }
 }
-void WorldClock::print_fullList() {
+void WorldClock::print_avaibleTime() {
   Serial.printf_P(PSTR("WorldClock full list\n"));
   String country = FPSTR(ALTIME_COUNTRY);
   DynamicJsonDocument doc(3072);
@@ -207,30 +469,4 @@ void WorldClock::print_fullList() {
       country.c_str()
     );    
   }
-}
-void WorldClock::display(){
-  int utc_fr = 2;
-
-  String ts_paris = "";
-  AL_timeHelper::getDateTimeShortString(ts_paris, 0);
-  Serial.printf("%-15s", "Paris");
-  for(int i = 0; i < _list.size(); ++i) {WorldClockItem * item = _list.get(i);Serial.printf("%-15s", item->_name);}
-  Serial.printf("\n");  
-  Serial.printf("%-15s", ts_paris.c_str());
-  for(int i = 0; i < _list.size(); ++i) {
-    WorldClockItem * item = _list.get(i);
-    String utc = al_tools::ch_toString(item->_utc_offset);
-    int utc_i = utc.substring(0,3).toInt();
-    if (utc_i == utc_fr) {
-      Serial.printf("%-15s", ts_paris.c_str());
-    } else {
-      String ts_country;
-      time_t ts;
-      utc_i -= utc_fr;
-      AL_timeHelper::incrementCurrentTime(ts, 0, 0, utc_i, 0, 0);
-      AL_timeHelper::getDateTimeShortString(ts_country, ts);
-      Serial.printf("%-15s", ts_country.c_str());
-    }
-  }
-  Serial.printf("\n");
 }

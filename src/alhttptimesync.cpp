@@ -32,6 +32,7 @@
 #include "altools.h"
 #include "alhttptools.h"
 
+    #define ALTIME_CONNECTED (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED)
 
 
 #define ALTIME_NTP1ADDRESS      "fr.pool.ntp.org"
@@ -233,7 +234,7 @@ unsigned long RTC_Worker(unsigned long _storage=0){
         //ESP.rtcUserMemoryWrite(128-sizeof(RTC_DATA), (uint32_t*)&rtcTime, sizeof(RTC_DATA));
         system_rtc_mem_write(192-sizeof(RTC_DATA), &rtcTime, sizeof(RTC_DATA));
     }
-    Serial.printf_P(PSTR("TIME: RTC time = %d sec (%d)\n"), (uint32_t)(rtcTime.timeAcc / 1000000) / 1000, rtcTime.storage);
+    Serial.printf_P(PSTR("[RTC_Worker] TIME: RTC time = %d sec (%d)\n"), (uint32_t)(rtcTime.timeAcc / 1000000) / 1000, rtcTime.storage);
     return rtcTime.storage+(rtcTime.timeAcc / 1000000) / 1000;
   #else
     struct timeval tv = { .tv_sec = 0, .tv_usec = 0 };   /* btw settimeofday() is helpfull here too*/
@@ -255,7 +256,7 @@ unsigned long RTC_Worker(unsigned long _storage=0){
         if(_storage)
             rtcTime.storage = _storage - rtcTime.timeAcc;
     }
-    Serial.printf_P(PSTR("TIME: RTC time = %lld sec (%ld)\n"), rtcTime.timeAcc, rtcTime.storage);
+    Serial.printf_P(PSTR("[RTC_Worker] TIME: RTC time = %lld sec (%ld)\n"), rtcTime.timeAcc, rtcTime.storage);
     return rtcTime.storage+rtcTime.timeAcc;
   #endif
 }
@@ -297,7 +298,7 @@ void AL_httpTime::tzsetup(const char* tz){
     }
     _tzfix += _tz.substring(_tz.lastIndexOf('>')+1, _tz.length());
     setenv("TZ", _tzfix.c_str(), 1/*overwrite*/);
-    Serial.printf_P( PSTR("TIME: TZ fix applied: %s\n"), _tzfix.c_str());
+    Serial.printf_P( PSTR("[tzsetup] TIME: TZ fix applied: %s\n"), _tzfix.c_str());
   } else {
     setenv("TZ", tz, 1/*overwrite*/);
   }
@@ -305,14 +306,14 @@ void AL_httpTime::tzsetup(const char* tz){
   tzset();
   tzone = ""; // сбрасываем костыльную зону
   // tpData.usehttpzone = false;  // запрещаем использование http
-  Serial.printf_P( PSTR("TIME: TZSET rules changed from: %s to: %s\n"), MYTZ, tz);
+  Serial.printf_P( PSTR("[tzsetup] TIME: TZSET rules changed from: %s to: %s\n"), MYTZ, tz);
 
   unsigned long shift = RTC_Worker();
   //time_t _time = shift;
   //timeval tv = { _time, 0 };
   //settimeofday(&tv, NULL);
   String dt; AL_timeHelper::getDateTimeString(dt, shift);
-  Serial.printf_P(PSTR("TIME: After reboot time (%lu)-> %s\n"), (unsigned long)shift, dt.c_str());
+  Serial.printf_P(PSTR("[tzsetup] TIME: After reboot time (%lu)-> %s\n"), (unsigned long)shift, dt.c_str());
 }
 
 void AL_httpTime::handle(){
@@ -322,6 +323,7 @@ void AL_httpTime::handle(){
       ntpResync_task.activate = false;
     }
   }
+  if (ALTIME_CONNECTED && !_get_timeHTTP && !AL_timeHelper::sntpIsSynced()) {get_timeHTTP();_get_timeHTTP=true;}
 }
 
 void AL_httpTime::ntpResync_start(){
@@ -332,6 +334,7 @@ void AL_httpTime::ntpResync_start(){
     ntpResync_task.time = millis();
     ntpResync_task.activate = true; 
   }
+
 }
 void AL_httpTime::ntpResync_run(){
   if((!AL_timeHelper::sntpIsSynced() ) && ntpcnt){
@@ -342,7 +345,7 @@ void AL_httpTime::ntpResync_run(){
       case 3:   to = ntp2.c_str();        break;
       default:  to = ALTIME_NTP1ADDRESS;  break;
     }
-    Serial.printf_P( PSTR("NTP: switching NTP[%d] server from %s to %s\n"), ntpcnt, String(sntp_getservername(0)).c_str(), to); // странное преобразование, но почему-то без него бывают ребуты...
+    Serial.printf_P( PSTR("[ntpResync_run] NTP: switching NTP[%d] server from %s to %s\n"), ntpcnt, String(sntp_getservername(0)).c_str(), to); // странное преобразование, но почему-то без него бывают ребуты...
     sntp_stop();
     sntp_setservername(0, (char *)to);
     sntp_init();
@@ -356,7 +359,7 @@ void AL_httpTime::ntpResync_run(){
       timeval tv = { _time, 0 };
       settimeofday(&tv, NULL);
       String dt; AL_timeHelper::getDateTimeString(dt);
-      Serial.printf_P(PSTR("TIME: Get time from RTC (%lu)-> %s\n"), (unsigned long)shift, dt.c_str());
+      Serial.printf_P(PSTR("[ntpResync_run] TIME: Get time from RTC (%lu)-> %s\n"), (unsigned long)shift, dt.c_str());
     }
   }
 }
@@ -420,17 +423,17 @@ void AL_httpTime::set_time(String str, uint32_t lastUpdate) {
   tm->tm_min  = s_min;
   tm->tm_sec  = s_sec;
   timeval tv  = { mktime(tm), 0 };
-  Serial.printf_P(PSTR(">>> [settimeofday]\n"));
+  Serial.printf_P(PSTR("[set_time] >>> [settimeofday]\n"));
   settimeofday(&tv, NULL);
 
 
   #ifdef ALTIME_USE_TIMELIB
-    Serial.printf_P(PSTR(">>> [TimeLib.h setTime+adjustTime]\n"));
+    Serial.printf_P(PSTR("[set_time] >>> [TimeLib.h setTime+adjustTime]\n"));
     setTime(t);  
     adjustTime(( (millis() - lastUpdate) / 1000 ) );   
   #endif 
 
-  Serial.printf_P(PSTR(">>> [RTC_Worker]\n"));
+  Serial.printf_P(PSTR("[set_time] >>> [RTC_Worker]\n"));
   RTC_Worker(tv.tv_sec);    
 }
 
@@ -445,7 +448,7 @@ void AL_httpTime::get_timeHTTP() {
     String url(FPSTR(ALTIME_PT_timeapi_tz_url));
     url+=tzone;
     al_httptools::get_httpdata(result, url);
-    Serial.printf_P(PSTR("[0] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
+    Serial.printf_P(PSTR("[get_timeHTTP] [0] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
   }
 
   if(!result.length()){
@@ -453,17 +456,17 @@ void AL_httpTime::get_timeHTTP() {
     if(!al_httptools::get_httpdata(result, url)) {
       return;
     }
-    Serial.printf_P(PSTR("[1] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());  
+    Serial.printf_P(PSTR("[get_timeHTTP] [1] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());  
   }
 
-  Serial.printf_P(PSTR("NTP: time synced from %s \n"), String(sntp_getservername(0)).c_str());     
+  Serial.printf_P(PSTR("[get_timeHTTP] NTP: time synced from %s \n"), String(sntp_getservername(0)).c_str());     
 
   DynamicJsonDocument doc(ALTIME_TIMEAPI_BUFSIZE);
   DeserializationError error = deserializeJson(doc, result);
   result="";
 
   if (error) {
-    Serial.print( F("[ERR] Time deserializeJson error: "));
+    Serial.print( F("[get_timeHTTP] [ERR] Time deserializeJson error: "));
     Serial.println( error.code());
     return;
   }
@@ -484,11 +487,11 @@ void AL_httpTime::get_timeHTTP() {
     tzone+=tz;
   }
 
-  Serial.printf_P(PSTR("Reading JSON:\n\t[HTTP TimeZone: %s]\n\t[timezone: %d]\n\t[dst_offset: %d]\n\t[datetime %s]\n"), 
+  Serial.printf_P(PSTR("[get_timeHTTP] Reading JSON:\n\t[HTTP TimeZone: %s]\n\t[timezone: %d]\n\t[dst_offset: %d]\n\t[datetime %s]\n"), 
     tzone.c_str(), raw_offset, dst_offset, datetime.c_str());
 
   AL_timeHelper::getDateTimeString(buf, 0);
-  Serial.printf_P(PSTR("[0] get datetime from time(<time.h>)\n\t[timestamp: %s]\n\t[sntpIsSynced: %d]\n"), buf.c_str(), AL_timeHelper::sntpIsSynced());
+  Serial.printf_P(PSTR("[get_timeHTTP] [0] get datetime from time(<time.h>)\n\t[timestamp: %s]\n\t[sntpIsSynced: %d]\n"), buf.c_str(), AL_timeHelper::sntpIsSynced());
 
   Serial.printf_P(PSTR(">>> [set_timezone]\n"));
   // setenv("TZ", tzone.c_str(),1);
@@ -502,31 +505,31 @@ void AL_httpTime::get_timeHTTP() {
     configTime((long)val, 0, ALTIME_NTP1ADDRESS, ALTIME_NTP2ADDRESS, "");
   #endif
 
-  Serial.printf_P(PSTR(">>> [set_time]\n"));
+  Serial.printf_P(PSTR("[get_timeHTTP] >>> [set_time]\n"));
   set_time(datetime, lastcall);
 
   struct tm timeinfo;
   #if defined(ESP32)
     if(!getLocalTime(&timeinfo)){
-      Serial.println(F("!!! [FAILED TO OBTAIN TIME] !!!"));
+      Serial.println(F("[get_timeHTTP] !!! [FAILED TO OBTAIN TIME] !!!"));
     }
   #elif defined(ESP8266)
     if(!getLocalTime(&timeinfo, 5000)){
-      Serial.println(F("!!! [FAILED TO OBTAIN TIME] !!!"));
+      Serial.println(F("[get_timeHTTP] !!! [FAILED TO OBTAIN TIME] !!!"));
     }
   #endif
 
   buf = "";
   AL_timeHelper::getDateTimeString(buf, 0);
-  Serial.printf_P(PSTR("[1] get datetime from time(<time.h>)\n\t[timestamp: %s]\n\t[sntpIsSynced: %d]\n"), buf.c_str(), AL_timeHelper::sntpIsSynced());
+  Serial.printf_P(PSTR("[get_timeHTTP] [1] get datetime from time(<time.h>)\n\t[timestamp: %s]\n\t[sntpIsSynced: %d]\n"), buf.c_str(), AL_timeHelper::sntpIsSynced());
 
   if (doc[F("dst_from")]!=nullptr){
-    Serial.println(F("Zone has DST, rescheduling refresh"));
+    Serial.println(F("[get_timeHTTP] Zone has DST, rescheduling refresh"));
     uint32_t tDelay;
     httprefreshtimer(0, tDelay);
     String sDelay = "";
     al_tools::on_time_h(tDelay, sDelay);
-    Serial.printf_P(PSTR("[next request]\n\t%d\n\t%s\n"), tDelay, sDelay.c_str());
+    Serial.printf_P(PSTR("[get_timeHTTP] [next request]\n\t%d\n\t%s\n"), tDelay, sDelay.c_str());
   }
 
   showTime() ;
@@ -554,7 +557,7 @@ void AL_httpTime::httprefreshtimer(const uint32_t delay, uint32_t &result){
 
     timer = (mktime(tm) - getUnixTime()) % ALTIME_DAYSECONDS;
 
-    Serial.printf_P(PSTR("Schedule TZ refresh in %ld\n"), timer);
+    Serial.printf_P(PSTR("[httprefreshtimer] Schedule TZ refresh in %ld\n"), timer);
   }
 
   // if(!_httpTask){
@@ -587,6 +590,8 @@ AL_getTime::AL_getTime(){
   set_cb_time( +[](){return AL_timeHelper::get_hours();},   1);
   set_cb_time( +[](){return AL_timeHelper::get_minutes();}, 2);
   set_cb_time( +[](){return AL_timeHelper::get_seconds();}, 3);
+  set_cb_time( +[](){return AL_timeHelper::get_month();},   4);
+  set_cb_getYear( +[](){return AL_timeHelper::get_year();} );  
   set_cb_getFormattedTime( &_cb_getFormattedTime );  
   set_cb_isTimeSet( +[](){return AL_timeHelper::sntpIsSynced();} );
 }
@@ -615,26 +620,33 @@ bool AL_timeHelper::sntpIsSynced() {
 
   return rc;
 }
-int AL_timeHelper::get_hours() {
-  return localtime(now())->tm_hour;
+uint8_t AL_timeHelper::get_hours(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_hour;
 }
-int AL_timeHelper::get_minutes() {
-  return localtime(now())->tm_min;
+uint8_t AL_timeHelper::get_minutes(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_min;
 }
-int AL_timeHelper::get_seconds() {
-  return localtime(now())->tm_sec;
+uint8_t AL_timeHelper::get_seconds(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_sec;
 }
-int AL_timeHelper::get_mday() {
-  return localtime(now())->tm_mday;
+uint8_t AL_timeHelper::get_mday(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_mday;
 }
-void AL_timeHelper::incrementCurrentTime(time_t & result, const time_t timeStamp, int day, int hr, int min, int sec){
+uint8_t AL_timeHelper::get_month(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_mon+1;
+}
+uint32_t AL_timeHelper::get_year(const time_t _tstamp) {
+  return localtime(_tstamp? &_tstamp : now())->tm_year ;
+}
+
+void AL_timeHelper::incrementCurrentTime(time_t & result, const time_t timeStamp, const int day, const int hr, const int min, const int sec){
   struct tm t;
   tm *tm = &t;
   time_t tnow = timeStamp ? timeStamp : time(nullptr);
   incrementCurrentTime(tm, tnow, day, hr, min, sec);
   result = mktime(&t);
 }
-void AL_timeHelper::incrementCurrentTime(struct tm * tm, const time_t timeStamp, int day, int hr, int min, int sec){
+void AL_timeHelper::incrementCurrentTime(struct tm * tm, const time_t timeStamp, const int day, const int hr, const int min, const int sec){
   time_t tnow = timeStamp ? timeStamp : time(nullptr);
   localtime_r(&tnow, tm);  
   tm->tm_mday += day;     
