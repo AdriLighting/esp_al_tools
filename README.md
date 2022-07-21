@@ -1,5 +1,33 @@
 # esp_al_tools
 
+
+def	def_varia	initialisation	
+FSOK		FILESYSTEM.begin();	altoolslib.h
+USE_LITTLEFS	USE_SPIFFS		
+FILESYSTEM=LittleFS	FILESYSTEM=SPIFFS		
+			
+ALT_DEBUG_TARCE		ALT_debugBuffer = new char[1024]; 	altoolslib.h
+		_DebugPrintList.add("main");	
+			
+DEBUG_KEYBOARD			altoolslib.h
+		_Sr_menu.add("", "y", []() { ; });	
+		 _Sr_menu.add("", "@", [](const String & v1, const String & v2) { ; }, SR_MM::SRMM_KEYVAL); 	
+			
+ALSI_ENABLED			altoolslib.h
+			
+ALTIMESYNC_ENABLED			altoolslib.h
+			
+ALWORLDCLOCK_ENABLED			altoolslib.h
+			
+WEATHERBIT_ENABLED			altoolslib.h
+			
+WEATHERBITFORECAST_ENABLED			altoolslib.h
+			
+OPENWEATHMAP_ENABLED			altoolslib.h
+![image](https://user-images.githubusercontent.com/43286266/180238286-367e2623-d4b0-4ef1-8c3b-979067ea37c6.png)
+
+
+
 altoolslib.h
 	#ifdef DEBUG_KEYBOARD
 		#include "../include/alserialmenu.h"	
