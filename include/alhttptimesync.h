@@ -13,6 +13,12 @@
       #include <WiFi.h>
       #include <HTTPClient.h>
     #endif
+    #ifdef ESP32
+     #include <time.h>
+     #include <lwip/apps/sntp.h>
+     #include <HTTPClient.h>
+     #include "TZ32.h"
+    #endif
 
     #ifndef SECS_PER_MIN
     #define SECS_PER_MIN  ((time_t)(60UL))  
@@ -153,7 +159,7 @@
       uint8_t getMinutes()        {if (cb_getMinutes) return cb_getMinutes(); else return 0;};
       uint8_t getSeconds()        {if (cb_getSeconds) return cb_getSeconds(); else return 0;};
       uint8_t getMonth()          {if (cb_getMonth)   return cb_getMonth();   else return 0;};
-      uint32_t     getYear()           {if (cb_getYear)    return cb_getYear();    else return 0;};
+      uint32_t getYear()          {if (cb_getYear)    return cb_getYear();    else return 0;};
       bool    isTimeSet()         {if (cb_isTimeSet)  return cb_isTimeSet();  else return false;};
       String  getFormattedTime()  {if (cb_getFormattedTime)  return cb_getFormattedTime(); else return "";};
       

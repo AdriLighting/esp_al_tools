@@ -80,6 +80,40 @@ void setup()
   Serial.printf_P(PSTR("time since board launch: %s\n"), result.c_str());
   //
   
+  File f ;
+  DynamicJsonDocument doc(10000);
+  JsonObject          root;
+  JsonArray           arr;
+
+  root = doc.to<JsonObject>();
+  root = root.createNestedObject(F("test_1"));
+  root[F("key_1")] = "key_1 v";
+  root[F("key_2")] = "key_2 v";
+  arr = root.createNestedArray(F("array"));
+  arr.add("v1");
+  arr.add("v2");
+  arr.add("v3");
+
+  FILESYSTEM.mkdir("/test");
+  f = FILESYSTEM.open("/test/test_1.json", "w");
+  serializeJson(doc, f);
+  f.close();
+
+
+  doc.clear();doc.garbageCollect();
+  root = doc.to<JsonObject>();
+  root = root.createNestedObject(F("test_2"));
+  root[F("key_1")] = "key_1 v";
+  root[F("key_2")] = "key_2 v";
+  arr = root.createNestedArray(F("array"));
+  arr.add("v1");
+  arr.add("v2");
+  arr.add("v3");  
+
+  FILESYSTEM.mkdir("/test/test2");
+  f = FILESYSTEM.open("/test/test2/test_2.json", "w");
+  serializeJson(doc, f);
+  f.close();
 
   /**
    * @brief      { function_description }
@@ -89,49 +123,21 @@ void setup()
    * @param[in]  display         print file content
    */                                
   al_tools::SPIFFS_PRINT("/", false, false); // display files and folder
-  al_tools::SPIFFS_PRINT("/eff", false, false); // display files and folder
+  al_tools::SPIFFS_PRINT("/test", false, false, false); // display files and folder
 
-  al_tools::SPIFFS_readFile("/outputs/lamp.txt"); // simpl read file  
+  // al_tools::SPIFFS_readFile("/test/test_1.json"); // simpl read file  
 
 
   // make json with folder and files from filesystem
-  DynamicJsonDocument doc(10000);
-  JsonObject root = doc.to<JsonObject>();
-  al_tools::SPIFFS_printFiles("/eff", root);
+  doc.clear();doc.garbageCollect();
+  root = doc.to<JsonObject>();
+  al_tools::SPIFFS_printFiles("/test", root, false, false);
   serializeJsonPretty(doc, Serial);Serial.println();
-
-/*
-  String returnText = "";
-  returnText += "<table><tr><th align='left'>Folder</th><th align='left'>Name</th><th align='left'>Size</th><th></th><th></th></tr>";
-  DynamicJsonDocument doc_fsWebpage(10000);
-  JsonObject root_fsWebpage = doc_fsWebpage.to<JsonObject>();
-  al_tools::SPIFFS_printFiles("/eff", root_fsWebpage);
-  JsonArray arr = doc_fsWebpage[F("folders")].as<JsonArray>();
-  for (size_t i = 0; i < arr.size(); i++) {
-    String path = arr[i].as<String>();
-    JsonArray oPath;
-    if (path == "/")  oPath = doc_fsWebpage[path][F("items")].as<JsonArray>();
-    else              oPath = doc_fsWebpage[F("/")][path][F("items")].as<JsonArray>();
-    for (size_t j = 0; j < oPath.size(); j++) {
-      String file = oPath[j][F("file")].as<String>();
-      size_t size = oPath[j][F("size")].as<size_t>();
-      returnText += "<tr align='left'><td>" + path+ "</td><td>" + file+ "</td><td>" + "humanReadableSize(size)" + "</td>";
-      String fullpath = (path=="/")?path+file:"/"+path+"/"+file;
-      returnText += "<td><button onclick=\"downloadDeleteButton(\'" + fullpath + "\', \'download\')\">Download</button>";
-      returnText += "<td><button onclick=\"downloadDeleteButton(\'" + fullpath + "\', \'delete\')\">Delete</button></tr>";
-    }
-  }
-  returnText += "</table>";
-  serializeJsonPretty(root_fsWebpage,Serial);Serial.println();
-*/
-
-  // spiff delete recursive file folder from target
-  // SPIFFS_deleteRecursive(fs::FS &fs, const String &path);
 
 
   // deserialise json from file
-  doc.clear();
-  if (AP_deserializeFile(doc, "/eff/STRIP_0/eff/0000.json")) {serializeJsonPretty(doc, Serial);Serial.println();}
+  // doc.clear();
+  // if (AP_deserializeFile(doc, "/test/test_1.json")) {serializeJsonPretty(doc, Serial);Serial.println();}
 
 }
 

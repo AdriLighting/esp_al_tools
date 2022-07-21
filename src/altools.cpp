@@ -42,10 +42,10 @@ namespace al_tools {
             SPIFFS_printFiles(fs, path + "/" + sub_dir.fileName(), obj, folders, display);
           }
           else {
-            JsonObject var = arr.createNestedObject();     
-            var[F("file")] = sub_dir.fileName();
-            var[F("size")] = sub_dir.fileSize();   
-            totalsize += sub_dir.fileSize();
+              JsonObject var = arr.createNestedObject();     
+              var[F("file")] = sub_dir.fileName();
+              var[F("size")] = sub_dir.fileSize();   
+              totalsize += sub_dir.fileSize();           
           }
         }
         _SPIFFS_printFiles_size += totalsize;
@@ -72,7 +72,7 @@ namespace al_tools {
         }
       #endif
     }  
-    void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display){
+    void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display, boolean subFolder){
       al_tools::_SPIFFS_printFiles_size = 0;
       int         totalsize = 0;
 
@@ -100,16 +100,16 @@ namespace al_tools {
         Dir dir = FILESYSTEM.openDir(sPath);
         while (dir.next()) {
 
-          if (dir.isDirectory()) {
+          if (dir.isDirectory() && subFolder) {
             // Serial.printf("A isDirectory -> %s\n", dir.fileName());
             if (path == "/") al_tools::SPIFFS_printFiles(FILESYSTEM, dir.fileName(), root, aFolder, display);
             else al_tools::SPIFFS_printFiles(FILESYSTEM, path + "/" + dir.fileName(), root, aFolder, display);
           } else  {
              // Serial.printf("isFile -> %s\n", dir.fileName());
-            JsonObject var = arr.createNestedObject();          
-            var[F("file")] = dir.fileName();
-            var[F("size")] = dir.fileSize();   
-            totalsize += dir.fileSize();
+              JsonObject var = arr.createNestedObject();          
+              var[F("file")] = dir.fileName();
+              var[F("size")] = dir.fileSize();   
+              totalsize += dir.fileSize();              
           }
         }
         root[F("size")] = totalsize;
@@ -118,7 +118,7 @@ namespace al_tools {
         File dir = FILESYSTEM.open(path);
         File fFile = dir.openNextFile();
         while (fFile) {
-          if (fFile.isDirectory()) {
+          if (fFile.isDirectory() && subFolder) {
             SPIFFS_printFiles(FILESYSTEM, fFile.name(), root, aFolder, display);
           } else  {
             int LarraySize;
@@ -170,45 +170,103 @@ namespace al_tools {
      * @param[in]  SerializePrint  pretty print
      * @param[in]  display         print file content
      */
-    void SPIFFS_PRINT(const String & in, boolean SerializePrint, boolean display) {
+    void SPIFFS_PRINT(const String & in, boolean SerializePrint, boolean display, boolean subFolder) {
       JsonObject obj_1 ;
       JsonArray oPath;
 
       DynamicJsonDocument doc(10000);
       JsonObject root = doc.to<JsonObject>();
-      al_tools::SPIFFS_printFiles(in, root, false);
+      al_tools::SPIFFS_printFiles(in, root, false, subFolder);
       if (SerializePrint) {serializeJsonPretty(doc, Serial);Serial.println("");}
       Serial.printf_P(PSTR("[AP_SPIFFS_PRINT]\n"));
       JsonArray arr = doc[F("folders")].as<JsonArray>();
       for (size_t i = 0; i < arr.size(); i++) {
         String path = arr[i].as<String>();
         Serial.printf_P(PSTR("[%-3d][%s]\n"), i, path.c_str());
-        
-        if (path == "/")  oPath = doc[path][F("items")].as<JsonArray>();
+        JsonArray oPath;
+        if (path == "/") oPath = doc[path][F("items")].as<JsonArray>();
         else {
           if (in == "/") oPath = doc[F("/")][path][F("items")].as<JsonArray>();
           else {
             String addF = in;
             if (addF.substring(0, 1) == "/") addF.remove(0,1);
             obj_1 = doc[F("/")][addF];
+            uint8_t j=0;
+            for (JsonObject item : obj_1[F("items")].as<JsonArray>()) {
+              String file =  item["file"].as<String>();
+              Serial.printf_P(PSTR("\t[%-3d][%s]\n"), j, file.c_str());
+              if (display) {
+                String filePath = "";
+                if (path.substring(0, 1) != "/") filePath = "/" + path + "/" + file; 
+                else filePath = path + "/" + file; 
+                SPIFFS_readFile(filePath);                
+              }
+              j++;
+            }
             oPath = obj_1[path][F("items")].as<JsonArray>();
           }
         }
-        for (size_t j = 0; j < oPath.size(); j++) {
-          String file = oPath[j][F("file")].as<String>();
+        uint8_t j=0;
+        for (JsonObject item : oPath) {
+          String file =  item["file"].as<String>();
           Serial.printf_P(PSTR("\t[%-3d][%s]\n"), j, file.c_str());
-          if (display){
-            if (path == "/") {
-              SPIFFS_readFile(path+file);
-            } else {
-              SPIFFS_readFile("/"+path+"/"+file);
-            }
-          }
+          if (display) {
+            String filePath = "";
+            if (path.substring(0, 1) != "/") filePath = "/" + path + "/" + file; 
+            else filePath = path + "/" + file; 
+            SPIFFS_readFile(filePath);                
+          }          
+          j++;
         }
       }
     } 
+   
+    void SPIFFS_listFiles(LList<FilePathList * > * ptr, const String & in, boolean subFolder){
+      JsonObject obj_1 ;
+      JsonArray oPath;      
+      DynamicJsonDocument doc(10000);
+      JsonObject root = doc.to<JsonObject>();
+      al_tools::SPIFFS_printFiles(in, root, false, subFolder);  
+      JsonArray arr = doc[F("folders")].as<JsonArray>();  
+      for (size_t i = 0; i < arr.size(); i++) {
+        String path = arr[i].as<String>();
+        JsonArray oPath;
+        if (path == "/") oPath = doc[path][F("items")].as<JsonArray>();
+        else {
+          if (in == "/") oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+          else {
+            String addF = in;
+            if (addF.substring(0, 1) == "/") addF.remove(0,1);
+            obj_1 = doc[F("/")][addF];
+            uint8_t j=0;
+            for (JsonObject item : obj_1[F("items")].as<JsonArray>()) {
+              String file =  item["file"].as<String>();
+              size_t size = oPath[j][F("size")].as<size_t>();
+              String rPath = "";
+              if (path.substring(0, 1) != "/") {rPath= "/" + path + "/" ;}
+              else {rPath= path + "/";}
+              ptr->add( new FilePathList(rPath, file, size));
+              j++;
+            }
+            oPath = obj_1[path][F("items")].as<JsonArray>();
+          }
+        }
+        uint8_t j=0;
+        for (JsonObject item : oPath) {
+          String file =  item["file"].as<String>();
+          size_t size = oPath[j][F("size")].as<size_t>();
+          String rPath = "";
+          if (path.substring(0, 1) != "/") {rPath= "/" + path + "/" ;}
+          else {rPath= path + "/";
+          ptr->add( new FilePathList(rPath, file, size));
+          j++;
+        }
+      }          
+    }
+  }
     void SPIFFS_deleteRecursive(fs::FS &fs, const String &path) {
 
+#ifdef ESP8266
         File file = fs.open(path, "r");
         bool isDir = file.isDirectory();
         file.close();
@@ -225,7 +283,8 @@ namespace al_tools {
             yield();
         }
 
-        fs.rmdir(path);
+        fs.rmdir(path);  
+#endif
     }    
   #endif
   
@@ -233,7 +292,7 @@ namespace al_tools {
     return String((const __FlashStringHelper*) c);
   } 
 
-  void millis2time_m(const uint32_t & s, char * time){
+  void millis2time_m(const uint64_t & s, char * time){
   uint32_t milliseconds   =       (s / 1000) % 1000;
   uint32_t seconds        = ((    (s / 1000) - milliseconds)/1000)%60;
   uint32_t minutes        = ((((  (s / 1000) - milliseconds)/1000) - seconds)/60) %60;
@@ -255,7 +314,7 @@ namespace al_tools {
     sprintf(time,"%02lu:%02lu:%02lu", (unsigned long)hours , (unsigned long)minutes, (unsigned long)seconds);
   }
 
-  void on_time_h(uint32_t time,String & result) {
+  void on_time_h(uint32_t time, String & result) {
      char t[12];
      millis2time_h(time, t);
      result = String(t);
@@ -270,12 +329,17 @@ namespace al_tools {
      millis2time_m(millis(), t);
      result = String(t);
   }
+  void on_time_m(const uint64_t & s, String & result) {
+     char t[12];
+     millis2time_m(s, t);
+     result = String(t);
+  }  
   void on_time_d(String & result) {
      char t[14];
      millis2time_d(millis(), t);
      result = String(t);
   } 
-  void on_time_d(uint32_t time,String & result) {
+  void on_time_d(uint32_t time, String & result) {
      char t[14];
      millis2time_d(millis(), t);
      result = String(t);

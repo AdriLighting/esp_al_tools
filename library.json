@@ -23,11 +23,17 @@
         "name": "ArduinoJson",
         "version": "https://github.com/bblanchon/ArduinoJson.git"
     },
-     {
+    {
         "owner": "Paul Stoffregen",
         "name": "Time",
         "version": "https://github.com/PaulStoffregen/Time.git"
     },
+    {
+        "owner": "squix78",
+        "name": "Json Streaming Parser",
+        "version": "https://github.com/squix78/json-streaming-parser.git"
+    },
+    
     {
         "owner": "Ivan Seidel",
         "name": "LinkedList",

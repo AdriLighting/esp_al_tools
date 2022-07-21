@@ -636,7 +636,7 @@ uint8_t AL_timeHelper::get_month(const time_t _tstamp) {
   return localtime(_tstamp? &_tstamp : now())->tm_mon+1;
 }
 uint32_t AL_timeHelper::get_year(const time_t _tstamp) {
-  return localtime(_tstamp? &_tstamp : now())->tm_year ;
+  return localtime(_tstamp? &_tstamp : now())->tm_year+ ALTIME_TM_BASE_YEAR ;
 }
 
 void AL_timeHelper::incrementCurrentTime(time_t & result, const time_t timeStamp, const int day, const int hr, const int min, const int sec){

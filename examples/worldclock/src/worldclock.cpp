@@ -7,7 +7,6 @@
 #define MYTZ PSTR("CET-1CEST,M3.5.0,M10.5.0/3")
 #include <altoolslib.h>
 #include <wificonnectevo.h>
-#include <adriiot_DS18B20.h>
 
 AsyncWebServer  webserver(80);
 DNSServer       dnsServer;

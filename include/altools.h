@@ -17,6 +17,17 @@
       #endif
     #endif  
 
+
+    class FilePathList {
+    public:
+      String _folder;
+      String _file;
+      size_t _size = 0;
+      FilePathList(const String & fo, const String & fi) : _folder(fo), _file(fi) {};
+      FilePathList(const String & fo, const String & fi, size_t s) : _folder(fo), _file(fi), _size(s) {};
+      ~FilePathList(){};
+    }; 
+
   namespace al_tools {
     /*
       int rSize = 0;
@@ -40,10 +51,11 @@
     const char** explode(const String & s, char sep, int & rSize);
 
     #ifdef FILESYSTEM 
-      void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display = false);
-      void SPIFFS_PRINT(const String & path = "", boolean sPrint = false, boolean display = false);
+      void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display = false, boolean subFolder = true);
+      void SPIFFS_PRINT(const String & path = "", boolean sPrint = false, boolean display = false, boolean subFolder = true);
       void SPIFFS_readFile(const String & path);
       void SPIFFS_deleteRecursive(fs::FS &fs, const String &path);
+      void SPIFFS_listFiles(LList<FilePathList * > * ptr, const String & in, boolean subFolder);
     #endif
 
     String ch_toString(const char * c);
@@ -52,6 +64,7 @@
     void on_time_h(String & result);
     void on_time_d(String & result);  
     void on_time_d(uint32_t, String & result);  
+    void on_time_m(const uint64_t & s, String & result);  
   } // al_tools
 
 
