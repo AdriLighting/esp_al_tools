@@ -26,55 +26,48 @@
 #ifndef WEATHERBIT_H
   #define WEATHERBIT_H
 
-  #include <JsonStreamingParser.h>
-  #include <JsonListener.h>
+  // #include <JsonStreamingParser.h>
+  // #include <JsonListener.h>
 
+  #include <Arduino.h>
+  #include <LinkedList.h>
 
 
 
   struct weatherbitList {
       const char *  key;
       const char *  desc;
-      boolean enable;
-      String data;
+      const char *  root;
+      // boolean enable;
+      // String data;
       // void    (* setValue ) (String msg);
   } ;
 
+  class weatherbitData {
+    public:
+      uint8_t   _keyPos = 0;
+      char *    _data   = nullptr;
+      weatherbitData(const char *  key);
+  };
+  extern LList<weatherbitData *> _weatherbitData;
 
-  class weatherbitCurrent: public JsonListener {
+  class weatherbitCurrent {
     private:
       String currentKey;
       String currentParent;
 
-      void httpget_updateData(const String & url);
       void buildUrl(String & result, const String & appId, const String & locationId, const String & language) ;
+      boolean httpget(const String & url, String & r);
+      boolean parse(const String & json);
 
     public:
       weatherbitCurrent();
 
-      void httpget_updateData(const String & appId, const String & locationId, const String & language);
+      boolean httpget_updateData(const String & appId, const String & locationId, const String & language);
       void print();
       void getKey(String & result, const String & value);
-
-      virtual void whitespace(char c);
-
-      virtual void startDocument();
-
-      virtual void key(String key);
-
-      virtual void value(String value);
-
-      virtual void endArray();
-
-      virtual void endObject();
-
-      virtual void endDocument();
-
-      virtual void startArray();
-
-      virtual void startObject();
   };
 
-
+  // extern PROGMEM weatherbitList weatherbitList_key [] ;
 #endif
 #endif

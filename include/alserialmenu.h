@@ -1,3 +1,4 @@
+#ifdef DEBUG_KEYBOARD
 #ifndef ALSERIALMENU_H
   #define ALSERIALMENU_H
 
@@ -57,4 +58,5 @@
     void print();
   };
   extern Sr_menu _Sr_menu;
-#endif // MENU_SERIAL_H
+#endif // MENU_SERIAL_H  
+#endif

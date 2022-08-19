@@ -16,10 +16,6 @@
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
-
-
-
-
 PROGMEM weatherbitForecastList weathebitForecastList_key [] = { 
   {ALMWBF_KEY_VALID_DATE,     ALMWBF_DESC_VALID_DATE,     ""},//
   {ALMWBF_KEY_TS,             ALMWBF_DESC_TS,             ""},
@@ -64,16 +60,49 @@ PROGMEM weatherbitForecastList weathebitForecastList_key [] = {
 };
 uint8_t weatherbitForecastList_keyCount = ARRAY_SIZE(weathebitForecastList_key);
 
-    int forecastCnt = 0;
 
+LList<weatherbitForecastListSet *> _weatherbitForecastListSet;
 
-weatherbitForecastData weatherbitForecastArray[MAX_FORECASTS];
-weatherbitForecastData::weatherbitForecastData() {
-  weatherbitForecast_init();
+weatherbitForecastListSet::weatherbitForecastListSet(const char *  search){
+  for( int j = 0; j < weatherbitForecastList_keyCount; j++) { 
+    String key = al_tools::ch_toString(weathebitForecastList_key[j].key);
+    if ( key == al_tools::ch_toString(search) ) _keyPos = j;
+  }   
 }
 
-weatherbitForecast::weatherbitForecast() {
+weatherbitForecastData  ** weatherbitForecastArray = nullptr;
+
+void weatherbitForecastData::setup(uint8_t cnt) {
+  ALT_TRACEC("main", "size = %d\n", cnt);
+  key   = new String[cnt];
+  data  = new String[cnt];
   
+}
+weatherbitForecastData::~weatherbitForecastData(){
+  ALT_TRACEC("main", "destructor weatherbitForecastData\n");
+  delete[] key;        
+  delete[] data;        
+};
+
+weatherbitForecast::~weatherbitForecast(){
+  ALT_TRACEC("main", "destructor weatherbitForecast\n");
+  if (weatherbitForecastArray) {
+    for( int i = 0; i < MAX_FORECASTS; i++) delete  weatherbitForecastArray[i];
+    delete[] weatherbitForecastArray;
+    weatherbitForecastArray = nullptr;
+  }      
+};
+weatherbitForecast::weatherbitForecast(uint8_t size) {
+  if (weatherbitForecastArray) {
+    for( int i = 0; i < MAX_FORECASTS; i++) delete  weatherbitForecastArray[i];
+    delete[] weatherbitForecastArray;
+    weatherbitForecastArray = nullptr;
+  }
+  
+  weatherbitForecastArray = new weatherbitForecastData * [MAX_FORECASTS];
+  for( int i = 0; i < MAX_FORECASTS; i++)  weatherbitForecastArray[i] = new weatherbitForecastData();
+  for( int i = 0; i < MAX_FORECASTS; i++)  weatherbitForecastArray[i]->setup(size);
+  weatherbitForecast_init();
 }
 
 void weatherbitForecast::buildUrl(String & r, const String & appId, const String & locationId, const String & language) {
@@ -90,26 +119,30 @@ boolean weatherbitForecast::httpget_updateData(const String & appId, const Strin
 
 boolean weatherbitForecast::httpget(const String & url, String & result) {
   int code = al_httptools::get_httpdata(result, url);
-  Serial.printf_P(PSTR("[weatherbitForecast::httpget] get_httpdata code: %d\n"), code);
+  // Serial.printf_P(PSTR("[weatherbitForecast::httpget] get_httpdata code: %d\n"), code);
   if ( code != 200) return false;
   return true;
 }
 boolean weatherbitForecast::parse(const String & json){
-  DynamicJsonDocument doc(3072);
+  DynamicJsonDocument doc(6200);
   DeserializationError error =  deserializeJson(doc, json);
-  Serial.printf_P(PSTR("[weatherbitForecast::parse] deserializeJson error: %s\n"), error.c_str());
-  // if (error) return false;
+  ALT_TRACEC("main", "deserializeJson error: %s\n", error.c_str());
+
   JsonArray array = doc[F("data")];
   for(size_t i = 0; i < array.size(); ++i) {
-    for( int j = 0; j < weatherbitForecastList_keyCount; j++) { 
-      String key = al_tools::ch_toString(weathebitForecastList_key[j].key);
-      String root = al_tools::ch_toString(weathebitForecastList_key[j].root);
-      if (root == "")
-        weatherbitForecastArray[i].data[j] = array[i][key].as<String>();
-      else {
-        weatherbitForecastArray[i].data[j] = array[i][root][key].as<String>();
+    for(int j = 0; j < _weatherbitForecastListSet.size(); ++j) {
+
+      uint8_t pos   = _weatherbitForecastListSet[j]->_keyPos; 
+      String  key   = al_tools::ch_toString(weathebitForecastList_key[pos].key);
+      String  root  = al_tools::ch_toString(weathebitForecastList_key[pos].root);
+
+      if (root == "") {
+        weatherbitForecastArray[i]->data[j] = array[i][key].as<String>();
+      } else {
+        weatherbitForecastArray[i]->data[j] = array[i][root][key].as<String>();
       }
-    }       
+    }
+    
   }  
   return true;
 }
@@ -117,37 +150,36 @@ void weatherbitForecast_init() {
   String s;
   String v;
   String d;
-  forecastCnt = 0;
-  // Serial.printf("forecastCnt: %d\n", forecastCnt);
-  // Serial.printf_P(PSTR("weatherbitForecastList_keyCount: %d\n"), weatherbitForecastList_keyCount);
-    for( int i = 0; i < MAX_FORECASTS; i++) { 
-      for( int j = 0; j < weatherbitForecastList_keyCount; j++) { 
-        s = al_tools::ch_toString(weathebitForecastList_key[j].key);
-        weatherbitForecastArray[i].key[j] = s;
-        weatherbitForecastArray[i].data[j] = "";
 
-      }     
+  for( int i = 0; i < MAX_FORECASTS; i++) { 
+    for( int j = 0; j < _weatherbitForecastListSet.size(); j++) { 
+      uint8_t pos = _weatherbitForecastListSet[j]->_keyPos; 
+      String  key = al_tools::ch_toString(weathebitForecastList_key[pos].key);
+      weatherbitForecastArray[i]->key[j]   = key;
+      weatherbitForecastArray[i]->data[j]  = "";
     }     
+  }  
 }
 void weatherbitForecast::print() {
   String s;
   String v;
   String d;
-    for( int i = 0; i < MAX_FORECASTS; i++) { 
-      Serial.printf_P(PSTR("\n[%d]\n"), i);
-      for( int j = 0; j < weatherbitForecastList_keyCount; j++) { 
-        s = weatherbitForecastArray[i].key[j];
-        v = weatherbitForecastArray[i].data[j];
-        d = al_tools::ch_toString(weathebitForecastList_key[j].desc);
-        Serial.printf_P(PSTR("%25s - %22s - %s\n"), s.c_str(), v.c_str(), d.c_str());
-      }     
-    }       
+  for( int i = 0; i < MAX_FORECASTS; i++) { 
+    Serial.printf_P(PSTR("\n[%d]\n"), i);
+    for( int j = 0; j < _weatherbitForecastListSet.size(); j++) { 
+      uint8_t pos = _weatherbitForecastListSet[j]->_keyPos;  
+      s = weatherbitForecastArray[i]->key[j];
+      v = weatherbitForecastArray[i]->data[j];
+      d = al_tools::ch_toString(weathebitForecastList_key[pos].desc);
+      Serial.printf_P(PSTR("%25s - %22s - %s\n"), s.c_str(), v.c_str(), d.c_str());
+    }     
+  } 
 }
 void weatherbitForecast::getKey(String & ret, int cnt, const String & value) {
   ret = "";
-  for( int i = 0; i < weatherbitForecastList_keyCount; i++) { 
-    if(weatherbitForecastArray[cnt].key[i] == value) {
-      ret = weatherbitForecastArray[cnt].data[i];
+  for( int i = 0; i < _weatherbitForecastListSet.size(); i++) { 
+    if(weatherbitForecastArray[cnt]->key[i] == value) {
+      ret = weatherbitForecastArray[cnt]->data[i];
       break;
     }
   }   

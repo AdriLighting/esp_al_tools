@@ -59,6 +59,10 @@
     #endif
 
     String ch_toString(const char * c);
+    boolean c_str(char * & ptr, const String & str);
+    boolean c_str(char * & ptr, const char * & );
+    boolean c_str(char * & ptr, const char * const & str);
+    char * c_str(const String & str); 
     
     void on_time_h(uint32_t, String & result);
     void on_time_h(String & result);

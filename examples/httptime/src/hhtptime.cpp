@@ -39,7 +39,7 @@ void setup()
     _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
   #endif 
 
-  // WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "SSIDPASS");
+  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "SSIDPASS");
   _WCEVO_manager.set_cm(WCEVO_CM_STAAP);
   _WCEVO_manager.set_cmFail(WCEVO_CF_RESET);
   _WCEVO_manager.start();
@@ -66,6 +66,7 @@ time_t displatTime_compare(){
   result+= AL_timeHelper::get_seconds();
   return (time_t)result; 
 }
+uint8_t loopMod=0;
 void loop()
 {
   _WCEVO_manager.handleConnection();  
@@ -75,7 +76,26 @@ void loop()
     char tmpStr[12];
     sprintf(tmpStr, "%02d:%02d:%02d", AL_timeHelper::get_hours(), AL_timeHelper::get_minutes(), AL_timeHelper::get_seconds());
     prevTime  = displatTime_compare( );
-    Serial.println(tmpStr);
+    // Serial.println(tmpStr);
+    String search;
+    // al_datestr::get_dowStr("fr", )
+    // Serial.println();
+    if (loopMod==0) {
+      showTime();
+      loopMod=1;
+      uint8_t month = AL_timeHelper::get_month();
+      uint8_t wday = AL_timeHelper::get_wday();
+      Serial.println(month);
+      Serial.println(al_dateString_month_t[month-1].fr);
+      Serial.println(al_dateString_month_t[month-1].en);
+      Serial.println(al_dateString_month_t[month-1].shortfr);
+      Serial.println(al_dateString_month_t[month-1].shorten);
+      Serial.println(wday);
+      Serial.println(al_dateString_days_t[wday].fr);
+      Serial.println(al_dateString_days_t[wday].en);
+      Serial.println(al_dateString_days_t[wday].shortfr);
+      Serial.println(al_dateString_days_t[wday].shorten);
+    }
   }  
 
   delay(0);

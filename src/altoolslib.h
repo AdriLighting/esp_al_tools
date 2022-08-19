@@ -28,6 +28,7 @@
 #ifdef ALSI_ENABLED
     #include "../include/alsysinfo.h"
 #endif
+#include "../include/aldatestring.h"      
 #ifdef ALTIMESYNC_ENABLED
     #include "../include/alhttptimesync.h"  
 #endif

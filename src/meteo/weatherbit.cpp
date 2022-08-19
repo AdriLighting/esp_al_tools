@@ -10,51 +10,64 @@
 #include <ESP8266HTTPClient.h>
 #include "../../include/meteo/weatherbit.h"
 #include "../../include/altools.h"
+#include "../../include/alhttptools.h"
 #include "../../include/meteo/weatherapiid.h"
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
-weatherbitList weatherbitList_key [] = { 
-  {ALMWB_KEY_LAT,                             ALMWB_DESC_LAT                },
-  {ALMWB_KEY_LON,                             ALMWB_DESC_LON                },
-  {ALMWB_KEY_SUNRISE,                         ALMWB_DESC_SUNRISE                },
-  {ALMWB_KEY_SUNSET,                          ALMWB_DESC_SUNSET               },
-  {ALMWB_KEY_TIMEZONE,                        ALMWB_DESC_TIMEZONE               },
-  {ALMWB_KEY_STATION,                         ALMWB_DESC_STATION                },
-  {ALMWB_KEY_OB_TIME,                         ALMWB_DESC_OB_TIME                },
-  {ALMWB_KEY_DATETIME,                        ALMWB_DESC_DATETIME               },
-  {ALMWB_KEY_TS,                              ALMWB_DESC_TS               },
-  {ALMWB_KEY_CITY_NAME,                       ALMWB_DESC_CITY_NAME                },
-  {ALMWB_KEY_COUNTRY_CODE,                    ALMWB_DESC_COUNTRY_CODE               },
-  {ALMWB_KEY_STATE_CODE,                      ALMWB_DESC_STATE_CODE               },
-  {ALMWB_KEY_PRES,                            ALMWB_DESC_PRES               },
-  {ALMWB_KEY_SLP,                             ALMWB_DESC_SLP                },
-  {ALMWB_KEY_WIND_SPD,                        ALMWB_DESC_WIND_SPD               },
-  {ALMWB_KEY_WIND_DIR,                        ALMWB_DESC_WIND_DIR               },
-  {ALMWB_KEY_WIND_CDIR,                       ALMWB_DESC_WIND_CDIR                },
-  {ALMWB_KEY_WIND_CDIR_FULL,                  ALMWB_DESC_WIND_CDIR_FULL               },
-  {ALMWB_KEY_TEMP,                            ALMWB_DESC_TEMP               },
-  {ALMWB_KEY_APP_TEMP,                        ALMWB_DESC_APP_TEMP               },
-  {ALMWB_KEY_RH,                              ALMWB_DESC_RH               },
-  {ALMWB_KEY_DEWPT,                           ALMWB_DESC_DEWPT                },
-  {ALMWB_KEY_CLOUDS,                          ALMWB_DESC_CLOUDS               },
-  {ALMWB_KEY_POD,                             ALMWB_DESC_POD                },
-  {ALMWB_KEY_ICON,                            ALMWB_DESC_ICON               },
-  {ALMWB_KEY_CODE,                            ALMWB_DESC_CODE               },
-  {ALMWB_KEY_DESCRIPTION,                     ALMWB_DESC_DESCRIPTION                },
-  {ALMWB_KEY_VIS,                             ALMWB_DESC_VIS                },
-  {ALMWB_KEY_PRECIP,                          ALMWB_DESC_PRECIP               },
-  {ALMWB_KEY_SNOW,                            ALMWB_DESC_SNOW               },
-  {ALMWB_KEY_UV,                              ALMWB_DESC_UV               },
-  {ALMWB_KEY_AQI,                             ALMWB_DESC_AQI                },
-  {ALMWB_KEY_DHI,                             ALMWB_DESC_DHI                },
-  {ALMWB_KEY_DNI,                             ALMWB_DESC_DNI                },
-  {ALMWB_KEY_GHI,                             ALMWB_DESC_GHI                },
-  {ALMWB_KEY_SOLAR_RAD,                       ALMWB_DESC_SOLAR_RAD                },
-  {ALMWB_KEY_ELEV_ANGLE,                      ALMWB_DESC_ELEV_ANGLE               },
-  {ALMWB_KEY_H_ANGLE,                         ALMWB_DESC_H_ANGLE                }
+PROGMEM weatherbitList weatherbitList_key [] = { 
+  {ALMWB_KEY_LAT,                             ALMWB_DESC_LAT,             (const char *)""        },
+  {ALMWB_KEY_LON,                             ALMWB_DESC_LON,             (const char *)""        },
+  {ALMWB_KEY_SUNRISE,                         ALMWB_DESC_SUNRISE,         (const char *)""        },
+  {ALMWB_KEY_SUNSET,                          ALMWB_DESC_SUNSET,          (const char *)""        },
+  {ALMWB_KEY_TIMEZONE,                        ALMWB_DESC_TIMEZONE,        (const char *)""        },
+  {ALMWB_KEY_STATION,                         ALMWB_DESC_STATION,         (const char *)""        },
+  {ALMWB_KEY_OB_TIME,                         ALMWB_DESC_OB_TIME,         (const char *)""        },
+  {ALMWB_KEY_DATETIME,                        ALMWB_DESC_DATETIME,        (const char *)""        },
+  {ALMWB_KEY_TS,                              ALMWB_DESC_TS,              (const char *)""        },
+  {ALMWB_KEY_CITY_NAME,                       ALMWB_DESC_CITY_NAME,       (const char *)""        },
+  {ALMWB_KEY_COUNTRY_CODE,                    ALMWB_DESC_COUNTRY_CODE,    (const char *)""        },
+  {ALMWB_KEY_STATE_CODE,                      ALMWB_DESC_STATE_CODE,      (const char *)""        },
+  {ALMWB_KEY_PRES,                            ALMWB_DESC_PRES,            (const char *)""        },
+  {ALMWB_KEY_SLP,                             ALMWB_DESC_SLP,             (const char *)""        },
+  {ALMWB_KEY_WIND_SPD,                        ALMWB_DESC_WIND_SPD,        (const char *)""        },
+  {ALMWB_KEY_WIND_DIR,                        ALMWB_DESC_WIND_DIR,        (const char *)""        },
+  {ALMWB_KEY_WIND_CDIR,                       ALMWB_DESC_WIND_CDIR,       (const char *)""        },
+  {ALMWB_KEY_WIND_CDIR_FULL,                  ALMWB_DESC_WIND_CDIR_FULL,  (const char *)""        },
+  {ALMWB_KEY_TEMP,                            ALMWB_DESC_TEMP,            (const char *)""        },
+  {ALMWB_KEY_APP_TEMP,                        ALMWB_DESC_APP_TEMP,        (const char *)""        },
+  {ALMWB_KEY_RH,                              ALMWB_DESC_RH,              (const char *)""        },
+  {ALMWB_KEY_DEWPT,                           ALMWB_DESC_DEWPT,           (const char *)""        },
+  {ALMWB_KEY_CLOUDS,                          ALMWB_DESC_CLOUDS,          (const char *)""        },
+  {ALMWB_KEY_POD,                             ALMWB_DESC_POD,             (const char *)""        },
+  {ALMWB_KEY_ICON,                            ALMWB_DESC_ICON,            (const char *)"weather" },
+  {ALMWB_KEY_CODE,                            ALMWB_DESC_CODE,            (const char *)"weather" },
+  {ALMWB_KEY_DESCRIPTION,                     ALMWB_DESC_DESCRIPTION,     (const char *)"weather" },
+  {ALMWB_KEY_VIS,                             ALMWB_DESC_VIS,             (const char *)""        },
+  {ALMWB_KEY_PRECIP,                          ALMWB_DESC_PRECIP,          (const char *)""        },
+  {ALMWB_KEY_SNOW,                            ALMWB_DESC_SNOW,            (const char *)""        },
+  {ALMWB_KEY_UV,                              ALMWB_DESC_UV,              (const char *)""        },
+  {ALMWB_KEY_AQI,                             ALMWB_DESC_AQI,             (const char *)""        },
+  {ALMWB_KEY_DHI,                             ALMWB_DESC_DHI,             (const char *)""        },
+  {ALMWB_KEY_DNI,                             ALMWB_DESC_DNI,             (const char *)""        },
+  {ALMWB_KEY_GHI,                             ALMWB_DESC_GHI,             (const char *)""        },
+  {ALMWB_KEY_SOLAR_RAD,                       ALMWB_DESC_SOLAR_RAD,       (const char *)""        },
+  {ALMWB_KEY_ELEV_ANGLE,                      ALMWB_DESC_ELEV_ANGLE,      (const char *)""        },
+  {ALMWB_KEY_H_ANGLE,                         ALMWB_DESC_H_ANGLE,         (const char *)""        }
 };
 uint8_t weatherbitList_keyCount = ARRAY_SIZE(weatherbitList_key);
+
+
+LList<weatherbitData *> _weatherbitData;
+
+weatherbitData::weatherbitData(const char *  search){
+  for( int j = 0; j < weatherbitList_keyCount; j++) { 
+
+    String key = al_tools::ch_toString(weatherbitList_key[j].key);
+
+    if ( key == al_tools::ch_toString(search) ) _keyPos = j;
+  }   
+}
 
 weatherbitCurrent::weatherbitCurrent() {
 
@@ -63,6 +76,64 @@ weatherbitCurrent::weatherbitCurrent() {
 void weatherbitCurrent::buildUrl(String & result, const String & appId, const String & locationId, const String & language) {
   result = "http://api.weatherbit.io/v2.0/current?city_id=" + locationId + "&lang=" + language + "&key=" + appId;
 }
+
+
+boolean weatherbitCurrent::httpget_updateData(const String & appId, const String & locationId, const String & language) {
+  String url, result;
+
+  buildUrl(url, appId, locationId, language);
+  if (!httpget(url, result)) return false;
+  delay(2);
+  return parse(result);
+}
+
+boolean weatherbitCurrent::httpget(const String & url, String & result) {
+  int code = al_httptools::get_httpdata(result, url);
+  // Serial.printf_P(PSTR("[weatherbitCurrent::httpget] get_httpdata code: %d\n"), code);
+  if ( code != 200) return false;
+  return true;
+}
+
+boolean weatherbitCurrent::parse(const String & json){
+  DynamicJsonDocument doc(15000);
+  DeserializationError error =  deserializeJson(doc, json);
+  ALT_TRACEC("main", "deserializeJson error: %s\n", error.c_str());
+  // if (error) return false;
+  JsonArray array = doc[F("data")];
+  for(size_t i = 0; i < array.size(); ++i) {
+
+      for(int j = 0; j < _weatherbitData.size(); ++j) {
+
+        uint8_t pos = _weatherbitData[j]->_keyPos; 
+
+        String key  = al_tools::ch_toString(weatherbitList_key[pos].key);
+        String root = al_tools::ch_toString(weatherbitList_key[pos].root);
+
+        if (root == "") {
+          // weatherbitList_key[j].data = array[pos][key].as<String>();
+          al_tools::c_str(_weatherbitData[j]->_data, array[i][key].as<String>());
+        } else {
+          // weatherbitList_key[j].data = array[pos][root][key].as<String>();
+          al_tools::c_str(_weatherbitData[j]->_data, array[i][root][key].as<String>());
+        }
+      }
+
+    // for( int j = 0; j < weatherbitList_keyCount; j++) { 
+    //   String key  = al_tools::ch_toString(weatherbitList_key[j].key);
+    //   String root = al_tools::ch_toString(weatherbitList_key[j].root);
+    //   if (root == "")
+    //     weatherbitList_key[j].data = array[i][key].as<String>();
+    //   else {
+    //     weatherbitList_key[j].data = array[i][root][key].as<String>();
+    //   }
+    // }
+
+  }  
+  return true;
+}
+
+/*
+
 void weatherbitCurrent::httpget_updateData(const String & appId, const String & locationId, const String & language) {
   String url;
   buildUrl(url, appId, locationId, language);
@@ -109,55 +180,76 @@ void weatherbitCurrent::httpget_updateData(const String & url) {
     }
   }
 }
+
+*/
+
+
 void weatherbitCurrent::print() {
   for( int i = 0; i < weatherbitList_keyCount; i++) { 
     String s = weatherbitList_key[i].key;
-    String v = weatherbitList_key[i].data;
+    String v;
     String d = weatherbitList_key[i].desc;
-    Serial.printf("%25s - %22s - %s\n", s.c_str(), v.c_str(), d.c_str());
+    // Serial.printf("%25s - %22s - %s\n", s.c_str(), v.c_str(), d.c_str());
+    for(int j = 0; j < _weatherbitData.size(); ++j) {
+      uint8_t pos = _weatherbitData[j]->_keyPos;    
+      if (i==pos) {
+        v = al_tools::ch_toString(_weatherbitData[j]->_data);
+      }
+    }
+    Serial.printf("%25s - %22s - %s\n", s.c_str(), v.c_str(), d.c_str());    
   }     
 }
 void weatherbitCurrent::getKey(String & result, const String & value) {
   result = "";
   for( int i = 0; i < weatherbitList_keyCount; i++) { 
     if(al_tools::ch_toString(weatherbitList_key[i].key) == value) {
-      result = weatherbitList_key[i].data;
+      // result = weatherbitList_key[i].data;
+      
+
+      for(int j = 0; j < _weatherbitData.size(); ++j) {
+        uint8_t pos = _weatherbitData[j]->_keyPos;    
+        if (i==pos) {
+          result = al_tools::ch_toString(_weatherbitData[j]->_data);
+        }
+        // Serial.printf("[%d] %d = %s, %s\n", i, pos, weatherbitList_key[pos].key, _weatherbitData[i]->_data); 
+      }
+
       break;
     }
   }   
 }
 
-void weatherbitCurrent::whitespace(char c) {
-}
+// void weatherbitCurrent::whitespace(char c) {
+// }
 
-void weatherbitCurrent::startDocument() {
-}
+// void weatherbitCurrent::startDocument() {
+// }
 
-void weatherbitCurrent::key(String key) {
-  currentKey = String(key);
-}
+// void weatherbitCurrent::key(String key) {
+//   currentKey = String(key);
+// }
 
-void weatherbitCurrent::value(String value) {
-  for( int i = 0; i < weatherbitList_keyCount; i++) { 
-    if(al_tools::ch_toString(weatherbitList_key[i].key) == currentKey) {
-      weatherbitList_key[i].data = value;
-    }
-  }   
-}
+// void weatherbitCurrent::value(String value) {
+//   for( int i = 0; i < weatherbitList_keyCount; i++) { 
+//     if(al_tools::ch_toString(weatherbitList_key[i].key) == currentKey) {
+//       weatherbitList_key[i].data = value;
+//     }
+//   }   
+// }
 
-void weatherbitCurrent::endArray() {
-}
+// void weatherbitCurrent::endArray() {
+// }
 
-void weatherbitCurrent::endObject() {
-}
+// void weatherbitCurrent::endObject() {
+// }
 
-void weatherbitCurrent::endDocument() {
-}
+// void weatherbitCurrent::endDocument() {
+// }
 
-void weatherbitCurrent::startArray() {
-}
+// void weatherbitCurrent::startArray() {
+// }
 
-void weatherbitCurrent::startObject() {
-}
+// void weatherbitCurrent::startObject() {
+// }
 
 #endif

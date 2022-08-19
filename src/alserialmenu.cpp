@@ -1,3 +1,4 @@
+#ifdef DEBUG_KEYBOARD
 #include "../include/alserialmenu.h"
 #include "../include/altools.h"
 #if defined(ALSI_ENABLED) && defined(DEBUG_KEYBOARD)
@@ -295,3 +296,5 @@ void Sr_menu::serialReadString(const String & v1){
   delete keyStr;
   Serial.flush();
 }
+  
+#endif

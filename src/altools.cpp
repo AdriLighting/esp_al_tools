@@ -20,6 +20,8 @@ https://stackoverflow.com/questions/16982015/getting-const-char-array-from-funct
   DebugPrintList _DebugPrintList;  
 #endif
 
+char * al_tools_cstrBuffer = nullptr;
+
 namespace al_tools {
   #ifdef FILESYSTEM
     unsigned int _SPIFFS_printFiles_size;
@@ -291,6 +293,63 @@ namespace al_tools {
   String ch_toString(const char * c) {
     return String((const __FlashStringHelper*) c);
   } 
+
+  boolean c_str(char * & ptr, const String & str) {
+    uint16_t length = str.length() + 1;
+
+    if (ptr) delete ptr; 
+
+    ptr = new char[length];
+    if(!ptr) {
+      return false;
+    }
+    strcpy(ptr, str.c_str());
+    return true;
+  }
+  boolean c_str(char * & ptr, const char * & str) {
+    if(!str) {
+      return false;
+    }
+        
+    uint16_t length = strlen(str) + 1;
+
+    if (ptr) delete ptr; 
+
+    ptr = new char[length];
+    if(!ptr) {
+      return false;
+    }
+    strcpy(ptr, str);
+    return true;
+  } 
+  boolean c_str(char * & ptr, const char * const & str) {
+    if(!str) {
+      return false;
+    }
+        
+    uint16_t length = strlen(str) + 1;
+
+    if (ptr) delete ptr; 
+
+    ptr = new char[length];
+    if(!ptr) {
+      return false;
+    }
+    strcpy(ptr, str);
+    return true;
+  }    
+  char * c_str(const String & str) {
+    uint16_t length = str.length() + 1;
+
+    if (al_tools_cstrBuffer) delete al_tools_cstrBuffer; 
+
+    al_tools_cstrBuffer = new char[length];
+    if(!al_tools_cstrBuffer) {
+      return nullptr;
+    }
+    strcpy(al_tools_cstrBuffer, str.c_str());
+    return al_tools_cstrBuffer;
+  }
 
   void millis2time_m(const uint64_t & s, char * time){
   uint32_t milliseconds   =       (s / 1000) % 1000;

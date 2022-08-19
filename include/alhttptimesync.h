@@ -109,13 +109,17 @@
         static uint8_t get_minutes(const time_t _tstamp = 0) ;
         static uint8_t get_seconds(const time_t _tstamp = 0) ;
         static uint8_t get_mday(const time_t _tstamp = 0) ;      
+        static uint8_t get_wday(const time_t _tstamp = 0) ;      
+        static uint8_t get_yday(const time_t _tstamp = 0) ;      
         static uint8_t get_month(const time_t _tstamp = 0) ;      
         static uint32_t get_year(const time_t _tstamp = 0) ;      
+        static bool get_dst(const time_t _tstamp = 0) ;      
         static void getDateTimeShortString(String &buf, const time_t _tstamp = 0);
         static void getDateTimeString(String &buf, const time_t _tstamp = 0);
         static void incrementCurrentTime(time_t & result, time_t timeStamp, int day, int hr, int min, int sec);
         static void incrementCurrentTime(struct tm * tm, time_t timeStamp, int day, int hr, int min, int sec);
-        static const time_t* now();     
+        static const time_t* now();  
+        static void getDateString(String &buf, const time_t _tstamp) ;  
     };
 
 

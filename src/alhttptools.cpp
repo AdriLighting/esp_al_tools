@@ -1,4 +1,5 @@
-#include "alhttptools.h"
+#include "../include/alhttptools.h"
+#include "../include/altools.h"
 
 #if defined(ESP8266)
   #include <ESP8266WiFi.h>
@@ -7,21 +8,122 @@
   #include <WiFi.h>
   #include <HTTPClient.h>
 #endif
+#ifdef FILESYSTEM
+  #if defined USE_SPIFFS
+    #include <FS.h>
+  #elif defined USE_LITTLEFS
+    #include <LittleFS.h> 
+  #endif
+#endif
+
+typedef void (*ProgressCallback)(const String &fileName, int16_t bytesDownloaded, int16_t bytesTotal);
+
 
 namespace al_httptools {
   unsigned int get_httpdata(String & payload, const String &url) {
+
     WiFiClient client;
     HTTPClient http;
-    Serial.printf_P( PSTR("[al_httptools::getHttpData] [url: %s]\n"), url.c_str());
+
+    ALT_TRACEC("main", "[get_httpdata]\n\turl: %s\n", url.c_str());  
+
     http.begin(client, url);
 
     int httpCode = http.GET();
     if (httpCode == HTTP_CODE_OK){
       payload = http.getString(); 
-    } else {
-      Serial.printf_P( PSTR("[ERR] [getHttpData] [HTTPCode: %d]\n"), httpCode);
     }
     http.end();
+
+    ALT_TRACEC("main", "&c:1&s:\tHTTPCode: %d\n", httpCode);  
+
     return httpCode;
   }
+
+
+unsigned int downloadFile(const String &url, const String &filename, ProgressCallback progressCallback) {
+  #ifdef FILESYSTEM
+    ALT_TRACEC("main", "[downloadFile][START]\n") ;
+    ALT_TRACEC("main", "&c:1&s:\tDownloading %s and saving as %s\n", url.c_str(), filename.c_str()) ;  
+
+    HTTPClient http;
+    WiFiClient client;
+    
+    #ifdef ALT_DEBUG_TARCE
+      Serial.print(F("\t[HTTP] begin...\n"));  
+    #endif
+
+    // configure server and url
+    http.begin(client, url);
+
+    ALT_TRACEC("main", "&c:1&s:\t[HTTP] GET...\n");  
+
+    // start connection and send HTTP header
+    int httpCode = http.GET();
+    if(httpCode > 0) {
+        //FILESYSTEM.remove(filename);
+        File f = FILESYSTEM.open(filename, "w");
+        if (!f) {
+
+            ALT_TRACEC("main", "&c:1&s:\t[FAIL]\n");
+            ALT_TRACEC("main", "&c:1&s:t\tfile open failed\n");  
+
+            return -1;
+        }
+
+        // HTTP header has been send and Server response header has been handled
+        ALT_TRACEC("main", "&c:1&s:\t[HTTP] GET... code: %d\n", httpCode);  
+
+        // file found at server
+        if(httpCode == HTTP_CODE_OK) {
+
+            // get lenght of document (is -1 when Server sends no Content-Length header)
+            int total = http.getSize();
+            int len = total;
+            // progressCallback(filename, 0,total);
+            // create buffer for read
+            uint8_t buff[128] = { 0 };
+
+            // get tcp stream
+            WiFiClient * stream = http.getStreamPtr();
+
+            // read all data from server
+            while(http.connected() && (len > 0 || len == -1)) {
+                // get available data size
+                size_t size = stream->available();
+
+                if(size) {
+                    // read up to 128 byte
+                    int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
+
+                    // write it to Serial
+                    f.write(buff, c);
+
+                    if(len > 0) {
+                        len -= c;
+                    }
+                    // progressCallback(filename, total - len,total);
+                }
+                delay(1);
+            }
+
+            ALT_TRACEC("main", "&c:1&s:\t[HTTP] connection closed or file end.\n");  
+
+        }
+        f.close();
+    } else {
+      ALT_TRACEC("main", "&c:1&s:\t[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());  
+    }
+    
+    http.end();
+    return httpCode;  
+  #else
+    return -1;  
+  #endif
+}
+
+unsigned int downloadFile(const String &url, const String &filename) {
+  return downloadFile(url, filename, nullptr);
+}
+
 }
