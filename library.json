@@ -29,12 +29,6 @@
         "version": "https://github.com/PaulStoffregen/Time.git"
     },
     {
-        "owner": "squix78",
-        "name": "Json Streaming Parser",
-        "version": "https://github.com/squix78/json-streaming-parser.git"
-    },
-    
-    {
         "owner": "Ivan Seidel",
         "name": "LinkedList",
         "version": "https://github.com/AdriLighting/LinkedList.git"

@@ -1,8 +1,3 @@
-/*
-    Author: adrilighting
-    original source: https://docs.thingpulse.com/guides/wifi-color-display-kit/
-*/
-
 #ifdef WEATHERBITFORECAST_ENABLED
 
 #ifndef _WEATHERBITFORECAST_H

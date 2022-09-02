@@ -1,14 +1,14 @@
 #ifndef WEATHERAPIID_H
   #define WEATHERAPIID_H
     #include <Arduino.h>
-    // #define WEATHERBIT_APP_ID  Sting("abb4137bd9474b30ab29f9d286a268e6")
+    // #define WEATHERBIT_APP_ID  Sting("")
 
     // #define WEATHER_LOCATION_ID Sting("2972214")
     // #define WEATHER_LANGUAGE    Sting("fr")
     // 
     //IS_METRIC ? "metric" : "imperial";
-static const char  WEATHERBIT_APPID   [] PROGMEM = "4b771a18fe0640a9939fd9492e162e00"; // abb4137bd9474b30ab29f9d286a268e6
-static const char  OPENWEATHERMAP_APPID [] PROGMEM = "603ef62761eb23b76ac8c8af7711776f";
+static const char  WEATHERBIT_APPID   [] PROGMEM = ""; // 
+static const char  OPENWEATHERMAP_APPID [] PROGMEM = "";
 
 static const char  WEATHER_LOCATIONID   [] PROGMEM = "2972214";
 static const char  WEATHER_LANGUAGE     [] PROGMEM = "fr";
