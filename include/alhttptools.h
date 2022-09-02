@@ -3,8 +3,9 @@
 #include <Arduino.h>
 
 namespace al_httptools {
-  unsigned int get_httpdata(String &, const String &);
-  unsigned int downloadFile(const String &, const String &);
+  int get_httpdata(String &, const String &);
+  int post_httpdata(String & payload, const String &url, const String &data);
+  int downloadFile(const String &, const String &);
 }
 
 #endif // _ALHTTPTOOLS_H

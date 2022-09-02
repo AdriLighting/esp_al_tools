@@ -77,13 +77,14 @@ extern "C" int clock_gettime(clockid_t unused, struct timespec *_tp);
 
 
 void printTm(const char* what, const tm* tm) {
-  Serial.print(what);
+  Serial.printf_P(PSTR("%s"), what);
   PTM(isdst); PTM(yday); PTM(wday);
   PTM(year);  PTM(mon);  PTM(mday);
   PTM(hour);  PTM(min);  PTM(sec);
 }
 
 // framework-arduinoespressif8266\libraries\esp8266\examples\NTP-TZ-DST\NTP-TZ-DST.ino
+/*
 void showTime() {
   timeval _tv;
   timespec _tp;
@@ -153,29 +154,8 @@ void showTime() {
   #endif
   Serial.println();
 }
+*/
 
-
-void worldclock(){
-
-
-
-
-// time_t tstampBadUTC;
-// AL_timeHelper::incrementCurrentTime(tstampBadUTC, 0, 0, -15, 0, 0);
-// String buf = "";
-// AL_timeHelper::getDateTimeString(buf, 0);
-// Serial.printf("current: %s\n", buf.c_str());
-// buf = "";
-// AL_timeHelper::getDateTimeString(buf, tstampBadUTC);
-// Serial.printf("current+10min: %s\n", buf.c_str());
-// char tmpStr[100];
-// sprintf(tmpStr, "%02d:%02d:%02d", _Event_time.getHours(), _Event_time.getMinutes(), _Event_time.getSeconds());
-// Serial.write(27);       // ESC command
-// Serial.print("[2J");    // clear screen command
-// Serial.write(27);
-// Serial.print("[H");      
-// ALT_TRACEC("main", "%s\n", tmpStr);
-}
 
 
 
@@ -388,7 +368,7 @@ void AL_httpTime::onSTAGotIP(WiFiEventStationModeGotIP ipInfo)
 
     sntp_init();
     ntpResync_start();
-    showTime();
+    // if (ALT_debugPrint("main")) showTime();
 }
 void AL_httpTime::onSTADisconnected(WiFiEventStationModeDisconnected ipInfo)
 {
@@ -451,6 +431,7 @@ void AL_httpTime::set_time(String str, uint32_t lastUpdate) {
 }
 
 void AL_httpTime::get_timeHTTP() {
+  yield();
   ALT_TRACEC("main", "-\n");
   String    buf       = "";
   uint32_t  lastcall  = millis();
@@ -554,8 +535,9 @@ void AL_httpTime::get_timeHTTP() {
     al_tools::on_time_h(tDelay, sDelay);
     ALT_TRACEC("main", "[next request]\n\t%d\n\t%s\n", tDelay, sDelay.c_str());
   }
-
-  showTime() ;
+  
+  yield();
+  // showTime() ;
 }
 
 void AL_httpTime::httprefreshtimer(const uint32_t delay, uint32_t &result){

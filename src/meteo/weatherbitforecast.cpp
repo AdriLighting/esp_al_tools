@@ -5,9 +5,19 @@
 
 #ifdef WEATHERBITFORECAST_ENABLED
 
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266HTTPClient.h>
+  #if defined(ESP8266)
+    extern "C" {
+      #include "user_interface.h"
+    }
+    #include <ESP8266WiFi.h>
+    #include <ESP8266mDNS.h>
+    #include <ESP8266HTTPClient.h>
+  #elif defined(ESP32)
+    #include <ESPmDNS.h>
+    #include <WiFi.h>
+    #include <HTTPClient.h>
+  #endif
+#include <WiFiClient.h>    
 #include "../../include/meteo/weatherbitforecast.h"
 #include "../../include/altools.h"
 #include "../../include/alhttptools.h"
@@ -124,7 +134,7 @@ boolean weatherbitForecast::httpget(const String & url, String & result) {
   return true;
 }
 boolean weatherbitForecast::parse(const String & json){
-  DynamicJsonDocument doc(6200);
+  DynamicJsonDocument doc(4000);
   DeserializationError error =  deserializeJson(doc, json);
   ALT_TRACEC("main", "deserializeJson error: %s\n", error.c_str());
 

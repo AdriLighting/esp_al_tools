@@ -160,15 +160,10 @@
             "country": "Espagne"
         },
         {
-            "timezone": "Europe/Berlin",
-            "name": "Berlin",
-            "country": "Allemagne"
-        },
             "timezone": "Europe/Amsterdam",
             "name": "Amsterdam",
             "country": "Pays-Bas"
-        },
-
+        }
     ]
 }
 */
@@ -390,7 +385,6 @@ void WorldClock::get_timeByCity(uint8_t p, time_t & result){
     result = ts;
   }
 }
-
 void WorldClock::get_timeByCity(const char * search, String & result, boolean shortTime){
   time_t ts;
   get_timeByCity(search, ts);
@@ -398,6 +392,15 @@ void WorldClock::get_timeByCity(const char * search, String & result, boolean sh
   else  AL_timeHelper::getDateTimeString(result, ts);
 }
 
+WorldClockItem * WorldClock::get_item(uint8_t i) {return _list.get(i);}
+WorldClockItem * WorldClock::get_itemByCity(const char * search){
+  for(int i = 0; i < _list.size(); ++i) {
+    WorldClockItem * item = _list.get(i);
+    if (strcmp(search, item->_name) != 0) continue;
+    return item;
+  }
+  return nullptr;
+}
 
 void WorldClock::print_times(boolean shortTime){
   int utc_fr = 2;

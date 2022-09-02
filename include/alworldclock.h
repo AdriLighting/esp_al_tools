@@ -41,6 +41,9 @@
     void get_timeByCity(const char * search, time_t & result);
     void get_timeByCity(const char * search, String & result, boolean shortTime = true);
     void get_timeByCity(uint8_t p, time_t & result);
+
+    WorldClockItem * get_item(uint8_t);
+    WorldClockItem * get_itemByCity(const char * search);
   };
 
   extern WorldClock _WorldClock;

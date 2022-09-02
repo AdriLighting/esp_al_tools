@@ -1,17 +1,38 @@
 #ifndef WEATHERAPIID_H
   #define WEATHERAPIID_H
-
+    #include <Arduino.h>
     // #define WEATHERBIT_APP_ID  Sting("abb4137bd9474b30ab29f9d286a268e6")
 
     // #define WEATHER_LOCATION_ID Sting("2972214")
     // #define WEATHER_LANGUAGE    Sting("fr")
     // 
     //IS_METRIC ? "metric" : "imperial";
-    static const char  WEATHERBIT_APPID   [] PROGMEM = "4b771a18fe0640a9939fd9492e162e00"; // abb4137bd9474b30ab29f9d286a268e6
-    static const char  OPENWEATHERMAP_APPID [] PROGMEM = "603ef62761eb23b76ac8c8af7711776f";
+static const char  WEATHERBIT_APPID   [] PROGMEM = "4b771a18fe0640a9939fd9492e162e00"; // abb4137bd9474b30ab29f9d286a268e6
+static const char  OPENWEATHERMAP_APPID [] PROGMEM = "603ef62761eb23b76ac8c8af7711776f";
 
-    static const char  WEATHER_LOCATIONID   [] PROGMEM = "2972214";
-    static const char  WEATHER_LANGUAGE     [] PROGMEM = "fr";
+static const char  WEATHER_LOCATIONID   [] PROGMEM = "2972214";
+static const char  WEATHER_LANGUAGE     [] PROGMEM = "fr";
+
+
+// http://api.openweathermap.org/data/2.5/weather?id=
+static const char  OPENWEATHERMAP_URL     [] PROGMEM = "http://api.openweathermap.org/data/2.5/weather/";
+// http://api.weatherbit.io/v2.0/current?city_id=
+static const char  WEATHERBIT_URL         [] PROGMEM = "http://api.weatherbit.io/v2.0/";
+// http://api.weatherbit.io/v2.0/forecast/daily?city_id=
+// static const char  WEATHERBITFORECAST_URL [] PROGMEM = "http://api.weatherbit.io/v2.0/forecast/";
+class alt_weatherApi
+{
+public:
+  alt_weatherApi();
+  ~alt_weatherApi(){};
+  
+  char * _wb_id       = nullptr;
+  char * _ow_id       = nullptr;
+  char * _wb_location = nullptr;
+  char * _ow_location = nullptr;
+  char * _lang        = nullptr;
+};
+extern alt_weatherApi _alt_weatherApi; 
 
 static const char ALMWBF_KEY_VALID_DATE            [] PROGMEM = "valid_date";
 static const char ALMWBF_KEY_TS                    [] PROGMEM = "ts";
@@ -137,5 +158,6 @@ static const char ALMWB_DESC_ELEV_ANGLE     [] PROGMEM = "Solar elevation angle 
 static const char ALMWB_DESC_H_ANGLE        [] PROGMEM = "Solar hour angle (degrees).";
 
 
-    
+
+
 #endif // WEATHERAPIID_H

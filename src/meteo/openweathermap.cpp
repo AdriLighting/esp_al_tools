@@ -82,7 +82,7 @@ namespace al_openweathermap {
   void getJson(OpenWeatherMap_t * data, boolean isMetric, const String & appId, const String & locationId, const String & language) {
       String  units = isMetric ? "metric" : "imperial";
       String  url   = "http://api.openweathermap.org/data/2.5/weather?id=" + locationId + "&appid=" + appId + "&units=" + units + "&lang=" + language;
-      
+
       String result = "";
       al_httptools::get_httpdata(result, url);
       DynamicJsonDocument doc(3200);

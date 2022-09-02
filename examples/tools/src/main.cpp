@@ -81,7 +81,7 @@ void setup()
   //
   
   File f ;
-  DynamicJsonDocument doc(10000);
+  DynamicJsonDocument doc(3072);
   JsonObject          root;
   JsonArray           arr;
 
@@ -98,7 +98,27 @@ void setup()
   f = FILESYSTEM.open("/test/test_1.json", "w");
   serializeJson(doc, f);
   f.close();
-
+  f = FILESYSTEM.open("/test/test_2.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test/test_3.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test_1.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test_2.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test_3.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test_4.json", "w");
+  serializeJson(doc, f);
+  f.close();
+  f = FILESYSTEM.open("/test_5.json", "w");
+  serializeJson(doc, f);
+  f.close();
 
   doc.clear();doc.garbageCollect();
   root = doc.to<JsonObject>();
@@ -123,7 +143,9 @@ void setup()
    * @param[in]  display         print file content
    */                                
   al_tools::SPIFFS_PRINT("/", false, false); // display files and folder
+  Serial.println();
   al_tools::SPIFFS_PRINT("/test", false, false, false); // display files and folder
+  Serial.println();
 
   // al_tools::SPIFFS_readFile("/test/test_1.json"); // simpl read file  
 
@@ -131,9 +153,23 @@ void setup()
   // make json with folder and files from filesystem
   doc.clear();doc.garbageCollect();
   root = doc.to<JsonObject>();
-  al_tools::SPIFFS_printFiles("/test", root, false, false);
+  al_tools::SPIFFS_printFiles("/", root, false, false);
   serializeJsonPretty(doc, Serial);Serial.println();
 
+
+  LList<FilePathList *> _FilePathList;
+  al_tools::SPIFFS_listFiles(&_FilePathList, "/", true);
+  for(int i = 0; i < _FilePathList.size(); ++i) {
+    String fo     = _FilePathList[i]->_folder;
+    String fi     = _FilePathList[i]->_file;
+    // size_t size   = _FilePathList[i]->_size;
+    Serial.printf_P(PSTR("[%3d] %25s %s\n"), i, fo.c_str(), fi.c_str());
+  }
+  while (_FilePathList.size()) {
+    FilePathList * item = _FilePathList.shift();
+    delete item;
+  }
+  _FilePathList.clear();
 
   // deserialise json from file
   // doc.clear();

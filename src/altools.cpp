@@ -52,26 +52,48 @@ namespace al_tools {
         }
         _SPIFFS_printFiles_size += totalsize;
       #elif defined(ESP32)
-        File dir = fs.open(path);
-        File sub_dir = dir.openNextFile();
-        while (sub_dir) {
-          if (sub_dir.isDirectory()) {
-            SPIFFS_printFiles(fs, sub_dir.name(), obj, folders, display);
-          }
-          else {
-            int LarraySize;
-            const char  ** Larray = al_tools::explode(sub_dir.name(), '/', LarraySize);
-            String      fileName  = Larray[LarraySize-1];
-            for(int i = 0; i < LarraySize; ++i) {delete Larray[i];}
-            delete[] Larray; 
-            JsonObject var = arr.createNestedObject(); 
-            var[F("file")] = fileName;
-            var[F("size")] = sub_dir.size();   
-            totalsize += sub_dir.size();
-          }
 
-          sub_dir = dir.openNextFile();
+        Serial.print("SPIFFS_printFiles[S] open DIR : ");
+        Serial.println(path);
+
+        File dir = FILESYSTEM.open(path);
+        if(!dir){
+          Serial.println("- failed to open directory");
+          return;
         }
+        if(!dir.isDirectory()){
+          Serial.println(" - not a directory");
+          return;
+        }
+
+        File file = dir.openNextFile();
+        while(file){
+          if(file.isDirectory()){
+            
+            Serial.print("  DIR : ");
+            Serial.println(file.name());
+
+            // if (subFolder) {
+              Serial.print(" SPIFFS_printFiles : ");
+              Serial.println(path + "/" + file.name());               
+              SPIFFS_printFiles(fs, path + "/" + file.name(), obj, folders, display);
+            // }
+          } else {
+            const String name = String(file.name());
+            
+            Serial.print("  FILE: ");
+            Serial.print(file.name());
+            Serial.print("  SIZE: ");
+            Serial.println(file.size());
+
+            JsonObject var = arr.createNestedObject();     
+            var[F("file")] = name;
+            var[F("size")] = file.size();   
+            totalsize += file.size(); 
+          }
+          file = dir.openNextFile();
+        }
+        _SPIFFS_printFiles_size += totalsize;
       #endif
     }  
     void SPIFFS_printFiles(const String & path, JsonObject & obj, boolean display, boolean subFolder){
@@ -82,7 +104,6 @@ namespace al_tools {
 
 
       if (path != "/") root = obj.createNestedObject(F("/"));
-
 
       String sPath = path;
       if (path.substring(0, 1) != "/") sPath = "/" + path;
@@ -117,32 +138,53 @@ namespace al_tools {
         root[F("size")] = totalsize;
         root[F("sizeTotal")] = totalsize+al_tools::_SPIFFS_printFiles_size;
       #elif defined(ESP32)
-        File dir = FILESYSTEM.open(path);
-        File fFile = dir.openNextFile();
-        while (fFile) {
-          if (fFile.isDirectory() && subFolder) {
-            SPIFFS_printFiles(FILESYSTEM, fFile.name(), root, aFolder, display);
-          } else  {
-            int LarraySize;
-            const char  ** Larray = al_tools::explode(fFile.name(), '/', LarraySize);
-            String      fileName  = Larray[LarraySize-1];
-            for(int i = 0; i < LarraySize; ++i) {delete Larray[i];}
-            delete[] Larray; 
-            // Larray = al_tools::explode(fileName, '.', LarraySize);
-            // String key = ""; 
-            // for (int i = 0; i < LarraySize-1; ++i) {
-            //   if (i >= LarraySize-2)  key += String(Larray[i]) ;
-            //   else key += String(Larray[i]) + ".";
-            // }
-            // for(int i = 0; i < LarraySize; ++i) {delete Larray[i];}
-            // delete[] Larray; 
-            // JsonObject file = root.createNestedObject(key);
+
+        Serial.print("SPIFFS_printFiles open DIR : ");
+        Serial.println(sPath);
+
+        File dir = FILESYSTEM.open(sPath);
+        if(!dir){
+          Serial.println("- failed to open directory");
+          return;
+        }
+        if(!dir.isDirectory()){
+          Serial.println(" - not a directory");
+          return;
+        }
+
+        File file = dir.openNextFile();
+        while(file){
+          if(file.isDirectory()){
+
+            Serial.print("  DIR : ");
+            Serial.println(file.name());
+
+            if (subFolder) {
+              if (path == "/") {
+                Serial.print(" SPIFFS_printFiles : ");
+                Serial.println(file.name());                    
+                al_tools::SPIFFS_printFiles(FILESYSTEM, path+file.name(), root, aFolder, display);
+              }
+              else {
+                Serial.print(" SPIFFS_printFiles : ");
+                Serial.println(path + "/" + file.name()); 
+                al_tools::SPIFFS_printFiles(FILESYSTEM, path + "/" + file.name(), root, aFolder, display); 
+              }                 
+            }
+          } else {
+            const String name = String(file.name());
+            Serial.print("  FILE: ");
+            Serial.print(file.name());
+            Serial.print("  SIZE: ");
+
+            Serial.println(file.size());
+
             JsonObject var = arr.createNestedObject(); 
-            var[F("file")] = fileName;
-            var[F("size")] = fFile.size();   
-            totalsize += fFile.size();
+            var[F("file")] = name;
+            var[F("size")] = file.size();   
+            totalsize += file.size();
           }
-          fFile = dir.openNextFile();
+          file = dir.openNextFile();
         }
         root[F("size")] = totalsize;
         root[F("sizeTotal")] = totalsize+_SPIFFS_printFiles_size;
@@ -176,7 +218,7 @@ namespace al_tools {
       JsonObject obj_1 ;
       JsonArray oPath;
 
-      DynamicJsonDocument doc(10000);
+      DynamicJsonDocument doc(5000);
       JsonObject root = doc.to<JsonObject>();
       al_tools::SPIFFS_printFiles(in, root, false, subFolder);
       if (SerializePrint) {serializeJsonPretty(doc, Serial);Serial.println("");}
@@ -224,7 +266,6 @@ namespace al_tools {
     } 
    
     void SPIFFS_listFiles(LList<FilePathList * > * ptr, const String & in, boolean subFolder){
-      JsonObject obj_1 ;
       JsonArray oPath;      
       DynamicJsonDocument doc(10000);
       JsonObject root = doc.to<JsonObject>();
@@ -232,39 +273,46 @@ namespace al_tools {
       JsonArray arr = doc[F("folders")].as<JsonArray>();  
       for (size_t i = 0; i < arr.size(); i++) {
         String path = arr[i].as<String>();
-        JsonArray oPath;
-        if (path == "/") oPath = doc[path][F("items")].as<JsonArray>();
+        if (path == "/") {
+          oPath = doc[path][F("items")].as<JsonArray>();
+          // Serial.printf("[%d] oPath: [%s][items]\n", i, path.c_str());
+        }
         else {
-          if (in == "/") oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+          if (in == "/") {
+            oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+            // Serial.printf("[%d] oPath: [/][%s][items]\n", i, path.c_str());
+          }
           else {
-            String addF = in;
-            if (addF.substring(0, 1) == "/") addF.remove(0,1);
-            obj_1 = doc[F("/")][addF];
-            uint8_t j=0;
-            for (JsonObject item : obj_1[F("items")].as<JsonArray>()) {
-              String file =  item["file"].as<String>();
-              size_t size = oPath[j][F("size")].as<size_t>();
-              String rPath = "";
-              if (path.substring(0, 1) != "/") {rPath= "/" + path + "/" ;}
-              else {rPath= path + "/";}
-              ptr->add( new FilePathList(rPath, file, size));
-              j++;
+            if (path.substring(0, 1) != "/") {
+              if ("/" + path == in) {
+                oPath = doc[F("/")][path][F("items")].as<JsonArray>();
+                // Serial.printf("[%d] oPath: [/][%s][items]\n", i, path.c_str());            
+              } else {
+                String addF = in; addF.remove(0,1);
+                oPath = doc[F("/")][addF][path][F("items")].as<JsonArray>();
+                // Serial.printf("[%d] oPath: [/][%s][%s][items]\n", i, addF.c_str(), path.c_str());
+              }
             }
-            oPath = obj_1[path][F("items")].as<JsonArray>();
           }
         }
         uint8_t j=0;
         for (JsonObject item : oPath) {
           String file =  item["file"].as<String>();
           size_t size = oPath[j][F("size")].as<size_t>();
-          String rPath = "";
-          if (path.substring(0, 1) != "/") {rPath= "/" + path + "/" ;}
-          else {rPath= path + "/";
-          ptr->add( new FilePathList(rPath, file, size));
+          // String rPath = "";
+          String fo = "";
+          if (path == "/") {
+            // rPath = "/" + file;
+            fo = "/";
+          } else {
+            // rPath = "/" + path + "/" + file;
+            fo = "/" + path + "/";
+          }
+          // Serial.printf("\t[%3d] file: %30s -> %s\n", j, file.c_str(), fo.c_str());
+          ptr->add( new FilePathList(fo, file, size));
           j++;
-        }
-      }          
-    }
+        }          
+      }
   }
     void SPIFFS_deleteRecursive(fs::FS &fs, const String &path) {
 

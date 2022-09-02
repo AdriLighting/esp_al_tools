@@ -21,7 +21,7 @@ void setup()
 
   const char * result = "";
   ALSYSINFO_getValByKey(ALSI_FREEHEAP, result);
-  Serial.printf_P("KEY: %s - RESULT: %s\n", ALSI_FREEHEAP, result);
+  Serial.printf_P(PSTR("KEY: %s - RESULT: %s\n"), ALSI_FREEHEAP, result);
 
   DynamicJsonDocument doc(1024);
   ALSYSINFO_getterByCat(doc, ALSI_BOARD);

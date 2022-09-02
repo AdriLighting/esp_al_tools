@@ -4,6 +4,8 @@
 AsyncWebServer  webserver(80);
 DNSServer       dnsServer;
 WCEVO_manager   _WCEVO_manager("httptime", "alml1234", &dnsServer, &webserver);  
+// weatherData _weatherData;
+// weatherData _weatherDataArray[4];
 
 void setup() {
   Serial.begin(115200);
@@ -31,6 +33,19 @@ void setup() {
 
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
+
+  Serial.printf_P(PSTR("[_weatherbitData]\n"));
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_DESCRIPTION)    );
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_ICON)           );
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_TEMP)           );
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_RH)             );
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_CITY_NAME)      );
+  _weatherbitData.add( new weatherbitData(ALMWB_KEY_WIND_CDIR_FULL) );
+
+  Serial.printf_P(PSTR("[_weatherbitForecastListSet]\n"));
+  _weatherbitForecastListSet.add( new weatherbitForecastListSet(ALMWB_KEY_TEMP)  );
+  _weatherbitForecastListSet.add( new weatherbitForecastListSet(ALMWB_KEY_TS)    );
+  _weatherbitForecastListSet.add( new weatherbitForecastListSet(ALMWB_KEY_ICON)  );  
 }
 
 uint8_t modLoop = 0;
@@ -53,13 +68,14 @@ void loop() {
 #endif
 
 #ifdef WEATHERBITFORECAST_ENABLED
-    weatherbitForecast _weatherbitForecast;
-    _weatherbitForecast.httpget_updateData(FPSTR(WEATHERBIT_APPID), FPSTR(WEATHER_LOCATIONID), FPSTR(WEATHER_LANGUAGE));
-    _weatherbitForecast.print(); 
+    weatherbitForecast * _weatherbitForecast;
+    _weatherbitForecast = new weatherbitForecast(_weatherbitForecastListSet.size());
+    _weatherbitForecast->httpget_updateData(FPSTR(WEATHERBIT_APPID), FPSTR(WEATHER_LOCATIONID), FPSTR(WEATHER_LANGUAGE));
+    _weatherbitForecast->print(); 
     Serial.println();
-    _weatherbitForecast.getKey(searchValue, 0, FPSTR(ALMWB_KEY_TEMP));
+    _weatherbitForecast->getKey(searchValue, 0, FPSTR(ALMWB_KEY_TEMP));
     Serial.println(searchValue);  
-
+    delete _weatherbitForecast;
     delay(2000);
 #endif
 

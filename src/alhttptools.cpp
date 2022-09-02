@@ -20,7 +20,7 @@ typedef void (*ProgressCallback)(const String &fileName, int16_t bytesDownloaded
 
 
 namespace al_httptools {
-  unsigned int get_httpdata(String & payload, const String &url) {
+  int get_httpdata(String & payload, const String &url) {
 
     WiFiClient client;
     HTTPClient http;
@@ -39,9 +39,28 @@ namespace al_httptools {
 
     return httpCode;
   }
+  int post_httpdata(String & payload, const String &url, const String &data) {
 
+    WiFiClient client;
+    HTTPClient http;
 
-unsigned int downloadFile(const String &url, const String &filename, ProgressCallback progressCallback) {
+    ALT_TRACEC("main", "[get_httpdata]\n\turl: %s\n", url.c_str());  
+
+    http.begin(client, url);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.POST(data);
+    if (httpCode == HTTP_CODE_OK){
+      payload = http.getString(); 
+    }
+    http.end();
+    
+    ALT_TRACEC("main", "&c:1&s:\tHTTPCode: %d\n", httpCode);  
+
+    return httpCode;
+    
+  }
+
+int downloadFile(const String &url, const String &filename, ProgressCallback progressCallback) {
   #ifdef FILESYSTEM
     ALT_TRACEC("main", "[downloadFile][START]\n") ;
     ALT_TRACEC("main", "&c:1&s:\tDownloading %s and saving as %s\n", url.c_str(), filename.c_str()) ;  
@@ -122,7 +141,7 @@ unsigned int downloadFile(const String &url, const String &filename, ProgressCal
   #endif
 }
 
-unsigned int downloadFile(const String &url, const String &filename) {
+int downloadFile(const String &url, const String &filename) {
   return downloadFile(url, filename, nullptr);
 }
 

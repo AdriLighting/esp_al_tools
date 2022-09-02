@@ -75,9 +75,9 @@ void loop()
         AL_timeHelper::getDateTimeString(buf, tstampBadUTC);
         Serial.printf("current+10hr: %s\n", buf.c_str()); 
       }
-      _WorldClock.new_timeByCity("Berlin");
-      _WorldClock.new_timeByCity("New York City");
-      _WorldClock.new_timeByCity("London");
+  _WorldClock.new_timeByCity("Shanghai");
+  _WorldClock.new_timeByCity("Tokyo");  
+  _WorldClock.new_timeByCity("Berlin");  
       _WorldClock.print_registeredTime();    
       loopMod = 1;
     break;
