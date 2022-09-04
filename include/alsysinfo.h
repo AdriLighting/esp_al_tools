@@ -22,10 +22,26 @@
  * SOFTWARE.
  */
 
+#ifdef ALSI_ENABLED
 #ifndef _ALSYSINFO_H
   #define _ALSYSINFO_H
   #include <Arduino.h>
   #include <ArduinoJson.h>
+
+
+  #ifdef FILESYSTEM 
+    #if defined USE_LITTLEFS
+      #if defined(ESP8266)
+        #include <LittleFS.h> 
+      #elif defined(ESP32)
+        #include <FS.h>
+        #include <LITTLEFS.h>
+      #endif
+    #elif defined USE_SPIFFS
+      #include <FS.h>
+    #endif
+  #endif  
+
 
   static const char ALSI_FREEHEAP        [] PROGMEM = "Free Heap";         // Ram
   #ifdef ESP8266
@@ -137,4 +153,5 @@
   void ALSYSINFO_keyboard_getter(const String & v1); 
   void ALSYSINFO_keyboard_print();  
   boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) ;  
+#endif // _ALSYSINFO_H
 #endif // _ALSYSINFO_H

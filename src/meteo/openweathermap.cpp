@@ -22,7 +22,11 @@
  * SOFTWARE.
  */
 
-
+#ifndef ALT_DEFINE_DEFAULT
+  #ifndef OPENWEATHMAP_ENABLED
+    #define OPENWEATHMAP_ENABLED
+  #endif
+#endif
 #ifdef OPENWEATHMAP_ENABLED
 
 #include "../../include/meteo/openweathermap.h"

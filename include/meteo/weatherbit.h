@@ -22,7 +22,11 @@
  * SOFTWARE.
  */
 
-
+#ifndef ALT_DEFINE_DEFAULT
+  #ifndef WEATHERBIT_ENABLED
+    #define WEATHERBIT_ENABLED
+  #endif
+#endif
 #ifdef WEATHERBIT_ENABLED
 
 #ifndef WEATHERBIT_H

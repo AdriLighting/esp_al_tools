@@ -22,20 +22,12 @@
  * SOFTWARE.
  */
 
-#include "../include/alsysinfo.h"
 
-    #ifdef FILESYSTEM 
-      #if defined USE_LITTLEFS
-        #if defined(ESP8266)
-          #include <LittleFS.h> 
-        #elif defined(ESP32)
-          #include <FS.h>
-          #include <LITTLEFS.h>
-        #endif
-      #elif defined USE_SPIFFS
-        #include <FS.h>
-      #endif
-    #endif  
+#include "../include/altools.h"
+
+#ifdef ALSI_ENABLED
+
+  #include "../include/alsysinfo.h"
 
   #if defined(ESP8266)
     #define WIFI_getChipId()  ESP.getChipId() 
@@ -47,7 +39,6 @@
     #include <esp_wifi.h>
   #endif
 
-#include "../include/altools.h"
 
 /*
 #include <cmath>
@@ -852,3 +843,5 @@ void ALSYSINFO_keyboard_print() {
     ALSYSINFO_keyboard_getter(v1);    
   }, SR_MM::SRMM_KEYVAL);   
 */
+
+#endif

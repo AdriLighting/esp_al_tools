@@ -22,6 +22,47 @@
  * SOFTWARE.
  */
 
+
+#ifndef ALT_DEFINE_DEFAULT
+  #ifndef OPENWEATHMAP_ENABLED
+    #define OPENWEATHMAP_ENABLED
+  #endif
+  #ifndef WEATHERBIT_ENABLED
+    #define WEATHERBIT_ENABLED
+  #endif
+  #ifndef WEATHERBITFORECAST_ENABLED
+    #define WEATHERBITFORECAST_ENABLED
+  #endif
+  #ifndef ALTIMESYNC_ENABLED
+    #define ALTIMESYNC_ENABLED
+  #endif
+  #ifndef ALWORLDCLOCK_ENABLED
+    #define ALWORLDCLOCK_ENABLED
+  #endif
+
+  #ifndef FSOK
+    #define FSOK
+  #endif
+  #ifndef USE_LITTLEF
+    #define USE_LITTLEF
+  #endif
+  #ifndef FILESYSTEM
+    #if defined(ESP8266)
+      #include <LittleFS.h> 
+      #define FILESYSTEM LittleFS  
+    #elif defined(ESP32)
+      #include <FS.h>
+      #include <LITTLEFS.h>
+      #define FILESYSTEM LittleFS
+    #endif
+  #endif
+  #ifndef ALT_DEBUG_TARCE
+      #define ALT_DEBUG_TARCE
+  #endif
+#endif
+
+
+
   #if defined(ESP8266)
     extern "C" {
       #include "user_interface.h"

@@ -25,14 +25,6 @@
 
 #include <Arduino.h>
 
-#ifdef FILESYSTEM
-  #if defined USE_SPIFFS
-    #include <FS.h>
-  #elif defined USE_LITTLEFS
-    #include <LittleFS.h> 
-  #endif
-#endif
-
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 #ifdef ALT_DEBUG_TARCE

@@ -28,18 +28,40 @@
   #include <ArduinoJson.h>
   #include <LinkedList.h>
 
-    #ifdef FILESYSTEM 
-      #if defined USE_LITTLEFS
-        #if defined(ESP8266)
-          #include <LittleFS.h> 
-        #elif defined(ESP32)
-          #include <FS.h>
-          #include <LITTLEFS.h>
-        #endif
-      #elif defined USE_SPIFFS
+  #ifndef ALT_DEFINE_DEFAULT
+    #ifndef FSOK
+      #define FSOK
+    #endif
+    #ifndef USE_LITTLEF
+      #define USE_LITTLEF
+    #endif
+    #ifndef FILESYSTEM
+      #if defined(ESP8266)
+        #include <LittleFS.h> 
+        #define FILESYSTEM LittleFS  
+      #elif defined(ESP32)
         #include <FS.h>
+        #include <LITTLEFS.h>
+        #define FILESYSTEM LittleFS
       #endif
-    #endif  
+    #endif
+    #ifndef ALT_DEBUG_TARCE
+        #define ALT_DEBUG_TARCE
+    #endif
+  #endif
+
+  #ifdef FILESYSTEM 
+    #if defined USE_LITTLEFS
+      #if defined(ESP8266)
+        #include <LittleFS.h> 
+      #elif defined(ESP32)
+        #include <FS.h>
+        #include <LITTLEFS.h>
+      #endif
+    #elif defined USE_SPIFFS
+      #include <FS.h>
+    #endif
+  #endif  
 
 
     class FilePathList {
