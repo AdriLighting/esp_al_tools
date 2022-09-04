@@ -28,7 +28,7 @@
 // ported by adrilighting 13/04/2022 00:38:55
 
 
-#include "alhttptimesync.h"
+#include "../include/alhttptimesync.h"
 
 #ifdef ESP8266
 #include <coredecls.h>                 // settimeofday_cb()
@@ -52,9 +52,9 @@
 
 #include <ArduinoJson.h>
 
-#include "altools.h"
-#include "alhttptools.h"
-#include "aldatestring.h"
+#include "../include/altools.h"
+#include "../include/alhttptools.h"
+#include "../include/aldatestring.h"
 
     #define ALTIME_CONNECTED (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED)
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#include "alsysinfo.h"
+#include "../include/alsysinfo.h"
 
     #ifdef FILESYSTEM 
       #if defined USE_LITTLEFS
@@ -47,7 +47,7 @@
     #include <esp_wifi.h>
   #endif
 
-#include "altools.h"
+#include "../include/altools.h"
 
 /*
 #include <cmath>

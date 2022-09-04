@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-#include "alworldclock.h"
+#include "../include/alworldclock.h"
 #include <ArduinoJson.h>
 
-#include "altools.h"
-#include "alhttptools.h"
-#include "alhttptimesync.h"
+#include "../include/altools.h"
+#include "../include/alhttptools.h"
+#include "../include/alhttptimesync.h"
 
 /*
 {
