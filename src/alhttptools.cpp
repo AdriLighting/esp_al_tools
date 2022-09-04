@@ -136,7 +136,7 @@ int downloadFile(const String &url, const String &filename, ProgressCallback pro
             while(http.connected() && (len > 0 || len == -1)) {
 
                 if (( millis() - watchDog_timer ) > 45000) {
-                  LT_TRACEC("main", "&c:1&s:\t[HTTP] WATCHDOG OVER 45000MS -> LEAV WHILE\n", httpCode);  
+                  ALT_TRACEC("main", "&c:1&s:\tWATCHDOG OVER 45000MS -> LEAV WHILE\n");  
                   break;}
 
                 // get available data size
