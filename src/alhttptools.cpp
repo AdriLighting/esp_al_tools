@@ -131,8 +131,12 @@ int downloadFile(const String &url, const String &filename, ProgressCallback pro
             // get tcp stream
             WiFiClient * stream = http.getStreamPtr();
 
+            uint32_t watchDog_timer = millis();
             // read all data from server
             while(http.connected() && (len > 0 || len == -1)) {
+
+                if (( millis() - watchDog_timer ) > 45000) break;
+
                 // get available data size
                 size_t size = stream->available();
 
