@@ -76,6 +76,8 @@
 
     static const char ALTIME_PT_timeapi_tz_url[] PROGMEM  = "http://worldtimeapi.org/api/timezone/";
     static const char ALTIME_PT_timeapi_ip_url[] PROGMEM  = "http://worldtimeapi.org/api/ip";
+    static const char ALTIME_PT_ntpip_default_1[] PROGMEM  = "fr.pool.ntp.org";
+    static const char ALTIME_PT_ntpip_default_2[] PROGMEM  = "pool.ntp.org";
 
 
     typedef struct EzTask{
@@ -128,8 +130,11 @@
 #endif
         void handle();
 
-    };
+        void set_tz(const String & v1, const String & v2);
 
+    };
+    AL_httpTime * AL_httpTime_getPtr();
+    
     class AL_timeHelper {
     public:
         AL_timeHelper(){};

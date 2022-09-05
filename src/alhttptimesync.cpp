@@ -59,8 +59,8 @@
     #define ALTIME_CONNECTED (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED)
 
 
-#define ALTIME_NTP1ADDRESS      "fr.pool.ntp.org"
-#define ALTIME_NTP2ADDRESS      "pool.ntp.org"
+char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
+char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
 #define ALTIME_TIMEAPI_BUFSIZE  600
 #define ALTIME_DATETIME_STRLEN  (19U)   // buffer for data/time string "YYYY-MM-DDThh:mm:ss"
 #define ALTIME_TM_BASE_YEAR     1900
@@ -274,8 +274,20 @@ unsigned long RTC_Worker(unsigned long _storage=0){
 
 
 AL_httpTime * AL_httpTimePtr = nullptr;
-AL_httpTime::AL_httpTime(){AL_httpTimePtr = this;}
+AL_httpTime * AL_httpTime_getPtr() { return AL_httpTimePtr;}
+AL_httpTime::AL_httpTime(){
+  AL_httpTimePtr = this;
+  char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
+  char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
 
+  al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_1);
+  al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_2);
+
+}
+void set_tz(const String & v1, const String & v2){
+  al_tools::c_str(ALTIME_NTP1ADDRESS, v1);
+  al_tools::c_str(ALTIME_NTP1ADDRESS, v2);  
+}
 /**
  * установки системной временной зоны/правил сезонного времени.
  * по сути дублирует системную функцию setTZ, но работает сразу
