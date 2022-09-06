@@ -284,7 +284,7 @@ AL_httpTime::AL_httpTime(){
   al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_2);
 
 }
-void set_tz(const String & v1, const String & v2){
+void AL_httpTime::set_tz(const String & v1, const String & v2){
   al_tools::c_str(ALTIME_NTP1ADDRESS, v1);
   al_tools::c_str(ALTIME_NTP1ADDRESS, v2);  
 }
