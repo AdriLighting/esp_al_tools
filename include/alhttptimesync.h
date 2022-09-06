@@ -99,10 +99,10 @@
         boolean _get_timeHTTP = false;
 
         String  tzone;
-        String  ntp2;              // хранилище для ntp-сервера2 (резервный, задается с UI)
+        String  ntp2;              // 
         uint8_t ntpcnt = 2;
 
-        void set_time(String str, uint32_t lastUpdate);
+        void set_time(String str, uint32_t lastUpdate); //
 
         // unsigned int getHttpData(String &payload, const String &url);
 
