@@ -280,8 +280,8 @@ AL_httpTime::AL_httpTime(){
   char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
   char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
 
-  al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_1);
-  al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_2);
+  // al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_1);
+  // al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_2);
 
 }
 void AL_httpTime::set_tz(const String & v1, const String & v2){

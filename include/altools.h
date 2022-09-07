@@ -45,9 +45,9 @@
         #define FILESYSTEM LittleFS
       #endif
     #endif
-    #ifndef ALT_DEBUG_TARCE
-        #define ALT_DEBUG_TARCE
-    #endif
+    // #ifndef ALT_DEBUG_TARCE
+    //     #define ALT_DEBUG_TARCE
+    // #endif
   #endif
 
   #ifdef FILESYSTEM 
