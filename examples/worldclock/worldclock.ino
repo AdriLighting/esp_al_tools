@@ -1,6 +1,6 @@
 /*
   COMPILATOR PREPOCESSOR 
-  	ALTIMESYNC_ENABLED
+    ALTIMESYNC_ENABLED
     ALWORLDCLOCK_ENABLED
 */
 
@@ -48,8 +48,7 @@ void setup()
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
 
-  // configTime(MYTZ, "fr.pool.ntp.org"); 
-  configTzTime(MYTZ, "fr.pool.ntp.org", "pool.ntp.org");
+  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
   #ifdef ESP8266
@@ -63,7 +62,7 @@ void setup()
 uint8_t loopMod = 0;
 void loop()
 {
-  _WCEVO_manager.handleConnection();	
+  _WCEVO_manager.handleConnection();  
   _AL_httpTime.handle();
   if (!WCEVO_CONNECTED) return;
   switch (loopMod) {
@@ -75,9 +74,9 @@ void loop()
         AL_timeHelper::getDateTimeString(buf, tstampBadUTC);
         Serial.printf("current+10hr: %s\n", buf.c_str()); 
       }
-  _WorldClock.new_timeByCity("Shanghai");
-  _WorldClock.new_timeByCity("Tokyo");  
-  _WorldClock.new_timeByCity("Berlin");  
+      _WorldClock.new_timeByCity("Shanghai");
+      _WorldClock.new_timeByCity("Tokyo");  
+      _WorldClock.new_timeByCity("Berlin");  
       _WorldClock.print_registeredTime();    
       loopMod = 1;
     break;

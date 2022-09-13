@@ -48,8 +48,7 @@ void setup()
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
 
-  // configTime(MYTZ, "fr.pool.ntp.org"); 
-  configTzTime(MYTZ, "fr.pool.ntp.org", "pool.ntp.org");
+  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
   #ifdef ESP8266

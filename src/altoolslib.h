@@ -56,8 +56,13 @@
       #define FILESYSTEM LittleFS
     #endif
   #endif
+
   #ifndef ALT_DEBUG_TARCE
       #define ALT_DEBUG_TARCE
+  #endif
+
+  #ifndef ALSI_ENABLED
+    #define ALSI_ENABLED
   #endif
 #endif
 

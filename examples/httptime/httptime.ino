@@ -47,9 +47,10 @@ void setup()
 
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
-
+  
+  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
   // configTime(MYTZ, "fr.pool.ntp.org"); 
-  configTzTime(MYTZ, "fr.pool.ntp.org", "pool.ntp.org");
+  // configTzTime(MYTZ, "fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
   #ifdef ESP8266
@@ -81,7 +82,7 @@ void loop()
     // al_datestr::get_dowStr("fr", )
     // Serial.println();
     if (loopMod==0) {
-      showTime();
+      // showTime();
       loopMod=1;
       uint8_t month = AL_timeHelper::get_month();
       uint8_t wday = AL_timeHelper::get_wday();
