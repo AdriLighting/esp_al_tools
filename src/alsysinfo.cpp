@@ -787,6 +787,7 @@ boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
   }  
   return false;
 }
+
 void ALSYSINFO_getterByKey(DynamicJsonDocument & doc, const char * key, bool keyStr) {
   if (!doc.containsKey(FPSTR(ALSI_PTJSON_001))) doc.createNestedObject(FPSTR(ALSI_PTJSON_001));
   String item;
