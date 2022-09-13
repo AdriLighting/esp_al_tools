@@ -752,12 +752,12 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t 
   }     
 }
 boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
-  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
   // sC_1 = sC_1.toLowerCase();
   String sC_2 = al_tools::ch_toString(key);
   // sC_2 = sC_2.toLowerCase();
 
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
+    String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
     if ( sC_1 == sC_2) {
       for(int j = 0; j < ALSI_CATEGORYSIZE; ++j) {
         if (al_tools::ch_toString(ALSI_items[i].GRP) == al_tools::ch_toString(ALSI_CATEGORY[j])) {
@@ -775,11 +775,11 @@ boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
     ALSI_items[p].DATA(ret);
     return true;
   }
-  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
-  sC_1.toLowerCase();
   String sC_2 = al_tools::ch_toString(key);
   sC_2.toLowerCase();     
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
+    String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
+    sC_1.toLowerCase();
     if (sC_1 == sC_2) {
       ALSI_items[i].DATA(ret);
       return true;
