@@ -752,9 +752,9 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t 
   }     
 }
 boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
-  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
   // sC_1 = sC_1.toLowerCase();
-  String sC_2 = al_tools::ch_toString(key)
+  String sC_2 = al_tools::ch_toString(key);
   // sC_2 = sC_2.toLowerCase();
 
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
@@ -775,9 +775,9 @@ boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
     ALSI_items[p].DATA(ret);
     return true;
   }
-  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME);
   sC_1 = sC_1.toLowerCase();
-  String sC_2 = al_tools::ch_toString(key)
+  String sC_2 = al_tools::ch_toString(key);
   sC_2 = sC_2.toLowerCase();     
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
     if (sC_1 == sC_2) {
@@ -802,11 +802,12 @@ void ALSYSINFO_getterByKey(DynamicJsonDocument & doc, const char * key, bool key
           doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[cp])][item] = al_tools::ch_toString(r);          
         }     
   } else {
-    String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
-    sC_1 = sC_1.toLowerCase();
-    String sC_2 = al_tools::ch_toString(key)
+
+    String sC_2 = al_tools::ch_toString(key);
     sC_2 = sC_2.toLowerCase();    
     for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
+      String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+      sC_1 = sC_1.toLowerCase();      
       if (sC_1 != sC_2) continue;
       const char * r = "";
       ALSI_items[i].DATA(r);
