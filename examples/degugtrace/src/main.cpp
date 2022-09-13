@@ -1,3 +1,5 @@
+#include <ESP8266mDNS.h>
+
 #include <altoolslib.h>
 
 // Set "ALT_DEBUG_TARCE" in your compiler’s preprocessor options
