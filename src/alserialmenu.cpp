@@ -183,8 +183,9 @@ Sr_menu::Sr_menu(){
     #if defined(ALSI_ENABLED) && defined(DEBUG_KEYBOARD)
     _Sr_menu.add((const char *)"sysinfo_value", (const char *)"t", []() { ALSYSINFO_print(); });  
     _Sr_menu.add((const char *)"sysinfo",       (const char *)"i", []() {
-      Serial.printf_P(PSTR("@&ALSI:0,Network=\n"));
-      Serial.printf_P(PSTR("@&ALSI:0,Network&WC:0,server=\n"));
+      Serial.printf_P(PSTR("@&alsi:0,network=\n"));
+      Serial.printf_P(PSTR("@&alsii:26,Uptime=\n"));
+      Serial.printf_P(PSTR("@&ALSI:0,network&WC:0,server=\n"));
       for(int i = 0; i < ALSI_CATEGORYSIZE; ++i) {
         Serial.printf_P(PSTR("[%-3d] %s\n"), i, ALSI_CATEGORY[i]);
         for(int j = 0; j < ALSI_ITEMSSIZE; ++j) {

@@ -684,6 +684,7 @@ void ALSYSINFO_print() {
   }   
 } 
 void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t returnArray) {
+
   JsonArray array;
   if (!doc.containsKey(FPSTR(ALSI_PTJSON_001))) doc.createNestedObject(FPSTR(ALSI_PTJSON_001));
   if(isDigit(al_tools::ch_toString(key).charAt(0))) {
@@ -715,8 +716,14 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t 
       } 
     }
   }
+
+  String sC_1 = al_tools::ch_toString(ALSI_items[i].GRP)
+  sC_1 = sC_1.toLowerCase();
+  String sC_2 = al_tools::ch_toString(key)
+  sC_2 = sC_2.toLowerCase();    
+
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
-    if (al_tools::ch_toString(ALSI_items[i].GRP) != al_tools::ch_toString(key)) continue;
+    if (sC_1 != sC_2) continue;
     const char * r = "";
     ALSI_items[i].DATA(r);
     if (!returnArray) {
@@ -743,8 +750,13 @@ void ALSYSINFO_getterByCat(DynamicJsonDocument & doc, const char * key, uint8_t 
   }     
 }
 boolean ALSYSINFO_getCatByKey(const char * key, uint8_t & ret) {
+  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+  // sC_1 = sC_1.toLowerCase();
+  String sC_2 = al_tools::ch_toString(key)
+  // sC_2 = sC_2.toLowerCase();
+
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
-    if (al_tools::ch_toString(ALSI_items[i].NAME) == al_tools::ch_toString(key)) {
+    if ( sC_1 == sC_2) {
       for(int j = 0; j < ALSI_CATEGORYSIZE; ++j) {
         if (al_tools::ch_toString(ALSI_items[i].GRP) == al_tools::ch_toString(ALSI_CATEGORY[j])) {
           ret = j; 
@@ -761,8 +773,12 @@ boolean ALSYSINFO_getValByKey(const char * key, const char *& ret) {
     ALSI_items[p].DATA(ret);
     return true;
   }
+  String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+  sC_1 = sC_1.toLowerCase();
+  String sC_2 = al_tools::ch_toString(key)
+  sC_2 = sC_2.toLowerCase();     
   for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
-    if (al_tools::ch_toString(ALSI_items[i].NAME) == al_tools::ch_toString(key)) {
+    if (sC_1 == sC_2) {
       ALSI_items[i].DATA(ret);
       return true;
     }
@@ -784,8 +800,12 @@ void ALSYSINFO_getterByKey(DynamicJsonDocument & doc, const char * key, bool key
           doc[FPSTR(ALSI_PTJSON_001)][FPSTR(ALSI_CATEGORY[cp])][item] = al_tools::ch_toString(r);          
         }     
   } else {
+    String sC_1 = al_tools::ch_toString(ALSI_items[i].NAME)
+    sC_1 = sC_1.toLowerCase();
+    String sC_2 = al_tools::ch_toString(key)
+    sC_2 = sC_2.toLowerCase();    
     for(int i = 0; i < ALSI_ITEMSSIZE; ++i) {
-      if (al_tools::ch_toString(ALSI_items[i].NAME) != al_tools::ch_toString(key)) continue;
+      if (sC_1 != sC_2) continue;
       const char * r = "";
       ALSI_items[i].DATA(r);
       uint8_t cp ;
@@ -810,13 +830,16 @@ void ALSYSINFO_keyboard_getter(const String & v1) {
     if (split) {
       for(int i = 0; i < rSize; ++i) {
         Serial.printf_P(PSTR("[%d] %s\n"), i , split[i]);
-        if (strcmp_P(_SplitItem[j]->_cmd, "ALSI") == 0)   ALSYSINFO_getterByCat(doc, split[i]);                           
-        if (strcmp_P(_SplitItem[j]->_cmd, "ALSII") == 0)  ALSYSINFO_getterByKey(doc, split[i]);                           
+        if (strcmp_P(_SplitItem[j]->_cmd, "alsi") == 0)   ALSYSINFO_getterByCat(doc, split[i]);                           
+        if (strcmp_P(_SplitItem[j]->_cmd, "alsii") == 0)  ALSYSINFO_getterByKey(doc, split[i]);                           
       }
       for(int i = 0; i < rSize; ++i) {
         delete split[i];
       }
       delete[] split; 
+    } else {
+        if (strcmp_P(_SplitItem[j]->_cmd, "alsi") == 0)   ALSYSINFO_getterByCat(doc, _SplitItem[j]->_value);                           
+        if (strcmp_P(_SplitItem[j]->_cmd, "alsii") == 0)  ALSYSINFO_getterByKey(doc, _SplitItem[j]->_value);       
     }
   }
   while (_SplitItem.size()) {
@@ -829,8 +852,9 @@ void ALSYSINFO_keyboard_getter(const String & v1) {
    
 }
 void ALSYSINFO_keyboard_print() {
-  Serial.printf_P(PSTR("@&ALSI:0,Network=\n"));
-  Serial.printf_P(PSTR("ALSI\n"));
+  Serial.printf_P(PSTR("@&alsi:0,network=\n"));
+  Serial.printf_P(PSTR("@&alsii:0,network=\n"));
+  Serial.printf_P(PSTR("alsi\n"));
   for(int i = 0; i < ALSI_CATEGORYSIZE; ++i) {
      Serial.printf_P(PSTR("[%-3d] %s\n"), i, ALSI_CATEGORY[i]);
   }   
