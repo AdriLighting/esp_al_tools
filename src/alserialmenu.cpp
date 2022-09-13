@@ -22,7 +22,11 @@
  * SOFTWARE.
  */
 
-
+#ifndef ALT_DEFINE_DEFAULT
+  #ifndef DEBUG_KEYBOARD
+    #define DEBUG_KEYBOARD
+  #endif
+#endif
 #ifdef DEBUG_KEYBOARD
 #include "../include/alserialmenu.h"
 #include "../include/altools.h"

@@ -64,6 +64,10 @@
   #ifndef ALSI_ENABLED
     #define ALSI_ENABLED
   #endif
+
+  #ifndef DEBUG_KEYBOARD
+    #define DEBUG_KEYBOARD
+  #endif
 #endif
 
 
