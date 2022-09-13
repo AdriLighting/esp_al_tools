@@ -193,7 +193,11 @@ Sr_menu::Sr_menu(){
           }
         }   
       }   
-    });  
+    }); 
+    _Sr_menu.add("asysinfo_keyb", "@", [](const String & v1, const String & v2) {  
+      Serial.printf("CMD: %s - VAL: %s\n", v1.c_str(), v2.c_str());
+      ALSYSINFO_keyboard_getter(v1);    
+    }, SR_MM::SRMM_KEYVAL);       
     #endif    
     #ifdef ALT_DEBUG_TARCE
     _Sr_menu.add((const char *)"debugregion", (const char *)"u", []() { _DebugPrintList.ketboardPrint(); });    
