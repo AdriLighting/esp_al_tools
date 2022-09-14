@@ -185,7 +185,7 @@ Sr_menu::Sr_menu(){
     _Sr_menu.add((const char *)"sysinfo",       (const char *)"i", []() {
       Serial.printf_P(PSTR("@&alsi:0,network=\n"));
       Serial.printf_P(PSTR("@&alsii:26,Uptime=\n"));
-      Serial.printf_P(PSTR("@&ALSI:0,network&WC:0,server=\n"));
+      Serial.printf_P(PSTR("@&alsi:0,network&wc:0,server=\n"));
       for(int i = 0; i < ALSI_CATEGORYSIZE; ++i) {
         Serial.printf_P(PSTR("[%-3d] %s\n"), i, ALSI_CATEGORY[i]);
         for(int j = 0; j < ALSI_ITEMSSIZE; ++j) {
@@ -195,7 +195,7 @@ Sr_menu::Sr_menu(){
         }   
       }   
     }); 
-    _Sr_menu.add("asysinfo_keyb", "@", [](const String & v1, const String & v2) {  
+    _Sr_menu.add("sysinfo_keyb", "@", [](const String & v1, const String & v2) {  
       Serial.printf("CMD: %s - VAL: %s\n", v1.c_str(), v2.c_str());
       ALSYSINFO_keyboard_getter(v1);    
     }, SR_MM::SRMM_KEYVAL);       

@@ -56,7 +56,6 @@
       #define FILESYSTEM LittleFS
     #endif
   #endif
-
   #ifndef ALT_DEBUG_TARCE
       #define ALT_DEBUG_TARCE
   #endif
@@ -68,6 +67,14 @@
   #ifndef DEBUG_KEYBOARD
     #define DEBUG_KEYBOARD
   #endif
+
+  #ifndef ALWC_WS_OTA
+    #define ALWC_WS_OTA
+  #endif
+  #ifndef ALWC_WS_API
+    #define ALWC_WS_API
+  #endif
+
 #endif
 
 
