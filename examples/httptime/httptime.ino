@@ -1,10 +1,8 @@
 /*
   -DALTIMESYNC_ENABLED
   -DALTIME_USE_TIMELIB
-
+  https://github.com/AdriLighting/espwificonnect_evo.git
 */
-
-#define MYTZ PSTR("CET-1CEST,M3.5.0,M10.5.0/3")
 
 #include <altoolslib.h>
 #include <wificonnectevo.h>
@@ -47,16 +45,9 @@ void setup()
 
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
-  
-  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
-  // configTime(MYTZ, "fr.pool.ntp.org"); 
-  // configTzTime(MYTZ, "fr.pool.ntp.org", "pool.ntp.org");
+  AL_httpTime_getPtr()->set_tz("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
-  #ifdef ESP8266
-    e1 = WiFi.onStationModeGotIP(std::bind(&AL_httpTime::onSTAGotIP, &_AL_httpTime, std::placeholders::_1));
-    e2 = WiFi.onStationModeDisconnected(std::bind(&AL_httpTime::onSTADisconnected, &_AL_httpTime, std::placeholders::_1));
-  #endif
 }
 
 time_t prevTime;
