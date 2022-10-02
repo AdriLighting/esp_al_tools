@@ -31,12 +31,7 @@ alt_weatherApi::alt_weatherApi(){
   if (_ow_location) delete _ow_location;
 
   uint8_t len;
-  len = strlen(WEATHERBIT_APPID);
-  _wb_id = new char[len+1];
-  strcpy(_wb_id, WEATHERBIT_APPID);
-  len = strlen(OPENWEATHERMAP_APPID);
-  _ow_id = new char[len+1];
-  strcpy(_ow_id, OPENWEATHERMAP_APPID);
+
 
   len = strlen(WEATHER_LOCATIONID);
   _wb_location = new char[len+1];

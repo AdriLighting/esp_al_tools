@@ -40,11 +40,67 @@
     #include <LittleFS.h> 
   #endif
 #endif
+#include <WiFiClientSecureBearSSL.h>
+
 
 typedef void (*ProgressCallback)(const String &fileName, int16_t bytesDownloaded, int16_t bytesTotal);
 
 
 namespace al_httptools {
+  int get_httpsdata(String & payload, const String &url) {
+
+  // std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
+  WiFiClientSecure client;
+  client.setInsecure();
+  HTTPClient https;
+
+/*
+    ALT_TRACEC("main", "[get_httpdata]\n\turl: %s\n", url.c_str());  
+
+    if (http.begin(*client, url)) {
+
+      int httpCode = http.GET();
+      if (httpCode == HTTP_CODE_OK){
+        payload = http.getString(); 
+      }
+
+      http.end();  
+
+      ALT_TRACEC("main", "&c:1&s:\tHTTPCode: %d\n", httpCode);  
+
+      return httpCode;
+    } else return -1;
+*/
+
+  if (https.begin(client, "https://timeapi.io/api/Time/current/zone?timeZone=Asia/Shanghai")) {  // HTTPS
+    Serial.println("[HTTPS] GET...");
+    int httpCode = https.GET();
+
+    // httpCode will be negative on error
+    if (httpCode > 0) {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+      // file found at server?
+      if (httpCode == HTTP_CODE_OK) {
+        payload = https.getString();
+        // Serial.println(String("[HTTPS] Received payload: ") + payload);
+        // Serial.println(String("1BTC = ") + payload + "USD");
+        Serial.printf("[HTTPS] GET... succes: %s\n\r", https.errorToString(httpCode).c_str());
+      }
+    } else {
+      Serial.printf("[HTTPS] GET... failed, error: %s\n\r", https.errorToString(httpCode).c_str());
+    }
+
+    https.end();
+
+    return httpCode;
+  } else {
+    Serial.printf("[HTTPS] Unable to connect\n\r");
+    return -1;
+  }
+
+
+  }  
   int get_httpdata(String & payload, const String &url) {
 
     WiFiClient client;

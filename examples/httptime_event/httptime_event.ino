@@ -42,7 +42,7 @@ void setup()
     _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
   #endif 
 
-  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "SSIDPASS");
+  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "phcaadax");
   _WCEVO_manager.set_cm(WCEVO_CM_STA);
   _WCEVO_manager.set_cmFail(WCEVO_CF_RESET);
   _WCEVO_manager.start();

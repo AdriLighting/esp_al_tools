@@ -127,19 +127,19 @@
 
     class DebugPrintItem;
 
-    #ifndef ARDUINOTRACE_FUNCTION_NAME_IN_FLASH
+    #ifndef ALTDEBUGTARCE_FUNCTION_NAME_IN_FLASH
       #if defined(ESP8266)
-        #define ARDUINOTRACE_FUNCTION_NAME_IN_FLASH 1
+        #define ALTDEBUGTARCE_FUNCTION_NAME_IN_FLASH 1
       #else
-        #define ARDUINOTRACE_FUNCTION_NAME_IN_FLASH 0
+        #define ALTDEBUGTARCE_FUNCTION_NAME_IN_FLASH 0
       #endif
     #endif
 
-    #if ARDUINOTRACE_FUNCTION_NAME_IN_FLASH
-      #define ARDUINOTRACE_FUNCTION_NAME \
+    #if ALTDEBUGTARCE_FUNCTION_NAME_IN_FLASH
+      #define ALTDEBUGTARCE_FUNCTION_NAME \
         reinterpret_cast<const __FlashStringHelper *>(__PRETTY_FUNCTION__)
     #else
-      #define ARDUINOTRACE_FUNCTION_NAME __PRETTY_FUNCTION__
+      #define ALTDEBUGTARCE_FUNCTION_NAME __PRETTY_FUNCTION__
     #endif
 
     extern char * ALT_debugBuffer;
@@ -165,20 +165,20 @@
     #define ALT_TRACE(parm_a, ...) { \
       if (ALT_debugBuffer) { \
         sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ARDUINOTRACE_FUNCTION_NAME));}  \
+        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME));}  \
       } 
 
     #define ALT_TRACEC(ptr, parm_a, ...) { \
       if (ALT_debugBuffer) { \
         sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ARDUINOTRACE_FUNCTION_NAME), ptr);} \
+        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr);} \
     } 
 
 
     #define ALT_TRACEM(ptr, mod, parm_a, ...) { \
       if (ALT_debugBuffer){ \
         sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ARDUINOTRACE_FUNCTION_NAME), ptr, mod);} \
+        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr, mod);} \
     } 
 
 
@@ -255,7 +255,16 @@
 
   #else
       #define ALT_TRACE(parm_a, ...) 
-      #define ALT_TRACEC(ptr, parm_a, ...) 
+      #ifdef DALT_DEBUG_TARCE_SIMPLE
+        #define ALT_TRACEC(ptr, parm_a, ...) { \
+          Serial.printf_P((PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
+        } 
+      #else 
+        #define ALT_TRACEC(ptr, parm_a, ...)
+      #endif
+    /*
+
+    */
   #endif
 
 

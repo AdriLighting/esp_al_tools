@@ -106,6 +106,7 @@
 #endif
 #include "../include/altools.h"
 #include "../include/alhttptools.h"
+#include "../include/alstring.h"
 #ifdef ALSI_ENABLED
     #include "../include/alsysinfo.h"
 #endif

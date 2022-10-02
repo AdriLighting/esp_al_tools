@@ -74,10 +74,11 @@
 
     #define ALTIME_TIMEAPI_BUFSIZE  600
 
-    static const char ALTIME_PT_timeapi_tz_url[] PROGMEM  = "http://worldtimeapi.org/api/timezone/";
-    static const char ALTIME_PT_timeapi_ip_url[] PROGMEM  = "http://worldtimeapi.org/api/ip";
-    static const char ALTIME_PT_ntpip_default_1[] PROGMEM  = "fr.pool.ntp.org";
-    static const char ALTIME_PT_ntpip_default_2[] PROGMEM  = "pool.ntp.org";
+    static const char ALTIME_PT_timeapi_tz_url      [] PROGMEM  = "http://worldtimeapi.org/api/timezone/";
+    static const char ALTIME_PT_timezonedb_tz_url   [] PROGMEM  = "http://api.timezonedb.com/v2.1/get-time-zone?";
+    static const char ALTIME_PT_timeapi_ip_url      [] PROGMEM  = "http://worldtimeapi.org/api/ip";
+    // static const char ALTIME_PT_ntpip_default_1     [] PROGMEM  = "fr.pool.ntp.org";
+    // static const char ALTIME_PT_ntpip_default_2     [] PROGMEM  = "pool.ntp.org";
 
 
     typedef struct EzTask{

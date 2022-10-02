@@ -61,6 +61,7 @@
 
 char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
 char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
+
 #define ALTIME_TIMEAPI_BUFSIZE  600
 #define ALTIME_DATETIME_STRLEN  (19U)   // buffer for data/time string "YYYY-MM-DDThh:mm:ss"
 #define ALTIME_TM_BASE_YEAR     1900
@@ -107,7 +108,7 @@ void printTm(const char* what, const tm* tm) {
 }
 
 // framework-arduinoespressif8266\libraries\esp8266\examples\NTP-TZ-DST\NTP-TZ-DST.ino
-/*
+
 void showTime() {
   timeval _tv;
   timespec _tp;
@@ -177,7 +178,7 @@ void showTime() {
   #endif
   Serial.println();
 }
-*/
+
 
 
 
@@ -277,8 +278,8 @@ AL_httpTime * AL_httpTimePtr = nullptr;
 AL_httpTime * AL_httpTime_getPtr() { return AL_httpTimePtr;}
 AL_httpTime::AL_httpTime(){
   AL_httpTimePtr = this;
-  char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
-  char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
+  // char * ALTIME_NTP1ADDRESS = nullptr;//      "fr.pool.ntp.org"
+  // char * ALTIME_NTP2ADDRESS = nullptr;//      "pool.ntp.org"
 
   // al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_1);
   // al_tools::c_str(ALTIME_NTP1ADDRESS, ALTIME_PT_ntpip_default_2);
@@ -286,18 +287,9 @@ AL_httpTime::AL_httpTime(){
 }
 void AL_httpTime::set_tz(const String & v1, const String & v2){
   al_tools::c_str(ALTIME_NTP1ADDRESS, v1);
-  al_tools::c_str(ALTIME_NTP1ADDRESS, v2);  
+  al_tools::c_str(ALTIME_NTP2ADDRESS, v2);  
 }
-/**
- * установки системной временной зоны/правил сезонного времени.
- * по сути дублирует системную функцию setTZ, но работает сразу
- * со строкой из памяти, а не из PROGMEM
- * Может использоваться для задания настроек зоны/правил налету из
- * браузера/апи вместо статического задания Зоны на этапе компиляции
- * @param tz - указатель на строку в формате TZSET(3)
- * набор отформатированных строк зон под прогмем лежит тут
- * https://github.com/esp8266/Arduino/blob/master/cores/esp8266/TZ.h
- */
+
 void AL_httpTime::tzsetup(const char* tz){
   // https://stackoverflow.com/questions/56412864/esp8266-timezone-issues
   ALT_TRACEC("main", "tz: %s\n", tz);
@@ -339,7 +331,8 @@ void AL_httpTime::tzsetup(const char* tz){
   String dt; AL_timeHelper::getDateTimeString(dt, shift);
   ALT_TRACEC("main", "reboot time (%lu)-> %s\n", (unsigned long)shift, dt.c_str());
 }
-boolean AL_httpTime_handle = false;
+
+uint32_t get_timeHTTP_TIMER = 0;
 void AL_httpTime::handle(){
   if (ntpResync_task.activate) {
     if (( millis() - ntpResync_task.time ) > 10000) {
@@ -347,8 +340,12 @@ void AL_httpTime::handle(){
       ntpResync_task.activate = false;
     }
   }
-  if (ALTIME_CONNECTED && !AL_timeHelper::sntpIsSynced()) {get_timeHTTP();_get_timeHTTP=true;}
-  if (ALTIME_CONNECTED && !_get_timeHTTP) {get_timeHTTP();_get_timeHTTP=true;}
+  if ( (millis()-get_timeHTTP_TIMER) > 5000 ) {
+    if (ALTIME_CONNECTED && !AL_timeHelper::sntpIsSynced()) {get_timeHTTP();_get_timeHTTP=true;}
+    if (ALTIME_CONNECTED && !_get_timeHTTP) {get_timeHTTP();_get_timeHTTP=true;}
+    get_timeHTTP_TIMER = millis();
+  }
+
 }
 
 void AL_httpTime::ntpResync_start(){
@@ -377,6 +374,7 @@ void AL_httpTime::ntpResync_run(){
     sntp_init();
     ntpcnt++; ntpcnt%=4;
     // ts.getCurrentTask()->restartDelayed(TASK_SECOND*10);
+    ALT_TRACEC("main", "--\n");
     return;
   } else {
     if(!ntpcnt){
@@ -386,6 +384,7 @@ void AL_httpTime::ntpResync_run(){
       settimeofday(&tv, NULL);
       String dt; AL_timeHelper::getDateTimeString(dt);
       ALT_TRACEC("main", "Get time from RTC (%lu)-> %s\n", (unsigned long)shift, dt.c_str());
+      ALT_TRACEC("main", "--\n");
     }
   }
 }
@@ -397,7 +396,7 @@ void AL_httpTime::ntpResync_run(){
 #ifdef ESP8266
 void AL_httpTime::onSTAGotIP(WiFiEventStationModeGotIP ipInfo)
 {
-      Serial.printf_P(PSTR(">>>>>>>>>>>>>>>>>> onSTAGotIP UI WiFi: IP: %s\n"), ipInfo.ip.toString().c_str());
+    Serial.printf_P(PSTR(">>> onSTAGotIP UI WiFi: IP: %s - sntpIsSynced: %d\n"), ipInfo.ip.toString().c_str(), AL_timeHelper::sntpIsSynced());
 
     if(AL_timeHelper::sntpIsSynced() ) return;
 
@@ -455,7 +454,6 @@ void AL_httpTime::set_time(String str, uint32_t lastUpdate) {
   ALT_TRACEC("main", ">>> settimeofday\n");
   settimeofday(&tv, NULL);
 
-
   #ifdef ALTIME_USE_TIMELIB
     ALT_TRACEC("main", ">>> TimeLib.h setTime+adjustTime]\n");
     setTime(t);  
@@ -474,8 +472,12 @@ void AL_httpTime::get_timeHTTP() {
   String result((char *)0);
   result.reserve(ALTIME_TIMEAPI_BUFSIZE);
 
+
   sntp_init();
   ntpResync_start();
+
+  // Serial.printf("timezone:  %s\n", getenv("TZ") ? : "(none)");
+  // showTime();
 
   if(tzone.length()){
     ALT_TRACEC("main", "sntp is sync\n");
@@ -507,18 +509,12 @@ void AL_httpTime::get_timeHTTP() {
     return;
   }
 
-
-
   String datetime = doc[F("datetime")];
 
   int raw_offset, dst_offset = 0;
 
-  raw_offset=doc[F("raw_offset")];    // по сути ничего кроме текущего смещения от UTC от сервиса не нужно
-                                      // правила перехода сезонного времени в формате, воспринимаемом системной
-                                      // либой он не выдает, нужно писать внешний парсер. Мнемонические определения
-                                      // слишком объемные для контроллера чтобы держать и обрабатывать их на лету.
-                                      // Вероятно проще будет их запихать в js веб-интерфейса
-  dst_offset=doc[F("dst_offset")];
+  raw_offset = doc[F("raw_offset")]; 
+  dst_offset = doc[F("dst_offset")];
 
   // Save mnemonic time-zone (do not know why :) )
   if (!tzone.length()) {
@@ -546,7 +542,6 @@ void AL_httpTime::get_timeHTTP() {
 
   set_time(datetime, lastcall);
 
-
   struct tm timeinfo;
   #if defined(ESP32)
     if(!getLocalTime(&timeinfo)){
@@ -570,7 +565,7 @@ void AL_httpTime::get_timeHTTP() {
     al_tools::on_time_h(tDelay, sDelay);
     ALT_TRACEC("main", "[next request]\n\t%d\n\t%s\n", tDelay, sDelay.c_str());
   }
-  
+  ALT_TRACEC("main", "--\n");
   yield();
   // showTime() ;
 }

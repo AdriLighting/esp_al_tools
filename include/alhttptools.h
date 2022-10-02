@@ -28,6 +28,7 @@
 
 namespace al_httptools {
   int get_httpdata(String &, const String &);
+  int get_httpsdata(String &, const String &);
   int post_httpdata(String & payload, const String &url, const String &data);
   int downloadFile(const String &, const String &);
 }

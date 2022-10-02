@@ -234,7 +234,7 @@ void weatherbitCurrent::print() {
   }     
 }
 void weatherbitCurrent::getKey(String & result, const String & value) {
-  result = "";
+  result = "error";
   for( int i = 0; i < weatherbitList_keyCount; i++) { 
     if(al_tools::ch_toString(weatherbitList_key[i].key) == value) {
       // result = weatherbitList_key[i].data;
@@ -250,7 +250,8 @@ void weatherbitCurrent::getKey(String & result, const String & value) {
 
       break;
     }
-  }   
+  }  
+  if (result == "") result = "error"; 
 }
 
 // void weatherbitCurrent::whitespace(char c) {

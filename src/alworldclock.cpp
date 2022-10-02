@@ -291,17 +291,22 @@ void WorldClock::add(const char * name, const char * tz, const char * country, c
 }
 // _WorldClock.add(name.c_str(), timezone.c_str(), country.c_str());
 
+boolean WorldClock::get_timeHTTP_TZDB(const String & timezone, String & ret) {
+  if (!_timezoneDB_key) return false; 
 
-
-boolean WorldClock::get_timeHTTP(const String & timezone, String & ret) {
   String result((char *)0);
   result.reserve(ALTIME_TIMEAPI_BUFSIZE);
 
   if(timezone.length()){
-    String url(FPSTR(ALTIME_PT_timeapi_tz_url));
-    url+=timezone;
+    String timezoneDB_key = "";
+    _WorldClock.get_timezoneDB_key(timezoneDB_key);
+    String url(FPSTR(ALTIME_PT_timezonedb_tz_url));
+    url += "&key=";
+    url += timezoneDB_key;
+    url += "&format=json&by=zone";
+    url += "&zone=" + timezone;
     al_httptools::get_httpdata(result, url);
-    Serial.printf_P(PSTR("[0] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
+    // Serial.printf_P(PSTR("[0] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
   } else return false;
 
   if(!result.length()){
@@ -313,12 +318,59 @@ boolean WorldClock::get_timeHTTP(const String & timezone, String & ret) {
   result="";
 
   if (error) {
-    Serial.print( F("[ERR] Time deserializeJson error: "));
-    Serial.println( error.code());
+    Serial.printf_P( PSTR("[get_timeHTTP_TZDB] Time deserializeJson error: %s\n"), error.c_str());
     return false;
   }
-  String utc_offset = doc[F("utc_offset")];
-  ret = utc_offset;
+
+  if ( doc[F("status")].as<String>() == "FAILED") return false;
+
+  String utc_offset_2;
+  String utc_offset = doc[F("gmtOffset")].as<String>(); 
+  String utc_dir    = utc_offset.substring(0, 1);
+
+  if (utc_dir=="-") {utc_offset_2 = utc_offset.substring(1,utc_offset.length());}
+  else              {utc_offset_2 = utc_offset; utc_dir = "+";}
+
+  int utc_offset_3 = utc_offset_2.toInt() / 3600;
+  
+  if (utc_offset_3 >= 10) ret = utc_dir + String(utc_offset_3) + ":00";
+  else                    ret = utc_dir + "0" + String(utc_offset_3) + ":00";
+
+  Serial.printf_P(PSTR("[get_timeHTTP_TZDB]\n\tgmtOffset_1: %s\n\tgmtOffset_2: %s\n\tdir: %s\n\tgmtOffset/3600: %d\n\tresult: %s\n"), 
+    utc_offset.c_str(), utc_offset_2.c_str(), utc_dir.c_str(), utc_offset_3, ret.c_str());
+
+  delay(1000);
+  return true;
+}
+
+boolean WorldClock::get_timeHTTP(const String & timezone, String & ret) {
+  String result((char *)0);
+  result.reserve(ALTIME_TIMEAPI_BUFSIZE);
+
+  if(timezone.length()){
+    String url(FPSTR(ALTIME_PT_timeapi_tz_url));
+    url+=timezone;
+    if (al_httptools::get_httpdata(result, url) == HTTP_CODE_OK)
+      Serial.printf_P(PSTR("[get_timeHTTP] getHttpData\n\turl: %s\n\tresult >>>\n%s\n\tresult <<<\n"), url.c_str(), result.c_str());
+    else return false;
+  } else return false;
+
+  if(!result.length()){
+    return false; 
+  }
+
+  DynamicJsonDocument doc(ALTIME_TIMEAPI_BUFSIZE);
+  DeserializationError error = deserializeJson(doc, result);
+  result="";
+
+  if (error) {
+    Serial.printf_P( PSTR("[get_timeHTTP] Time deserializeJson error: %s\n"), error.c_str());
+    return false;
+  }
+
+  ret = doc[F("utc_offset")].as<String>();
+
+  Serial.println(ret);
 
   return true;
 }
@@ -353,20 +405,30 @@ void WorldClock::setup_default(){
 }
 void WorldClock::new_timeByCity(const String & search){
   String country = FPSTR(ALTIME_COUNTRY);
-  DynamicJsonDocument doc(3072);
+  DynamicJsonDocument doc(4096);
+
   DeserializationError error = deserializeJson(doc, country);
   if (error) return;
+
   JsonArray arr = doc[F("items")];  
   for(size_t j = 0; j < arr.size(); ++j) {
+
     JsonObject obj      = arr[j];
     String timezone     = obj[F("timezone")];
     String name         = obj[F("name")].as<String>();
     String country      = obj[F("country")];
+
     if (name == search) {
       String utc = "";
-      if (!get_timeHTTP(timezone, utc)) break;
+      
+      if (!get_timeHTTP(timezone, utc)) {
+         if (!get_timeHTTP_TZDB(timezone, utc)) break;
+      }
+
       _WorldClock.add(name.c_str(), timezone.c_str(), country.c_str(), utc.c_str());
+
       break;
+
     }
   }
 }
@@ -496,4 +558,11 @@ void WorldClock::print_avaibleTime() {
       country.c_str()
     );    
   }
+}
+
+void WorldClock::set_timezoneDB_key(const char * const & key) {
+  al_tools::c_str(_timezoneDB_key, key);
+}
+void WorldClock::get_timezoneDB_key(String & res) {
+  res = String(_timezoneDB_key);
 }

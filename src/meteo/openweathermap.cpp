@@ -70,6 +70,7 @@ PROGMEM OpenWeatherMapData_t OpenWeatherMapData_items [] = {
 uint8_t OpenWeatherMapData_itemsCount = ARRAY_SIZE(OpenWeatherMapData_items);
 namespace al_openweathermap {
   void updataData(OpenWeatherMap_t * data, DynamicJsonDocument & doc){
+      ALT_TRACEC("main", "-\n");
       data->coord_lon  = doc[F("coord")][F("lon")].as<float>();
       data->coord_lat  = doc[F("coord")][F("lat")].as<float>();
 
@@ -106,6 +107,7 @@ namespace al_openweathermap {
       data->id       = doc[F("id")].as<long>();
       data->name     = doc[F("name")].as<String>();
       data->cod      = doc[F("cod")].as<uint8_t>(); 
+      ALT_TRACEC("main", "--\n");
   }    
   void getJson(OpenWeatherMap_t * data, boolean isMetric, const String & appId, const String & locationId, const String & language) {
       String  units = isMetric ? "metric" : "imperial";
@@ -113,7 +115,7 @@ namespace al_openweathermap {
 
       String result = "";
       al_httptools::get_httpdata(result, url);
-      DynamicJsonDocument doc(3200);
+      DynamicJsonDocument doc(2000);
       deserializeJson(doc, result);
       updataData(data, doc);
   }

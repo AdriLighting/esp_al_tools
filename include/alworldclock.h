@@ -44,6 +44,7 @@
   class WorldClock
   {
     boolean get_timeHTTP(const String & timezone, String & ret);
+    boolean get_timeHTTP_TZDB(const String & timezone, String & ret);
     void add(const char * name, const char * tz, const char * country, const char * utc);
 
     
@@ -52,7 +53,10 @@
     WorldClock()  {};
     ~WorldClock() {};
 
+    char * _timezoneDB_key  = nullptr;
 
+    void set_timezoneDB_key(const char * const & key );
+    void get_timezoneDB_key(String & ret );
     void setup_default();
 
     void print_times(boolean shortTime = true);

@@ -25,25 +25,12 @@
 #ifndef WEATHERAPIID_H
   #define WEATHERAPIID_H
     #include <Arduino.h>
-    // #define WEATHERBIT_APP_ID  Sting("")
 
-    // #define WEATHER_LOCATION_ID Sting("2972214")
-    // #define WEATHER_LANGUAGE    Sting("fr")
-    // 
-    //IS_METRIC ? "metric" : "imperial";
-static const char  WEATHERBIT_APPID   [] PROGMEM = ""; // 
-static const char  OPENWEATHERMAP_APPID [] PROGMEM = "";
-
-static const char  WEATHER_LOCATIONID   [] PROGMEM = "2972214";
-static const char  WEATHER_LANGUAGE     [] PROGMEM = "fr";
-
-
-// http://api.openweathermap.org/data/2.5/weather?id=
+static const char  WEATHER_LOCATIONID     [] PROGMEM = "2972214";
+static const char  WEATHER_LANGUAGE       [] PROGMEM = "fr";
 static const char  OPENWEATHERMAP_URL     [] PROGMEM = "http://api.openweathermap.org/data/2.5/weather/";
-// http://api.weatherbit.io/v2.0/current?city_id=
 static const char  WEATHERBIT_URL         [] PROGMEM = "http://api.weatherbit.io/v2.0/";
-// http://api.weatherbit.io/v2.0/forecast/daily?city_id=
-// static const char  WEATHERBITFORECAST_URL [] PROGMEM = "http://api.weatherbit.io/v2.0/forecast/";
+
 class alt_weatherApi
 {
 public:
