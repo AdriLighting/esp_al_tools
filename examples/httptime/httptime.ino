@@ -11,12 +11,6 @@ AsyncWebServer  webserver(80);
 DNSServer       dnsServer;
 WCEVO_manager   _WCEVO_manager("httptime", "alml1234", &dnsServer, &webserver);  
 AL_httpTime     _AL_httpTime;
-#ifdef ESP8266
-  WiFiEventHandler e1, e2;  
-#endif
-
-
-bool cb_timeIsSet(){return AL_timeHelper::sntpIsSynced();}
 
 void setup()
 {
@@ -29,13 +23,13 @@ void setup()
   Serial.println("STARTUP");
 
   
-  #ifdef ALT_DEBUG_TARCE
-    ALT_debugBuffer = new char[1024];  
-    _DebugPrintList.add("main");  
-    _DebugPrintList.add(WCEVO_DEBUGREGION_WCEVO);  
-    _DebugPrintList.add(WCEVO_DEBUGREGION_AP);  
-    _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
-  #endif 
+  // #ifdef ALT_DEBUG_TARCE
+  //   ALT_debugBuffer = new char[1024];  
+  //   _DebugPrintList.add("main");  
+  //   _DebugPrintList.add(WCEVO_DEBUGREGION_WCEVO);  
+  //   _DebugPrintList.add(WCEVO_DEBUGREGION_AP);  
+  //   _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
+  // #endif 
 
   WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "phcaadax");
   _WCEVO_manager.set_cm(WCEVO_CM_STAAP);
@@ -45,7 +39,9 @@ void setup()
 
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
-  AL_httpTime_getPtr()->set_tz("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
+  
+  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
+  // configTzTime("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
 }
@@ -63,17 +59,12 @@ void loop()
 {
   _WCEVO_manager.handleConnection();  
   _AL_httpTime.handle();
-
   if (AL_timeHelper::sntpIsSynced() && prevTime != displatTime_compare( )) {
     char tmpStr[12];
     sprintf(tmpStr, "%02d:%02d:%02d", AL_timeHelper::get_hours(), AL_timeHelper::get_minutes(), AL_timeHelper::get_seconds());
     prevTime  = displatTime_compare( );
-    // Serial.println(tmpStr);
     String search;
-    // al_datestr::get_dowStr("fr", )
-    // Serial.println();
     if (loopMod==0) {
-      // showTime();
       loopMod=1;
       uint8_t month = AL_timeHelper::get_month();
       uint8_t wday = AL_timeHelper::get_wday();
@@ -87,8 +78,8 @@ void loop()
       Serial.println(al_dateString_days_t[wday].en);
       Serial.println(al_dateString_days_t[wday].shortfr);
       Serial.println(al_dateString_days_t[wday].shorten);
+      Serial.println(tmpStr);
     }
   }  
-
   delay(0);
 }

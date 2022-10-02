@@ -163,22 +163,22 @@
     void ALT_debugPrint(const String & msg, const String & file, const String & line, const String & func, const char * ptr  = "", ALT_DEBUGLVL_T mod = ALT_DEBUGLVL_NORMAL);
 
     #define ALT_TRACE(parm_a, ...) { \
-      if (ALT_debugBuffer) { \
+        if (!ALT_debugBuffer) ALT_debugBuffer = new char[512];  \
         sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME));}  \
+        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME)); \
       } 
 
     #define ALT_TRACEC(ptr, parm_a, ...) { \
-      if (ALT_debugBuffer) { \
-        sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr);} \
+      if (!ALT_debugBuffer) ALT_debugBuffer = new char[512];  \
+      sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
+      ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr); \
     } 
 
 
     #define ALT_TRACEM(ptr, mod, parm_a, ...) { \
-      if (ALT_debugBuffer){ \
-        sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
-        ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr, mod);} \
+      if (!ALT_debugBuffer) ALT_debugBuffer = new char[512];  \
+      sprintf_P(ALT_debugBuffer, (PGM_P)PSTR(parm_a), ##__VA_ARGS__); \
+      ALT_debugPrint(String(ALT_debugBuffer), String(__FILE__), String(__LINE__), String(ALTDEBUGTARCE_FUNCTION_NAME), ptr, mod); \
     } 
 
 

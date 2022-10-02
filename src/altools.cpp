@@ -854,7 +854,7 @@ boolean DebugPrintItem::is_crmsg()              {return _p_crmsg;}
 ALT_DEBUGLVL_T DebugPrintItem::get_lvl()         {return _lvl;}
 
 
-DebugPrintList::DebugPrintList(){};
+DebugPrintList::DebugPrintList() {_DebugPrintList.add("main");}
 DebugPrintList::~DebugPrintList(){};
 DebugPrintItem * DebugPrintList::add(const char * const & id){ 
   _list.add(new DebugPrintItem(id));uint8_t pos = _list.size()-1;return _list[pos];
