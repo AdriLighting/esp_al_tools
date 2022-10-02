@@ -97,7 +97,7 @@
     } RTC_DATA;
 
     class AL_httpTime {
-        boolean _get_timeHTTP = false;
+
 
         String  tzone;
         String  ntp2;              // 

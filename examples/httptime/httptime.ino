@@ -22,15 +22,6 @@ void setup()
   Serial.println();
   Serial.println("STARTUP");
 
-  
-  // #ifdef ALT_DEBUG_TARCE
-  //   ALT_debugBuffer = new char[1024];  
-  //   _DebugPrintList.add("main");  
-  //   _DebugPrintList.add(WCEVO_DEBUGREGION_WCEVO);  
-  //   _DebugPrintList.add(WCEVO_DEBUGREGION_AP);  
-  //   _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
-  // #endif 
-
   WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "phcaadax");
   _WCEVO_manager.set_cm(WCEVO_CM_STAAP);
   _WCEVO_manager.set_cmFail(WCEVO_CF_RESET);
@@ -41,33 +32,52 @@ void setup()
   WiFi.mode(WIFI_OFF);
   
   AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
-  // configTzTime("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
+  configTzTime("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
   sntp_stop(); 
 
+/*
+  EXTERNAL FUNCTIONS
+    static bool sntpIsSynced();
+    static uint8_t get_hours(const time_t _tstamp = 0) ;
+    static uint8_t get_minutes(const time_t _tstamp = 0) ;
+    static uint8_t get_seconds(const time_t _tstamp = 0) ;
+    static uint8_t get_mday(const time_t _tstamp = 0) ;      
+    static uint8_t get_wday(const time_t _tstamp = 0) ;      
+    static uint8_t get_yday(const time_t _tstamp = 0) ;      
+    static uint8_t get_month(const time_t _tstamp = 0) ;      
+    static uint32_t get_year(const time_t _tstamp = 0) ;      
+    static bool get_dst(const time_t _tstamp = 0) ;      
+    static void getDateTimeShortString(String &buf, const time_t _tstamp = 0);
+    static void getDateTimeString(String &buf, const time_t _tstamp = 0);
+    static void incrementCurrentTime(time_t & result, time_t timeStamp, int day, int hr, int min, int sec);
+    static void incrementCurrentTime(struct tm * tm, time_t timeStamp, int day, int hr, int min, int sec);
+    static const time_t* now();  
+    static void getDateString(String &buf, const time_t _tstamp) ;  
+*/    
+
 }
 
-time_t prevTime;
-time_t displatTime_compare(){   
-  uint32_t result = 0;
-  result+= AL_timeHelper::get_hours()    * SECS_PER_HOUR;
-  result+= AL_timeHelper::get_minutes()  * SECS_PER_MIN;
-  result+= AL_timeHelper::get_seconds();
-  return (time_t)result; 
-}
+
 uint8_t loopMod=0;
 void loop()
 {
-  _WCEVO_manager.handleConnection();  
+
+  // winfi connect 
+  _WCEVO_manager.handleConnection(); 
+
+  // timeSync 
   _AL_httpTime.handle();
-  if (AL_timeHelper::sntpIsSynced() && prevTime != displatTime_compare( )) {
-    char tmpStr[12];
-    sprintf(tmpStr, "%02d:%02d:%02d", AL_timeHelper::get_hours(), AL_timeHelper::get_minutes(), AL_timeHelper::get_seconds());
-    prevTime  = displatTime_compare( );
-    String search;
+
+  // when time is sync
+  if (AL_timeHelper::sntpIsSynced() ) {
     if (loopMod==0) {
       loopMod=1;
+      
       uint8_t month = AL_timeHelper::get_month();
-      uint8_t wday = AL_timeHelper::get_wday();
+      uint8_t wday  = AL_timeHelper::get_wday();
+
+      // print date fr && en
+      Serial.println();
       Serial.println(month);
       Serial.println(al_dateString_month_t[month-1].fr);
       Serial.println(al_dateString_month_t[month-1].en);
@@ -78,7 +88,29 @@ void loop()
       Serial.println(al_dateString_days_t[wday].en);
       Serial.println(al_dateString_days_t[wday].shortfr);
       Serial.println(al_dateString_days_t[wday].shorten);
-      Serial.println(tmpStr);
+      Serial.println();
+
+      // print current time  
+      char tmpStr[12];
+      sprintf(tmpStr, "%02d:%02d:%02d", AL_timeHelper::get_hours(), AL_timeHelper::get_minutes(), AL_timeHelper::get_seconds());      
+      Serial.printf_P(PSTR("\n%s: %s\n"), getenv("TZ") ? : "(none)", tmpStr);
+      String result;
+      AL_timeHelper::getDateTimeShortString(result);
+      Serial.printf_P(PSTR("\n%s\n"), result.c_str());
+      result = "";
+      AL_timeHelper::getDateTimeString(result);
+      Serial.printf_P(PSTR("\n%s\n"), result.c_str());
+      result = "";
+      AL_timeHelper::getDateString(result, time(nullptr));
+      Serial.printf_P(PSTR("\n%s\n"), result.c_str());
+
+      // increment time
+      time_t incrementTime;
+      //                                                  time base day hr  min   sec
+      AL_timeHelper::incrementCurrentTime(incrementTime, 0,        0,  0,  10,   0);
+      result = "";
+      AL_timeHelper::getDateTimeString(result, incrementTime);   
+      Serial.printf_P(PSTR("\n%s\n"), result.c_str());   
     }
   }  
   delay(0);

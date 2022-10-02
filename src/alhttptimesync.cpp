@@ -95,6 +95,7 @@ static const char P_LOC[] PROGMEM = "LOC";
 
 extern "C" int clock_gettime(clockid_t unused, struct timespec *_tp);
 
+/*
 #define PTM(w) \
   Serial.print(" " #w "="); \
   Serial.print(tm->tm_##w);
@@ -178,7 +179,7 @@ void showTime() {
   #endif
   Serial.println();
 }
-
+*/
 
 
 
@@ -332,18 +333,22 @@ void AL_httpTime::tzsetup(const char* tz){
   ALT_TRACEC("main", "reboot time (%lu)-> %s\n", (unsigned long)shift, dt.c_str());
 }
 
-uint32_t get_timeHTTP_TIMER = 0;
+  boolean   _getTimeHTTP       = false;
+  uint32_t  _getTimeHTTP_TIMER = 0;
+        
 void AL_httpTime::handle(){
+
   if (ntpResync_task.activate) {
     if (( millis() - ntpResync_task.time ) > 10000) {
       ntpResync_run();
       ntpResync_task.activate = false;
     }
   }
-  if ( (millis()-get_timeHTTP_TIMER) > 5000 ) {
-    if (ALTIME_CONNECTED && !AL_timeHelper::sntpIsSynced()) {get_timeHTTP();_get_timeHTTP=true;}
-    if (ALTIME_CONNECTED && !_get_timeHTTP) {get_timeHTTP();_get_timeHTTP=true;}
-    get_timeHTTP_TIMER = millis();
+
+  if ( !_getTimeHTTP && (millis()-_getTimeHTTP_TIMER) > 5000 ) {
+    if (ALTIME_CONNECTED && !AL_timeHelper::sntpIsSynced()) {get_timeHTTP();_getTimeHTTP=true;}
+    if (ALTIME_CONNECTED && !_getTimeHTTP) {get_timeHTTP();_getTimeHTTP=true;}
+    _getTimeHTTP_TIMER = millis();
   }
 
 }
@@ -639,6 +644,9 @@ const time_t* AL_timeHelper::now(){
   return &_now;
 }
 bool AL_timeHelper::sntpIsSynced() {
+
+    if (!_getTimeHTTP) return false;
+
     time_t now;
     tm *timeinfo;
     bool rc;
