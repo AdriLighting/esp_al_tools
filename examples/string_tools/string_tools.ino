@@ -55,13 +55,13 @@ Serial.println(ESP.getFreeHeap());
 {
   alstring _alstring;
   double value = 22.22;
-  _alstring.add_str(0, 0,   al_tools::c_str(String(value)));
+  // _alstring.add_str(0, 0,   al_tools::c_str(String(value)));
   _alstring.add_str(0, 0,   "line 1 col 0");
   _alstring.add_str(1, 0,   "line 1 col 1");
   _alstring.add_str(0, 0,   "line 2 col 0");
   _alstring.add_str(1, 0,   "l2 c1");
   _alstring.add_str(2, 0,   "l2 c2");
-  _alstring.add_str(4, 0,   al_tools::c_str(String("1234567891")));
+  // _alstring.add_str(4, 0,   al_tools::c_str(String("1234567891")));
   _alstring.add_str(1, -1,  "yxxxxxxxxxxxxxxxxxy");
   _alstring.add_str(2, -1,  "yxxxxxxxxxxxxxxxxxy");
   _alstring.add_str(0, 0,   "dsdqd");
