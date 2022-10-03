@@ -74,9 +74,18 @@ class alstring
 public:
 	alstring(){};
 	~alstring(){
-		if (_col_sizeArray) delete[] _col_sizeArray;
+		
   	while (_list.size()) {alstring_str * item = _list.shift(); delete item;}
-  	_list.clear();		
+  	_list.clear();	
+
+  	if (_col_sizeArray) {
+	  	for(int i = 0; i < _nb_col; i++) {
+	  		delete _col_sizeArray[i];
+	  	}
+	  	delete[] _col_sizeArray;  		
+  	}	
+
+
 	};
 	uint8_t get_col_nb() {return _nb_col;}
 	uint8_t get_col_size(uint8_t p) {return _col_sizeArray[p];}
