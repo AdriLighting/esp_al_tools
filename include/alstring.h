@@ -73,7 +73,11 @@ class alstring
 	uint8_t * _col_sizeArray = nullptr;
 public:
 	alstring(){};
-	~alstring(){};
+	~alstring(){
+		if (_col_sizeArray) delete[] _col_sizeArray;
+  	while (_list.size()) {alstring_str * item = _list.shift(); delete item;}
+  	_list.clear();		
+	};
 	uint8_t get_col_nb() {return _nb_col;}
 	uint8_t get_col_size(uint8_t p) {return _col_sizeArray[p];}
 	void get_col_seperator(String & r) {r = _col_separator;}

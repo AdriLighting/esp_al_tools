@@ -1,5 +1,3 @@
-#include <ESP8266mDNS.h>
-
 #include <altoolslib.h>
 
 // Set "ALT_DEBUG_TARCE" in your compiler’s preprocessor options
@@ -29,11 +27,10 @@ void setup()
   Serial.println();
   Serial.printf_P(PSTR("\n#############\nALT DEBUG\n#############\n\n"));
 
-    // Mandatory buffer initialization
-    ALT_debugBuffer = new char[1024];   
+  // Mandatory buffer initialization
+  ALT_debugBuffer = new char[1024];   
 
-
-    ALT_TRACEC(DEBUGREGION_MAIN, "string sans region, ne s'affiche pas\n");
+  ALT_TRACEC(DEBUGREGION_SERVER, "string sans region, ne s'affiche pas\n");
 
   _DebugPrintList.add(DEBUGREGION_MAIN); 
   _DebugPrintList.add(DEBUGREGION_SERVER); 

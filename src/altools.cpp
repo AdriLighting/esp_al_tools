@@ -365,6 +365,7 @@ namespace al_tools {
     strcpy(ptr, str.c_str());
     return true;
   }
+/*  
   boolean c_str(char * & ptr, const char * & str) {
     if(!str) {
       return false;
@@ -381,6 +382,7 @@ namespace al_tools {
     strcpy(ptr, str);
     return true;
   } 
+*/  
   boolean c_str(char * & ptr, const char * const & str) {
     if(!str) {
       return false;
