@@ -56,7 +56,7 @@ public:
 		al_tools::c_str(_buffer, str);
 	}
 	~alstring_str() {
-		if (_buffer) {Serial.println("delete buffer");delete _buffer;}
+		if (_buffer) {delete _buffer;}
 	}
 	uint8_t get_len() { return strlen(_buffer); }
 	uint8_t get_col() { return _col; }
@@ -79,9 +79,6 @@ public:
   	_list.clear();	
 
   	if (_col_sizeArray) {
-	  	for(int i = 0; i < _nb_col; i++) {
-	  		delete _col_sizeArray[i];
-	  	}
 	  	delete[] _col_sizeArray;  		
   	}	
 
@@ -196,7 +193,7 @@ public:
 						}
 					}
 				}
-				Serial.println(_str_out);
+				// Serial.println(_str_out);
 			}
 
 		}
