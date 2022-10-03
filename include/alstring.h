@@ -56,7 +56,7 @@ public:
 		al_tools::c_str(_buffer, str);
 	}
 	~alstring_str() {
-		if (_buffer) delete _buffer;
+		if (_buffer) {Serial.println("delete buffer");delete _buffer;}
 	}
 	uint8_t get_len() { return strlen(_buffer); }
 	uint8_t get_col() { return _col; }

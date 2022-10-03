@@ -51,7 +51,8 @@ void setup()
   String str = al_tools::ch_toString(cs); 
   //
 
-
+Serial.println(ESP.getFreeHeap());
+{
   alstring _alstring;
   double value = 22.22;
   _alstring.add_str(0, 0,   al_tools::c_str(String(value)));
@@ -73,21 +74,22 @@ void setup()
   _alstring.setup();
   _alstring.set_col_size(3,10);
 
-  uint8_t cols = _alstring.get_col_nb();
-  for(int i = 0; i < cols; i++) {
-    uint8_t sizeMax = _alstring.get_col_size(i);
-    String  sep;
-    String  str_pad = String(i) + " ";
-    uint8_t size    = str_pad.length();
-    _alstring.get_col_seperator(sep);
-    while (size < sizeMax) {str_pad += " "; size = str_pad.length();}    
-    if (i==0) Serial.print(str_pad) ;
-    else Serial.print(sep + str_pad) ; 
-  }
-  Serial.println();
+  // uint8_t cols = _alstring.get_col_nb();
+  // for(int i = 0; i < cols; i++) {
+  //   uint8_t sizeMax = _alstring.get_col_size(i);
+  //   String  sep;
+  //   String  str_pad = String(i) + " ";
+  //   uint8_t size    = str_pad.length();
+  //   _alstring.get_col_seperator(sep);
+  //   while (size < sizeMax) {str_pad += " "; size = str_pad.length();}    
+  //   if (i==0) Serial.print(str_pad) ;
+  //   else Serial.print(sep + str_pad) ; 
+  // }
+  // Serial.println();
   _alstring.print();
-  delete _alstring;
 
+}
+Serial.println(ESP.getFreeHeap());
 }
 
 
