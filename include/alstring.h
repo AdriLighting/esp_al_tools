@@ -193,7 +193,7 @@ public:
 						}
 					}
 				}
-				// Serial.println(_str_out);
+				Serial.println(_str_out);
 			}
 
 		}
