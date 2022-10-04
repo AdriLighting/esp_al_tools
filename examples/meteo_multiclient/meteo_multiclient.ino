@@ -25,7 +25,7 @@ void setup() {
     _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
   #endif 
 
-  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "phcaadax");
+  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "SSIDPASS");
   _WCEVO_manager.set_cm(WCEVO_CM_STA);
   _WCEVO_manager.set_cmFail(WCEVO_CF_RESET);
   _WCEVO_manager.start();
@@ -48,8 +48,8 @@ void setup() {
   _weatherbitForecastListSet.add( new weatherbitForecastListSet(ALMWB_KEY_ICON)  );  
 
   // configure weather api key and location
-  al_tools::c_str(_alt_weatherApi._wb_id,       "4b771a18fe0640a9939fd9492e162e00"); // weatherbit APIKEY
-  al_tools::c_str(_alt_weatherApi._ow_id,       "603ef62761eb23b76ac8c8af7711776f"); // openweathermap APIKEY
+  al_tools::c_str(_alt_weatherApi._wb_id,       "weatherbitAPIkey"); // weatherbit APIKEY
+  al_tools::c_str(_alt_weatherApi._ow_id,       "openweathermapAPIkey"); // openweathermap APIKEY
   al_tools::c_str(_alt_weatherApi._wb_location, "2972214"); // weatherbit location -- https://www.weatherbit.io/static/exports/cities_all.csv.gz
   al_tools::c_str(_alt_weatherApi._ow_location, "2972214"); // openweathermap location --  https://openweathermap.org/find?q=
   al_tools::c_str(_alt_weatherApi._lang,        "fr"); // lang  
@@ -195,7 +195,7 @@ String getMeteoIcon(const String & icon) {
 
 }
 
-// http://api.openweathermap.org/data/2.5/weather?id=2972214&appid=603ef62761eb23b76ac8c8af7711776f&units=metric&lang=fr
-// http://api.openweathermap.org/data/2.5/weather?2972214&appid=603ef62761eb23b76ac8c8af7711776f&units=metric&lang=fr
+// http://api.openweathermap.org/data/2.5/weather?id=2972214&appid=openweathermapAPIkey&units=metric&lang=fr
+// http://api.openweathermap.org/data/2.5/weather?2972214&appid=openweathermapAPIkey&units=metric&lang=fr
 
 */
