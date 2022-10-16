@@ -125,6 +125,10 @@
 
   #ifdef ALT_DEBUG_TARCE
 
+    static const char ALDT_REGION_TASK       [] PROGMEM = "task";
+    static const char ALDT_REGION_WEBSERVER  [] PROGMEM = "webserver";
+  // static const char ALML_DEBUGREGION_TASK       [] PROGMEM = "alml task";
+  // static const char ALML_DEBUGREGION_WEBSERVER  [] PROGMEM = "alml webserver";
     class DebugPrintItem;
 
     #ifndef ALTDEBUGTARCE_FUNCTION_NAME_IN_FLASH
