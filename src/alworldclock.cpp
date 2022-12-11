@@ -509,10 +509,11 @@ void WorldClock::print_times(boolean shortTime){
     #endif
   } else {
     bool dst_offset = doc[F("dst")];
-    // if (!dst_offset) utc_fr -= 1;    
+    if (!dst_offset) utc_fr -= 1;    
+    Serial.printf("[**************] dst: %d\n", dst_offset);
   }
 
-    Serial.printf("[**************] dst: %d\n", dst_offset)
+    
 
 
   if (shortTime) AL_timeHelper::getDateTimeShortString(ts_paris, 0);
