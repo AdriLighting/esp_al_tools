@@ -490,7 +490,31 @@ WorldClockItem * WorldClock::get_itemByCity(const char * search){
 
 void WorldClock::print_times(boolean shortTime){
   int utc_fr = 2;
+
   String ts_paris = "";
+
+  String result = "";
+  ALT_TRACEC("main", "[ERR] size of ALTIME_PT_timeapi_tz_url data: %d - try with ALTIME_PT_timeapi_ip_url\n", result.length());
+  String url(FPSTR(ALTIME_PT_timeapi_ip_url));
+  if(!al_httptools::get_httpdata(result, url)) {
+    ALT_TRACEC("main", "[ERR] size of ALTIME_PT_timeapi_ip_url data: %d\n", result.length());
+  }
+  ALT_TRACEC("main", "\n\tresult >>>\n%s\n\tresult <<<\n", result.c_str());  
+  DynamicJsonDocument doc(ALTIME_TIMEAPI_BUFSIZE);
+  DeserializationError error = deserializeJson(doc, result);
+  if (error) {
+    ALT_TRACEC("main", "Time deserializeJson error: ");
+    #ifdef ALT_DEBUG_TARCE
+      Serial.println( error.code());  
+    #endif
+  } else {
+    bool dst_offset = doc[F("dst")];
+    // if (!dst_offset) utc_fr -= 1;    
+  }
+
+    Serial.printf("[**************] dst: %d\n", dst_offset)
+
+
   if (shortTime) AL_timeHelper::getDateTimeShortString(ts_paris, 0);
   else AL_timeHelper::getDateTimeString(ts_paris, 0);
   Serial.printf("%-15s", "Paris");

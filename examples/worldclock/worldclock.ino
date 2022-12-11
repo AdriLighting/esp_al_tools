@@ -19,6 +19,11 @@ AL_getTime      _Event_time;
 
 
 bool cb_timeIsSet(){return AL_timeHelper::sntpIsSynced();}
+void set_tz(const char* tz, const char * const & v1, const char * const & v2){
+  AL_httpTime_getPtr()->set_tz(al_tools::ch_toString(v1), al_tools::ch_toString(v2));
+  configTzTime(tz, v1, v2);
+  sntp_stop();   
+}
 
 void setup()
 {
@@ -39,7 +44,7 @@ void setup()
     _DebugPrintList.add(WCEVO_DEBUGREGION_STA);  
   #endif 
 
-  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "SSIDPASS");
+  WCEVO_managerPtrGet()->set_credential("free-3C3786-EXT", "phcaadax");
   _WCEVO_manager.set_cm(WCEVO_CM_STA);
   _WCEVO_manager.set_cmFail(WCEVO_CF_RESET);
   _WCEVO_manager.start();
@@ -48,8 +53,9 @@ void setup()
   WiFi.persistent(false);
   WiFi.mode(WIFI_OFF);
 
-  AL_httpTime_getPtr()->set_tz("fr.pool.ntp.org", "pool.ntp.org");
-  sntp_stop(); 
+  set_tz("CET-1CEST,M3.5.0,M10.5.0/3", "fr.pool.ntp.org", "pool.ntp.org");
+  _WorldClock.set_timezoneDB_key("44ZOXRJMFHSP");
+
 
   #ifdef ESP8266
     e1 = WiFi.onStationModeGotIP(std::bind(&AL_httpTime::onSTAGotIP, &_AL_httpTime, std::placeholders::_1));
@@ -65,15 +71,16 @@ void loop()
   _WCEVO_manager.handleConnection();  
   _AL_httpTime.handle();
   if (!WCEVO_CONNECTED) return;
+  if (!AL_timeHelper::sntpIsSynced()) return;
   switch (loopMod) {
     case 0:
-      {
-      time_t tstampBadUTC;
-        AL_timeHelper::incrementCurrentTime(tstampBadUTC, 0, 0, 10, 0, 0);
-        String buf = "";
-        AL_timeHelper::getDateTimeString(buf, tstampBadUTC);
-        Serial.printf("current+10hr: %s\n", buf.c_str()); 
-      }
+      // {
+      // time_t tstampBadUTC;
+      //   AL_timeHelper::incrementCurrentTime(tstampBadUTC, 0, 0, 10, 0, 0);
+      //   String buf = "";
+      //   AL_timeHelper::getDateTimeString(buf, tstampBadUTC);
+      //   Serial.printf("current+10hr: %s\n", buf.c_str()); 
+      // }
       _WorldClock.new_timeByCity("Shanghai");
       _WorldClock.new_timeByCity("Tokyo");  
       _WorldClock.new_timeByCity("Berlin");  
@@ -81,27 +88,27 @@ void loop()
       loopMod = 1;
     break;
     case 1:
-      {      
-        time_t t;
-        _WorldClock.get_timeByCity("Berlin", t);
-        Serial.printf("\nBerlin : %02d:%02d:%02d - %02d/%02d/%d\n", 
-          AL_timeHelper::get_hours(t),
-          AL_timeHelper::get_minutes(t),
-          AL_timeHelper::get_seconds(t),
-          AL_timeHelper::get_mday(t),
-          AL_timeHelper::get_month(t),
-          AL_timeHelper::get_year(t)
-        );
-      }
+      // {      
+      //   time_t t;
+      //   _WorldClock.get_timeByCity("Berlin", t);
+      //   Serial.printf("\nBerlin : %02d:%02d:%02d - %02d/%02d/%d\n", 
+      //     AL_timeHelper::get_hours(t),
+      //     AL_timeHelper::get_minutes(t),
+      //     AL_timeHelper::get_seconds(t),
+      //     AL_timeHelper::get_mday(t),
+      //     AL_timeHelper::get_month(t),
+      //     AL_timeHelper::get_year(t)
+      //   );
+      // }
 
-      {
-        String ts;
-        _WorldClock.get_timeByCity("New York City", ts);
-        Serial.printf_P(PSTR("New York City: %s\n"), ts.c_str());
-        ts="";
-        _WorldClock.get_timeByCity("New York City", ts, false);
-        Serial.printf_P(PSTR("New York City: %s\n"), ts.c_str());
-      }
+    //   {
+    //     String ts;
+    //     _WorldClock.get_timeByCity("New York City", ts);
+    //     Serial.printf_P(PSTR("New York City: %s\n"), ts.c_str());
+    //     ts="";
+    //     _WorldClock.get_timeByCity("New York City", ts, false);
+    //     Serial.printf_P(PSTR("New York City: %s\n"), ts.c_str());
+    //   }
       _WorldClock.print_times();
       loopMod = 2;
     break;
